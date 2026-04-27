@@ -1,0 +1,944 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Day 2: Variables &amp; Data Types 🐍</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800;900&family=Fira+Code:wght@400;600&display=swap');
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    @page { size: A4 landscape; margin: 0; }
+
+    body { font-family: 'Poppins', 'Segoe UI', sans-serif; background: #e8e8e8; }
+
+    .slide {
+      width: 297mm;
+      height: 210mm;
+      overflow: hidden;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      page-break-after: always;
+      break-after: page;
+    }
+    @media screen { .slide { margin: 20px auto; box-shadow: 0 8px 40px rgba(0,0,0,0.18); } }
+
+    .blob { position: absolute; border-radius: 50%; opacity: 0.15; pointer-events: none; }
+
+    /* ── Themes ─── */
+    .hero {
+      background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 60%, #a855f7 100%);
+      color: white; justify-content: center; align-items: center; text-align: center; padding: 60px;
+    }
+    .hero .blob1 { width: 280px; height: 280px; background: white; top: -80px; right: -60px; }
+    .hero .blob2 { width: 200px; height: 200px; background: #c4b5fd; bottom: -60px; left: -40px; }
+
+    .section-intro { background: white; flex-direction: row; }
+    .section-intro .panel {
+      width: 36%; display: flex; flex-direction: column;
+      justify-content: center; align-items: center; padding: 50px 28px; color: white;
+    }
+    .section-intro .body { width: 64%; padding: 44px 52px; display: flex; flex-direction: column; justify-content: center; }
+
+    .content { background: white; padding: 48px 62px; }
+    .dark { background: #0f172a; color: #e2e8f0; padding: 46px 62px; }
+
+    /* ── Gradients ─── */
+    .purple { background: linear-gradient(135deg, #4f46e5, #7c3aed); }
+    .green  { background: linear-gradient(135deg, #059669, #10b981); }
+    .blue   { background: linear-gradient(135deg, #0284c7, #0ea5e9); }
+    .amber  { background: linear-gradient(135deg, #d97706, #f59e0b); }
+    .teal   { background: linear-gradient(135deg, #0d9488, #14b8a6); }
+    .violet { background: linear-gradient(135deg, #6d28d9, #8b5cf6); }
+    .rose   { background: linear-gradient(135deg, #be185d, #e11d48); }
+
+    /* ── Typography ─── */
+    .slide-tag { font-size: 11px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; opacity: 0.7; margin-bottom: 10px; }
+    .slide-title { font-size: 52px; font-weight: 900; line-height: 1.1; }
+    .slide-subtitle { font-size: 22px; font-weight: 400; opacity: 0.85; margin-top: 14px; }
+    .section-emoji { font-size: 88px; line-height: 1; margin-bottom: 14px; }
+    .section-label { font-size: 19px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; }
+
+    h2 { font-size: 31px; font-weight: 800; color: #1e1b4b; margin-bottom: 20px; }
+    h3 { font-size: 20px; font-weight: 700; color: #1e1b4b; margin-bottom: 10px; }
+    .dark h2 { color: #e2e8f0; }
+    .dark h3 { color: #94a3b8; }
+
+    p { font-size: 16px; line-height: 1.65; color: #374151; }
+    .dark p { color: #cbd5e1; }
+
+    ul { list-style: none; margin-top: 6px; }
+    ul li { font-size: 16px; color: #374151; padding: 5px 0; display: flex; align-items: flex-start; gap: 10px; line-height: 1.5; }
+    .dark ul li { color: #cbd5e1; }
+    ul li .icon { flex-shrink: 0; font-size: 17px; margin-top: 1px; }
+
+    /* ── Code ─── */
+    pre {
+      background: #0f172a; border-radius: 12px; padding: 18px 22px;
+      font-family: 'Fira Code', 'Consolas', monospace; font-size: 14px;
+      line-height: 1.75; color: #e2e8f0; overflow: hidden;
+    }
+    .dark pre { background: #1e293b; }
+    pre .kw  { color: #c084fc; }
+    pre .fn  { color: #34d399; }
+    pre .st  { color: #fbbf24; }
+    pre .cm  { color: #4b5563; }
+    pre .nm  { color: #38bdf8; }
+    pre .op  { color: #f472b6; }
+    pre .var { color: #e2e8f0; }
+    pre .key { color: #fb923c; }
+
+    /* ── Layouts ─── */
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+    .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+    .grid-4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 14px; }
+
+    /* ── Cards ─── */
+    .card { background: #f8fafc; border-radius: 14px; padding: 18px 22px; border-left: 5px solid #4f46e5; }
+    .card.green-border  { border-left-color: #059669; }
+    .card.blue-border   { border-left-color: #0284c7; }
+    .card.amber-border  { border-left-color: #d97706; }
+    .card.teal-border   { border-left-color: #0d9488; }
+    .card.violet-border { border-left-color: #6d28d9; }
+    .card.rose-border   { border-left-color: #be185d; }
+
+    /* ── Pills ─── */
+    .pill { display: inline-block; padding: 4px 14px; border-radius: 999px; font-size: 12px; font-weight: 700; }
+    .pill-purple { background: #ede9fe; color: #5b21b6; }
+    .pill-green  { background: #d1fae5; color: #065f46; }
+    .pill-blue   { background: #dbeafe; color: #1e40af; }
+    .pill-amber  { background: #fef3c7; color: #92400e; }
+    .pill-teal   { background: #ccfbf1; color: #134e4a; }
+    .pill-violet { background: #ede9fe; color: #4c1d95; }
+    .pill-rose   { background: #ffe4e6; color: #9f1239; }
+
+    /* ── Highlight box ─── */
+    .highlight-box {
+      background: #fef9c3; border: 2px solid #fde047; border-radius: 10px;
+      padding: 12px 18px; font-size: 15px; color: #713f12; margin-top: 16px; font-weight: 600;
+    }
+
+    /* ── Compare columns ─── */
+    .compare-row { display: flex; gap: 18px; margin-top: 14px; }
+    .compare-col { flex: 1; background: #f8fafc; border-radius: 12px; padding: 16px 20px; }
+    .compare-col.good { border-top: 4px solid #10b981; }
+    .compare-col.bad  { border-top: 4px solid #ef4444; }
+    .compare-col h4 { font-size: 14px; font-weight: 700; margin-bottom: 10px; }
+    .compare-col.good h4 { color: #065f46; }
+    .compare-col.bad  h4 { color: #991b1b; }
+    .compare-col ul li { font-size: 13.5px; padding: 3px 0; }
+
+    /* ── Type cards ─── */
+    .type-card { background: #f8fafc; border-radius: 14px; padding: 18px; text-align: center; }
+    .type-card .emoji { font-size: 32px; display: block; margin-bottom: 8px; }
+    .type-card .type-name  { font-size: 17px; font-weight: 800; color: #1e1b4b; }
+    .type-card .type-label { font-size: 12px; color: #6b7280; margin: 3px 0 8px; }
+    .type-card pre { font-size: 12px; padding: 10px 14px; text-align: left; }
+
+    /* ── Operator grid ─── */
+    .op-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 10px; margin-top: 14px; }
+    .op-cell { background: #f8fafc; border-radius: 10px; padding: 12px 10px; text-align: center; }
+    .op-cell .sym  { font-family: 'Fira Code', monospace; font-size: 20px; font-weight: 700; color: #4f46e5; }
+    .op-cell .desc { font-size: 11px; color: #6b7280; margin-top: 3px; }
+    .op-cell .ex   { font-family: 'Fira Code', monospace; font-size: 11px; color: #374151; margin-top: 5px; }
+
+    /* ── Index diagram ─── */
+    .index-diagram { display: flex; gap: 0; margin: 14px 0; }
+    .index-cell {
+      flex: 1; text-align: center; border: 2px solid #e2e8f0;
+      border-right: none; padding: 8px 4px;
+    }
+    .index-cell:last-child { border-right: 2px solid #e2e8f0; }
+    .index-cell .val  { font-family: 'Fira Code', monospace; font-size: 13px; font-weight: 700; color: #1e1b4b; padding: 6px 0; background: #f8fafc; }
+    .index-cell .idx  { font-family: 'Fira Code', monospace; font-size: 12px; color: #4f46e5; background: #ede9fe; padding: 4px 0; }
+    .index-cell .nidx { font-family: 'Fira Code', monospace; font-size: 12px; color: #059669; background: #d1fae5; padding: 4px 0; }
+
+    /* ── Page number ─── */
+    .page-num { position: absolute; bottom: 16px; right: 26px; font-size: 11px; font-weight: 600; opacity: 0.32; letter-spacing: 1px; }
+  </style>
+</head>
+<body>
+
+<!-- ════════════════════════════════════════
+  SLIDE 1 — TITLE
+════════════════════════════════════════ -->
+<div class="slide hero">
+  <div class="blob blob1"></div>
+  <div class="blob blob2"></div>
+  <div class="slide-tag">Python Crash Course · Day 2</div>
+  <div class="slide-title">Variables &amp; Data Types</div>
+  <div class="slide-subtitle">Strings · Numbers · Booleans · Lists · Tuples · Dictionaries</div>
+  <div style="margin-top:30px; font-size:56px; line-height:1;">🐍</div>
+  <div style="margin-top:26px; font-size:12px; opacity:0.6; font-weight:600; letter-spacing:2px; text-transform:uppercase;">
+    45 min slides · then we build real things
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+  SLIDE 2 — AGENDA
+════════════════════════════════════════ -->
+<div class="slide content" style="padding:40px 58px;">
+  <h2 style="margin-bottom:14px;">Today's Roadmap 🗺️</h2>
+  <div style="display:grid; grid-template-columns:1fr 1fr 1fr 1fr; gap:12px; margin-bottom:14px;">
+    <div class="card" style="border-left-color:#4f46e5;">
+      <div style="font-size:24px; margin-bottom:6px;">📦</div>
+      <div style="font-weight:800; font-size:15px; color:#1e1b4b;">Variables</div>
+      <div style="font-size:12px; color:#6b7280; margin-top:3px;">Storing &amp; reusing info</div>
+    </div>
+    <div class="card green-border">
+      <div style="font-size:24px; margin-bottom:6px;">🔤</div>
+      <div style="font-weight:800; font-size:15px; color:#1e1b4b;">Strings</div>
+      <div style="font-size:12px; color:#6b7280; margin-top:3px;">Text + f-strings</div>
+    </div>
+    <div class="card blue-border">
+      <div style="font-size:24px; margin-bottom:6px;">🔢</div>
+      <div style="font-weight:800; font-size:15px; color:#1e1b4b;">Numbers</div>
+      <div style="font-size:12px; color:#6b7280; margin-top:3px;">int · float · arithmetic</div>
+    </div>
+    <div class="card amber-border">
+      <div style="font-size:24px; margin-bottom:6px;">✅</div>
+      <div style="font-weight:800; font-size:15px; color:#1e1b4b;">Booleans</div>
+      <div style="font-size:12px; color:#6b7280; margin-top:3px;">True / False + type()</div>
+    </div>
+  </div>
+  <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px;">
+    <div class="card teal-border">
+      <div style="font-size:24px; margin-bottom:6px;">📋</div>
+      <div style="font-weight:800; font-size:15px; color:#1e1b4b;">Lists</div>
+      <div style="font-size:12px; color:#6b7280; margin-top:3px;">Ordered · changeable · indexed</div>
+    </div>
+    <div class="card violet-border">
+      <div style="font-size:24px; margin-bottom:6px;">🔒</div>
+      <div style="font-weight:800; font-size:15px; color:#1e1b4b;">Tuples</div>
+      <div style="font-size:12px; color:#6b7280; margin-top:3px;">Like a list — but locked!</div>
+    </div>
+    <div class="card rose-border">
+      <div style="font-size:24px; margin-bottom:6px;">📖</div>
+      <div style="font-weight:800; font-size:15px; color:#1e1b4b;">Dictionaries</div>
+      <div style="font-size:12px; color:#6b7280; margin-top:3px;">Key → Value pairs</div>
+    </div>
+  </div>
+  <div class="highlight-box" style="margin-top:14px; font-size:14px;">
+    💡 Goal: by the end of today you can store and use ANY kind of data in Python!
+  </div>
+  <div class="page-num">2 / 21</div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+  SLIDE 3 — QUICK RECAP
+════════════════════════════════════════ -->
+<div class="slide section-intro">
+  <div class="panel purple">
+    <div class="section-emoji">⏮️</div>
+    <div class="section-label">Quick Recap</div>
+    <div style="font-size:13px; margin-top:8px; opacity:0.85; text-align:center;">Day 1 highlights</div>
+  </div>
+  <div class="body">
+    <h2>What We Already Know</h2>
+    <ul>
+      <li><span class="icon">🖨️</span><span><strong>print()</strong> — show a message on screen</span></li>
+      <li><span class="icon">⌨️</span><span><strong>input()</strong> — pause and ask the user to type something</span></li>
+      <li><span class="icon">➕</span><span><strong>Basic math</strong> — Python works perfectly as a calculator</span></li>
+      <li><span class="icon">🔗</span><span><strong>String joining</strong> — connect text with the <code style="background:#f3f4f6;padding:1px 6px;border-radius:4px;font-family:monospace;">+</code> operator</span></li>
+      <li><span class="icon">🎮</span><span><strong>Mad Libs game</strong> — combining print + input into something fun</span></li>
+    </ul>
+    <div class="highlight-box">✅ Feeling confident? Today we level up — a lot.</div>
+  </div>
+  <div class="page-num">3 / 21</div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+  SLIDE 4 — WHAT IS A VARIABLE?
+════════════════════════════════════════ -->
+<div class="slide content">
+  <h2>What is a Variable? 📦</h2>
+  <div class="grid-2" style="gap:26px; margin-top:8px;">
+    <div>
+      <p>Think of a variable as a <strong>labelled box</strong>.<br>
+      You give the box a <strong>name</strong>, put a <strong>value</strong> inside,<br>
+      and use the name whenever you need that value.</p>
+      <div style="margin-top:20px; display:flex; flex-direction:column; gap:10px;">
+        <div style="background:#ede9fe; border-radius:12px; padding:13px 16px; display:flex; align-items:center; gap:14px;">
+          <div style="font-size:26px;">📦</div>
+          <div><div style="font-family:monospace; font-weight:700; color:#4f46e5; font-size:14px;">name</div><div style="font-family:monospace; font-size:15px; color:#1e1b4b;">"Alice"</div></div>
+        </div>
+        <div style="background:#d1fae5; border-radius:12px; padding:13px 16px; display:flex; align-items:center; gap:14px;">
+          <div style="font-size:26px;">📦</div>
+          <div><div style="font-family:monospace; font-weight:700; color:#059669; font-size:14px;">age</div><div style="font-family:monospace; font-size:15px; color:#1e1b4b;">15</div></div>
+        </div>
+        <div style="background:#dbeafe; border-radius:12px; padding:13px 16px; display:flex; align-items:center; gap:14px;">
+          <div style="font-size:26px;">📦</div>
+          <div><div style="font-family:monospace; font-weight:700; color:#0284c7; font-size:14px;">city</div><div style="font-family:monospace; font-size:15px; color:#1e1b4b;">"Kathmandu"</div></div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <pre><span class="cm"># Create variables</span>
+<span class="var">name</span> <span class="op">=</span> <span class="st">"Alice"</span>
+<span class="var">age</span>  <span class="op">=</span> <span class="nm">15</span>
+<span class="var">city</span> <span class="op">=</span> <span class="st">"Kathmandu"</span>
+
+<span class="cm"># Use them</span>
+<span class="fn">print</span>(<span class="var">name</span>)    <span class="cm"># Alice</span>
+<span class="fn">print</span>(<span class="var">age</span>)     <span class="cm"># 15</span>
+
+<span class="cm"># Update them anytime!</span>
+<span class="var">age</span> <span class="op">=</span> <span class="nm">16</span>
+<span class="fn">print</span>(<span class="var">age</span>)     <span class="cm"># 16</span></pre>
+      <div style="margin-top:14px; background:#fef9c3; border-radius:10px; padding:11px 16px; font-size:13.5px; color:#713f12; font-weight:600;">
+        🔑 <code style="background:#fde047;padding:0 4px;border-radius:3px;">=</code> means "put this value in this box" — it's NOT an equals sign from maths!
+      </div>
+    </div>
+  </div>
+  <div class="page-num">4 / 21</div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+  SLIDE 5 — NAMING RULES
+════════════════════════════════════════ -->
+<div class="slide content">
+  <h2>Variable Naming Rules 📝</h2>
+  <div class="compare-row">
+    <div class="compare-col good">
+      <h4>✅ DO THIS</h4>
+      <ul>
+        <li><span class="icon">•</span><span><code style="font-family:monospace; color:#065f46;">first_name = "Bob"</code><br><span style="font-size:12px; color:#6b7280;">Underscore for spaces</span></span></li>
+        <li><span class="icon">•</span><span><code style="font-family:monospace; color:#065f46;">score1 = 100</code><br><span style="font-size:12px; color:#6b7280;">Numbers OK — not at the start</span></span></li>
+        <li><span class="icon">•</span><span><code style="font-family:monospace; color:#065f46;">is_happy = True</code><br><span style="font-size:12px; color:#6b7280;">Descriptive, clear names</span></span></li>
+        <li><span class="icon">•</span><span><code style="font-family:monospace; color:#065f46;">total_price = 250</code><br><span style="font-size:12px; color:#6b7280;">lowercase_with_underscores (Python style)</span></span></li>
+      </ul>
+    </div>
+    <div class="compare-col bad">
+      <h4>❌ NEVER DO THIS</h4>
+      <ul>
+        <li><span class="icon">•</span><span><code style="font-family:monospace; color:#991b1b;">1score = 100</code><br><span style="font-size:12px; color:#6b7280;">Cannot start with a number</span></span></li>
+        <li><span class="icon">•</span><span><code style="font-family:monospace; color:#991b1b;">my score = 100</code><br><span style="font-size:12px; color:#6b7280;">Cannot have spaces</span></span></li>
+        <li><span class="icon">•</span><span><code style="font-family:monospace; color:#991b1b;">my-score = 100</code><br><span style="font-size:12px; color:#6b7280;">Dash means subtraction!</span></span></li>
+        <li><span class="icon">•</span><span><code style="font-family:monospace; color:#991b1b;">@name = "Bob"</code><br><span style="font-size:12px; color:#6b7280;">No special characters @ # $ %</span></span></li>
+      </ul>
+    </div>
+  </div>
+  <div class="highlight-box">
+    💡 Good names describe what is INSIDE the box. <code style="background:#fde047; padding:0 4px; border-radius:3px;">student_age</code> beats <code style="background:#fde047; padding:0 4px; border-radius:3px;">x</code> every time — future-you will be grateful!
+  </div>
+  <div class="page-num">5 / 21</div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+  SLIDE 6 — ALL THE DATA TYPES
+════════════════════════════════════════ -->
+<div class="slide content" style="padding:38px 55px;">
+  <h2 style="margin-bottom:12px;">Python's Data Types 🧬</h2>
+  <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-bottom:12px;">
+    <div class="type-card" style="border-top:4px solid #4f46e5;">
+      <span class="emoji">🔤</span>
+      <div class="type-name">String</div>
+      <div class="type-label" style="color:#4f46e5; font-weight:700;">str · Text</div>
+      <pre><span class="st">"Alice"</span></pre>
+    </div>
+    <div class="type-card" style="border-top:4px solid #0284c7;">
+      <span class="emoji">🔢</span>
+      <div class="type-name">Integer</div>
+      <div class="type-label" style="color:#0284c7; font-weight:700;">int · Whole number</div>
+      <pre><span class="nm">42</span></pre>
+    </div>
+    <div class="type-card" style="border-top:4px solid #0891b2;">
+      <span class="emoji">💫</span>
+      <div class="type-name">Float</div>
+      <div class="type-label" style="color:#0891b2; font-weight:700;">float · Decimal</div>
+      <pre><span class="nm">3.14</span></pre>
+    </div>
+    <div class="type-card" style="border-top:4px solid #d97706;">
+      <span class="emoji">✅</span>
+      <div class="type-name">Boolean</div>
+      <div class="type-label" style="color:#d97706; font-weight:700;">bool · True/False</div>
+      <pre><span class="nm">True</span></pre>
+    </div>
+  </div>
+  <div style="font-size:12px; font-weight:800; color:#6b7280; letter-spacing:2px; text-transform:uppercase; margin-bottom:10px;">Collection Types — store multiple values at once</div>
+  <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:12px;">
+    <div class="type-card" style="border-top:4px solid #0d9488;">
+      <span class="emoji">📋</span>
+      <div class="type-name">List</div>
+      <div class="type-label" style="color:#0d9488; font-weight:700;">list · Ordered, changeable</div>
+      <pre><span class="op">[</span><span class="st">"a"</span><span class="op">,</span> <span class="nm">2</span><span class="op">,</span> <span class="nm">True</span><span class="op">]</span></pre>
+    </div>
+    <div class="type-card" style="border-top:4px solid #6d28d9;">
+      <span class="emoji">🔒</span>
+      <div class="type-name">Tuple</div>
+      <div class="type-label" style="color:#6d28d9; font-weight:700;">tuple · Ordered, locked</div>
+      <pre><span class="op">(</span><span class="nm">10</span><span class="op">,</span> <span class="nm">20</span><span class="op">,</span> <span class="nm">30</span><span class="op">)</span></pre>
+    </div>
+    <div class="type-card" style="border-top:4px solid #be185d;">
+      <span class="emoji">📖</span>
+      <div class="type-name">Dictionary</div>
+      <div class="type-label" style="color:#be185d; font-weight:700;">dict · Key→Value pairs</div>
+      <pre><span class="op">{</span><span class="key">"name"</span><span class="op">:</span> <span class="st">"Bob"</span><span class="op">}</span></pre>
+    </div>
+  </div>
+  <div class="page-num">6 / 21</div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+  SLIDE 7 — STRINGS (section intro)
+════════════════════════════════════════ -->
+<div class="slide section-intro">
+  <div class="panel green">
+    <div class="section-emoji">🔤</div>
+    <div class="section-label">Strings</div>
+    <div style="font-size:13px; margin-top:8px; opacity:0.85; text-align:center;">Type: str</div>
+  </div>
+  <div class="body">
+    <h2>Strings — Working with Text</h2>
+    <p style="margin-bottom:16px;">A <strong>string</strong> is any text inside quote marks — letters, words, emoji, anything!</p>
+    <pre><span class="cm"># Single or double quotes — both work!</span>
+<span class="var">greeting</span> <span class="op">=</span> <span class="st">"Hello, World!"</span>
+<span class="var">city</span>     <span class="op">=</span> <span class="st">'Kathmandu'</span>
+<span class="var">mood</span>     <span class="op">=</span> <span class="st">"Python is 🔥"</span>
+
+<span class="cm"># + joins strings, * repeats them</span>
+<span class="fn">print</span>(<span class="st">"Hello, "</span> <span class="op">+</span> <span class="st">"class!"</span>)
+<span class="fn">print</span>(<span class="st">"⭐"</span> <span class="op">*</span> <span class="nm">15</span>)</pre>
+    <div class="highlight-box" style="font-size:13.5px; margin-top:14px;">
+      ⚠️ A number inside quotes is still a string: <code style="background:#fde047;padding:0 4px;border-radius:3px;">"42"</code> ≠ <code style="background:#fde047;padding:0 4px;border-radius:3px;">42</code>
+    </div>
+  </div>
+  <div class="page-num">7 / 21</div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+  SLIDE 8 — STRING SUPERPOWERS
+════════════════════════════════════════ -->
+<div class="slide content">
+  <h2>String Superpowers 🦸</h2>
+  <div class="grid-2" style="gap:20px; margin-top:8px;">
+    <div>
+      <h3 style="margin-bottom:12px;">Built-in methods</h3>
+      <pre><span class="var">word</span> <span class="op">=</span> <span class="st">"python"</span>
+
+<span class="var">word</span><span class="op">.</span><span class="fn">upper</span>()    <span class="cm"># "PYTHON"</span>
+<span class="var">word</span><span class="op">.</span><span class="fn">lower</span>()    <span class="cm"># "python"</span>
+<span class="var">word</span><span class="op">.</span><span class="fn">title</span>()    <span class="cm"># "Python"</span>
+<span class="fn">len</span>(<span class="var">word</span>)       <span class="cm"># 6</span></pre>
+    </div>
+    <div>
+      <h3 style="margin-bottom:12px;">F-Strings ⭐ — The Modern Way</h3>
+      <pre><span class="var">name</span> <span class="op">=</span> <span class="st">"Alice"</span>
+<span class="var">age</span>  <span class="op">=</span> <span class="nm">15</span>
+
+<span class="cm"># Old messy way:</span>
+<span class="st">"Hi, "</span> <span class="op">+</span> <span class="var">name</span> <span class="op">+</span> <span class="st">" age "</span> <span class="op">+</span> <span class="fn">str</span>(<span class="var">age</span>)
+
+<span class="cm"># F-string — clean ✨</span>
+<span class="fn">print</span>(<span class="st">f"Hi, <span style="color:#f472b6;">{</span><span style="color:#38bdf8;">name</span><span style="color:#f472b6;">}</span> age <span style="color:#f472b6;">{</span><span style="color:#38bdf8;">age</span><span style="color:#f472b6;">}</span>"</span>)
+
+<span class="cm"># Maths inside curly braces!</span>
+<span class="fn">print</span>(<span class="st">f"Next year: <span style="color:#f472b6;">{</span><span style="color:#38bdf8;">age</span> <span class="op">+</span> <span class="nm">1</span><span style="color:#f472b6;">}</span>"</span>)</pre>
+    </div>
+  </div>
+  <div style="margin-top:16px; background:#d1fae5; border-radius:10px; padding:12px 18px; font-size:14px; color:#065f46; font-weight:600; border-left:4px solid #059669;">
+    🚀 Always prefer f-strings when mixing variables with text — so much cleaner than lots of <code style="background:#a7f3d0;padding:0 4px;border-radius:3px;">+</code> signs!
+  </div>
+  <div class="page-num">8 / 21</div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+  SLIDE 9 — NUMBERS (section intro)
+════════════════════════════════════════ -->
+<div class="slide section-intro">
+  <div class="panel blue">
+    <div class="section-emoji">🔢</div>
+    <div class="section-label">Numbers</div>
+    <div style="font-size:13px; margin-top:8px; opacity:0.85; text-align:center;">int &amp; float</div>
+  </div>
+  <div class="body">
+    <h2>Integers &amp; Floats</h2>
+    <div class="grid-2" style="gap:14px; margin-bottom:14px;">
+      <div class="card blue-border">
+        <div style="font-weight:700; color:#0284c7; margin-bottom:7px; font-size:14px;">int — whole numbers</div>
+        <pre style="font-size:13px;"><span class="var">age</span>      <span class="op">=</span> <span class="nm">15</span>
+<span class="var">students</span> <span class="op">=</span> <span class="nm">28</span></pre>
+      </div>
+      <div class="card" style="border-left-color:#0891b2;">
+        <div style="font-weight:700; color:#0891b2; margin-bottom:7px; font-size:14px;">float — decimal numbers</div>
+        <pre style="font-size:13px;"><span class="var">price</span> <span class="op">=</span> <span class="nm">9.99</span>
+<span class="var">pi</span>    <span class="op">=</span> <span class="nm">3.14159</span></pre>
+      </div>
+    </div>
+    <div class="op-grid">
+      <div class="op-cell"><div class="sym">+</div><div class="desc">Add</div><div class="ex">10+3=13</div></div>
+      <div class="op-cell"><div class="sym">-</div><div class="desc">Subtract</div><div class="ex">10-3=7</div></div>
+      <div class="op-cell"><div class="sym">*</div><div class="desc">Multiply</div><div class="ex">10*3=30</div></div>
+      <div class="op-cell"><div class="sym">/</div><div class="desc">Divide→float</div><div class="ex">10/3=3.33</div></div>
+      <div class="op-cell"><div class="sym">//</div><div class="desc">Floor div</div><div class="ex">10//3=3</div></div>
+      <div class="op-cell"><div class="sym">%</div><div class="desc">Remainder</div><div class="ex">10%3=1</div></div>
+      <div class="op-cell"><div class="sym">**</div><div class="desc">Power</div><div class="ex">2**8=256</div></div>
+      <div class="op-cell" style="background:#dbeafe;"><div class="sym" style="font-size:14px; color:#0284c7;">round()</div><div class="desc">Round</div><div class="ex">round(3.14,1)</div></div>
+    </div>
+  </div>
+  <div class="page-num">9 / 21</div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+  SLIDE 10 — NUMBERS IN ACTION
+════════════════════════════════════════ -->
+<div class="slide dark">
+  <h2 style="color:#38bdf8; margin-bottom:16px;">Numbers in Action 💡</h2>
+  <div class="grid-2" style="gap:22px;">
+    <pre><span class="cm"># Shopping receipt</span>
+<span class="var">price</span>    <span class="op">=</span> <span class="nm">250</span>
+<span class="var">quantity</span> <span class="op">=</span> <span class="nm">4</span>
+<span class="var">discount</span> <span class="op">=</span> <span class="nm">50</span>
+
+<span class="var">subtotal</span> <span class="op">=</span> <span class="var">price</span> <span class="op">*</span> <span class="var">quantity</span>
+<span class="var">final</span>    <span class="op">=</span> <span class="var">subtotal</span> <span class="op">-</span> <span class="var">discount</span>
+
+<span class="fn">print</span>(<span class="st">f"Subtotal : Rs. <span style="color:#f472b6;">{</span><span style="color:#38bdf8;">subtotal</span><span style="color:#f472b6;">}</span>"</span>)
+<span class="fn">print</span>(<span class="st">f"Final    : Rs. <span style="color:#f472b6;">{</span><span style="color:#38bdf8;">final</span><span style="color:#f472b6;">}</span>"</span>)</pre>
+    <div>
+      <pre><span class="cm"># input() always returns a string!</span>
+<span class="cm"># Convert with int() for maths.</span>
+
+<span class="var">raw</span> <span class="op">=</span> <span class="fn">input</span>(<span class="st">"Enter a number: "</span>)
+<span class="cm"># raw = "42"  ← string!</span>
+
+<span class="var">num</span> <span class="op">=</span> <span class="fn">int</span>(<span class="var">raw</span>)
+<span class="fn">print</span>(<span class="var">num</span> <span class="op">+</span> <span class="nm">10</span>)    <span class="cm"># 52 ✅</span>
+<span class="fn">print</span>(<span class="var">raw</span> <span class="op">+</span> <span class="st">"10"</span>)  <span class="cm"># "4210" ← strings join!</span></pre>
+      <div style="margin-top:14px; background:#1e293b; border-radius:10px; padding:12px 16px; font-size:13.5px; color:#fbbf24; font-weight:600; border-left:3px solid #fbbf24;">
+        ⚠️ Forgetting to convert input is the #1 beginner mistake. Always ask: "do I need maths with this?"
+      </div>
+    </div>
+  </div>
+  <div class="page-num">10 / 21</div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+  SLIDE 11 — BOOLEANS (section intro)
+════════════════════════════════════════ -->
+<div class="slide section-intro">
+  <div class="panel amber">
+    <div class="section-emoji">✅</div>
+    <div class="section-label">Booleans</div>
+    <div style="font-size:13px; margin-top:8px; opacity:0.85; text-align:center;">Type: bool</div>
+  </div>
+  <div class="body">
+    <h2>Booleans — True or False</h2>
+    <p style="margin-bottom:14px;">A boolean has only <strong>two</strong> possible values. They power every decision your program makes!</p>
+    <pre><span class="cm"># Creating booleans directly</span>
+<span class="var">is_raining</span>    <span class="op">=</span> <span class="nm">False</span>
+<span class="var">has_homework</span>  <span class="op">=</span> <span class="nm">True</span>
+<span class="var">is_python_fun</span> <span class="op">=</span> <span class="nm">True</span>   <span class="cm"># obviously 😄</span>
+
+<span class="cm"># Comparison operators PRODUCE booleans</span>
+<span class="fn">print</span>(<span class="nm">10</span> <span class="op">==</span> <span class="nm">10</span>)    <span class="cm"># True   (equal to)</span>
+<span class="fn">print</span>(<span class="nm">10</span> <span class="op">!=</span> <span class="nm">5</span>)     <span class="cm"># True   (not equal)</span>
+<span class="fn">print</span>(<span class="nm">10</span> <span class="op">&gt;</span>  <span class="nm">20</span>)    <span class="cm"># False  (greater than)</span>
+<span class="fn">print</span>(<span class="nm">10</span> <span class="op">&lt;=</span> <span class="nm">10</span>)    <span class="cm"># True   (less or equal)</span></pre>
+    <div class="highlight-box" style="font-size:13px; margin-top:12px;">
+      🧠 <code style="background:#fde047;padding:0 4px;border-radius:3px;">==</code> checks equality &nbsp;|&nbsp; <code style="background:#fde047;padding:0 4px;border-radius:3px;">=</code> assigns a value. Completely different!
+    </div>
+  </div>
+  <div class="page-num">11 / 21</div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+  SLIDE 12 — type() + TYPE CONVERSION
+════════════════════════════════════════ -->
+<div class="slide content">
+  <h2>type() and Type Conversion 🔎🦎</h2>
+  <div class="grid-2" style="gap:22px; margin-top:8px;">
+    <div>
+      <h3>The type() Detective</h3>
+      <pre><span class="fn">print</span>(<span class="fn">type</span>(<span class="st">"Hello"</span>))  <span class="cm"># &lt;class 'str'&gt;</span>
+<span class="fn">print</span>(<span class="fn">type</span>(<span class="nm">42</span>))       <span class="cm"># &lt;class 'int'&gt;</span>
+<span class="fn">print</span>(<span class="fn">type</span>(<span class="nm">3.14</span>))     <span class="cm"># &lt;class 'float'&gt;</span>
+<span class="fn">print</span>(<span class="fn">type</span>(<span class="nm">True</span>))     <span class="cm"># &lt;class 'bool'&gt;</span></pre>
+    </div>
+    <div>
+      <h3>Shapeshifting!</h3>
+      <pre><span class="fn">int</span>(<span class="st">"100"</span>)     <span class="cm"># str → int   : 100</span>
+<span class="fn">float</span>(<span class="st">"3.14"</span>)  <span class="cm"># str → float : 3.14</span>
+<span class="fn">str</span>(<span class="nm">42</span>)         <span class="cm"># int → str   : "42"</span>
+<span class="fn">bool</span>(<span class="nm">0</span>)         <span class="cm"># 0 is always False!</span>
+<span class="fn">bool</span>(<span class="nm">1</span>)         <span class="cm"># anything else → True</span></pre>
+    </div>
+  </div>
+  <div style="margin-top:16px; background:#0f172a; border-radius:12px; padding:16px 20px;">
+    <div style="font-size:12px; font-weight:700; color:#64748b; letter-spacing:2px; margin-bottom:10px;">THE CLASSIC TRAP — AND THE FIX</div>
+    <pre style="background:transparent; padding:0; font-size:13.5px;"><span class="cm"># input() ALWAYS gives a string — even if the user types 42</span>
+<span class="var">age</span> <span class="op">=</span> <span class="fn">int</span>(<span class="fn">input</span>(<span class="st">"Enter your age: "</span>))  <span class="cm"># ← wrap with int() immediately</span>
+<span class="fn">print</span>(<span class="st">f"Next year you'll be <span style="color:#f472b6;">{</span><span style="color:#38bdf8;">age</span> <span class="op">+</span> <span class="nm">1</span><span style="color:#f472b6;">}</span>"</span>)</pre>
+  </div>
+  <div class="page-num">12 / 21</div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+  SLIDE 13 — LISTS (section intro)
+════════════════════════════════════════ -->
+<div class="slide section-intro">
+  <div class="panel teal">
+    <div class="section-emoji">📋</div>
+    <div class="section-label">Lists</div>
+    <div style="font-size:13px; margin-top:8px; opacity:0.85; text-align:center;">Type: list</div>
+  </div>
+  <div class="body">
+    <h2>Lists — Many Values, One Variable</h2>
+    <p style="margin-bottom:14px;">A <strong>list</strong> stores multiple items in one place. Items are ordered and you can change them!</p>
+    <pre><span class="cm"># Create a list with square brackets []</span>
+<span class="var">fruits</span>  <span class="op">=</span> <span class="op">[</span><span class="st">"apple"</span><span class="op">,</span> <span class="st">"banana"</span><span class="op">,</span> <span class="st">"mango"</span><span class="op">]</span>
+<span class="var">scores</span>  <span class="op">=</span> <span class="op">[</span><span class="nm">95</span><span class="op">,</span> <span class="nm">87</span><span class="op">,</span> <span class="nm">72</span><span class="op">,</span> <span class="nm">100</span><span class="op">]</span>
+<span class="var">mixed</span>   <span class="op">=</span> <span class="op">[</span><span class="st">"Alice"</span><span class="op">,</span> <span class="nm">15</span><span class="op">,</span> <span class="nm">True</span><span class="op">]</span>   <span class="cm"># mix types!</span>
+
+<span class="fn">print</span>(<span class="var">fruits</span>)  <span class="cm"># ['apple', 'banana', 'mango']</span>
+<span class="fn">print</span>(<span class="fn">len</span>(<span class="var">fruits</span>))  <span class="cm"># 3</span></pre>
+    <div class="highlight-box" style="font-size:13px; margin-top:14px;">
+      📦 Think of a list as a row of numbered boxes — but the numbering starts at <strong>0</strong>, not 1!
+    </div>
+  </div>
+  <div class="page-num">13 / 21</div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+  SLIDE 14 — LISTS IN ACTION
+════════════════════════════════════════ -->
+<div class="slide dark">
+  <h2 style="color:#2dd4bf; margin-bottom:14px;">Lists in Action 🛠️</h2>
+  <div class="grid-2" style="gap:22px;">
+    <div>
+      <div style="font-size:11px; font-weight:700; color:#64748b; letter-spacing:2px; margin-bottom:10px;">INDEXING — STARTS AT ZERO!</div>
+      <div class="index-diagram">
+        <div class="index-cell"><div class="val">"apple"</div><div class="idx">0</div><div class="nidx">-4</div></div>
+        <div class="index-cell"><div class="val">"banana"</div><div class="idx">1</div><div class="nidx">-3</div></div>
+        <div class="index-cell"><div class="val">"mango"</div><div class="idx">2</div><div class="nidx">-2</div></div>
+        <div class="index-cell"><div class="val">"orange"</div><div class="idx">3</div><div class="nidx">-1</div></div>
+      </div>
+      <pre style="font-size:13px;"><span class="var">fruits</span><span class="op">[</span><span class="nm">0</span><span class="op">]</span>   <span class="cm"># "apple"  ← first</span>
+<span class="var">fruits</span><span class="op">[-</span><span class="nm">1</span><span class="op">]</span>  <span class="cm"># "orange" ← last</span>
+
+<span class="cm"># Change an item</span>
+<span class="var">fruits</span><span class="op">[</span><span class="nm">1</span><span class="op">]</span> <span class="op">=</span> <span class="st">"grape"</span></pre>
+    </div>
+    <div>
+      <div style="font-size:11px; font-weight:700; color:#64748b; letter-spacing:2px; margin-bottom:10px;">ADDING, REMOVING &amp; USEFUL FUNCTIONS</div>
+      <pre style="font-size:13px;"><span class="var">fruits</span><span class="op">.</span><span class="fn">append</span>(<span class="st">"watermelon"</span>) <span class="cm"># add to end</span>
+<span class="var">fruits</span><span class="op">.</span><span class="fn">remove</span>(<span class="st">"apple"</span>)      <span class="cm"># remove by value</span>
+
+<span class="var">nums</span> <span class="op">=</span> <span class="op">[</span><span class="nm">5</span><span class="op">,</span> <span class="nm">3</span><span class="op">,</span> <span class="nm">9</span><span class="op">,</span> <span class="nm">1</span><span class="op">,</span> <span class="nm">7</span><span class="op">]</span>
+<span class="fn">max</span>(<span class="var">nums</span>)     <span class="cm"># 9</span>
+<span class="fn">min</span>(<span class="var">nums</span>)     <span class="cm"># 1</span>
+<span class="fn">sum</span>(<span class="var">nums</span>)     <span class="cm"># 25</span>
+<span class="fn">sorted</span>(<span class="var">nums</span>) <span class="cm"># [1, 3, 5, 7, 9]</span></pre>
+    </div>
+  </div>
+  <div style="margin-top:14px; background:#1e293b; border-radius:10px; padding:11px 16px; font-size:13px; color:#2dd4bf; font-weight:600; border-left:3px solid #2dd4bf;">
+    💡 Purple index row (0,1,2…) = count from front &nbsp;|&nbsp; Green row (-1,-2…) = count from back — both work!
+  </div>
+  <div class="page-num">14 / 21</div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+  SLIDE 15 — TUPLES
+════════════════════════════════════════ -->
+<div class="slide section-intro">
+  <div class="panel violet">
+    <div class="section-emoji">🔒</div>
+    <div class="section-label">Tuples</div>
+    <div style="font-size:13px; margin-top:8px; opacity:0.85; text-align:center;">Type: tuple</div>
+  </div>
+  <div class="body">
+    <h2>Tuples — Lists That Can't Change</h2>
+    <p style="margin-bottom:14px;">A <strong>tuple</strong> is exactly like a list, but once created it is <strong>locked</strong> — perfect for data that should never change.</p>
+    <pre><span class="cm"># Use round brackets () instead of []</span>
+<span class="var">coordinates</span>  <span class="op">=</span> <span class="op">(</span><span class="nm">27.7172</span><span class="op">,</span> <span class="nm">85.3240</span><span class="op">)</span>  <span class="cm"># Kathmandu GPS</span>
+<span class="var">rgb_red</span>      <span class="op">=</span> <span class="op">(</span><span class="nm">255</span><span class="op">,</span> <span class="nm">0</span><span class="op">,</span> <span class="nm">0</span><span class="op">)</span>
+<span class="var">days</span>         <span class="op">=</span> <span class="op">(</span><span class="st">"Mon"</span><span class="op">,</span><span class="st">"Tue"</span><span class="op">,</span><span class="st">"Wed"</span><span class="op">,</span><span class="st">"Thu"</span><span class="op">,</span><span class="st">"Fri"</span><span class="op">)</span>
+
+<span class="cm"># Indexing works the same as lists</span>
+<span class="fn">print</span>(<span class="var">days</span><span class="op">[</span><span class="nm">0</span><span class="op">]</span>)   <span class="cm"># Mon</span>
+<span class="fn">print</span>(<span class="var">days</span><span class="op">[-</span><span class="nm">1</span><span class="op">]</span>)  <span class="cm"># Fri</span>
+
+<span class="cm"># Unpacking — one variable per item</span>
+<span class="var">lat</span><span class="op">,</span> <span class="var">lon</span> <span class="op">=</span> <span class="var">coordinates</span>
+<span class="fn">print</span>(<span class="st">f"Latitude: <span style="color:#f472b6;">{</span><span style="color:#38bdf8;">lat</span><span style="color:#f472b6;">}</span>,  Longitude: <span style="color:#f472b6;">{</span><span style="color:#38bdf8;">lon</span><span style="color:#f472b6;">}</span>"</span>)</pre>
+    <div style="margin-top:12px; display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+      <div style="background:#ede9fe; border-radius:10px; padding:11px 16px; font-size:13px; color:#4c1d95; font-weight:600;">
+        ✅ <strong>Use a List</strong> when data will grow or change (shopping list, scores)
+      </div>
+      <div style="background:#f3e8ff; border-radius:10px; padding:11px 16px; font-size:13px; color:#6d28d9; font-weight:600;">
+        🔒 <strong>Use a Tuple</strong> when data is fixed (GPS, colours, weekdays)
+      </div>
+    </div>
+  </div>
+  <div class="page-num">15 / 21</div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+  SLIDE 16 — DICTIONARIES (section intro)
+════════════════════════════════════════ -->
+<div class="slide section-intro">
+  <div class="panel rose">
+    <div class="section-emoji">📖</div>
+    <div class="section-label">Dictionaries</div>
+    <div style="font-size:13px; margin-top:8px; opacity:0.85; text-align:center;">Type: dict</div>
+  </div>
+  <div class="body">
+    <h2>Dictionaries — Key → Value Pairs</h2>
+    <p style="margin-bottom:14px;">Like a real dictionary: you look up a <strong>word (key)</strong> to get its <strong>meaning (value)</strong>.</p>
+    <pre><span class="cm"># Use curly braces {}, with  "key": value</span>
+<span class="var">student</span> <span class="op">=</span> <span class="op">{</span>
+    <span class="key">"name"</span>       <span class="op">:</span> <span class="st">"Alice"</span><span class="op">,</span>
+    <span class="key">"age"</span>        <span class="op">:</span> <span class="nm">15</span><span class="op">,</span>
+    <span class="key">"city"</span>       <span class="op">:</span> <span class="st">"Kathmandu"</span><span class="op">,</span>
+    <span class="key">"is_enrolled"</span><span class="op">:</span> <span class="nm">True</span>
+<span class="op">}</span>
+
+<span class="cm"># Access values using the KEY (not an index!)</span>
+<span class="fn">print</span>(<span class="var">student</span><span class="op">[</span><span class="key">"name"</span><span class="op">]</span>)   <span class="cm"># Alice</span>
+<span class="fn">print</span>(<span class="var">student</span><span class="op">[</span><span class="key">"age"</span><span class="op">]</span>)    <span class="cm"># 15</span></pre>
+    <div class="highlight-box" style="font-size:13px; margin-top:12px;">
+      🔑 Keys are usually strings. Values can be ANY type — string, int, list, even another dictionary!
+    </div>
+  </div>
+  <div class="page-num">16 / 21</div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+  SLIDE 17 — DICTIONARIES IN ACTION
+════════════════════════════════════════ -->
+<div class="slide dark">
+  <h2 style="color:#fb7185; margin-bottom:14px;">Dictionaries in Action 🛠️</h2>
+  <div class="grid-2" style="gap:22px;">
+    <pre><span class="var">student</span> <span class="op">=</span> <span class="op">{</span><span class="key">"name"</span><span class="op">:</span><span class="st">"Alice"</span><span class="op">,</span> <span class="key">"age"</span><span class="op">:</span><span class="nm">15</span><span class="op">}</span>
+
+<span class="cm"># Update a value</span>
+<span class="var">student</span><span class="op">[</span><span class="key">"age"</span><span class="op">]</span> <span class="op">=</span> <span class="nm">16</span>
+
+<span class="cm"># Add a new key</span>
+<span class="var">student</span><span class="op">[</span><span class="key">"grade"</span><span class="op">]</span> <span class="op">=</span> <span class="st">"Grade 10"</span>
+
+<span class="cm"># Delete a key</span>
+<span class="kw">del</span> <span class="var">student</span><span class="op">[</span><span class="key">"age"</span><span class="op">]</span>
+
+<span class="cm"># Explore keys &amp; values</span>
+<span class="fn">print</span>(<span class="var">student</span><span class="op">.</span><span class="fn">keys</span>())
+<span class="fn">print</span>(<span class="var">student</span><span class="op">.</span><span class="fn">values</span>())</pre>
+    <div>
+      <div style="font-size:11px; font-weight:700; color:#64748b; letter-spacing:2px; margin-bottom:10px;">REAL-WORLD EXAMPLE — PHONE BOOK</div>
+      <pre style="font-size:13px;"><span class="var">phone_book</span> <span class="op">=</span> <span class="op">{</span>
+    <span class="key">"Alice"</span>  <span class="op">:</span> <span class="st">"9841000001"</span><span class="op">,</span>
+    <span class="key">"Bob"</span>    <span class="op">:</span> <span class="st">"9841000002"</span>
+<span class="op">}</span>
+
+<span class="var">name</span> <span class="op">=</span> <span class="fn">input</span>(<span class="st">"Who to call? "</span>)
+
+<span class="kw">if</span> <span class="var">name</span> <span class="kw">in</span> <span class="var">phone_book</span><span class="op">:</span>
+    <span class="fn">print</span>(<span class="var">phone_book</span><span class="op">[</span><span class="var">name</span><span class="op">]</span>)
+<span class="kw">else</span><span class="op">:</span>
+    <span class="fn">print</span>(<span class="st">"Not found!"</span>)</pre>
+      <div style="margin-top:12px; background:#1e293b; border-radius:10px; padding:10px 14px; font-size:12.5px; color:#fb7185; font-weight:600; border-left:3px solid #fb7185;">
+        Lists use [0],[1],[2]… &nbsp;|&nbsp; Dicts use ["name"],["age"]… Keys, not numbers!
+      </div>
+    </div>
+  </div>
+  <div class="page-num">17 / 21</div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+  SLIDE 18 — COMPARE: LIST vs TUPLE vs DICT
+════════════════════════════════════════ -->
+<div class="slide content" style="padding:40px 55px;">
+  <h2 style="margin-bottom:16px;">List vs Tuple vs Dictionary — Quick Compare ⚡</h2>
+  <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px;">
+    <div style="background:#f0fdfa; border-radius:14px; padding:20px; border-top:5px solid #0d9488;">
+      <div style="font-size:22px; margin-bottom:8px;">📋 List</div>
+      <div style="font-family:monospace; font-size:13px; background:#0f172a; color:#2dd4bf; padding:10px 14px; border-radius:8px; margin-bottom:12px;">[1, 2, 3]</div>
+      <ul style="gap:0;">
+        <li style="font-size:13.5px; padding:3px 0;"><span class="icon" style="font-size:14px;">✅</span>Ordered</li>
+        <li style="font-size:13.5px; padding:3px 0;"><span class="icon" style="font-size:14px;">✅</span>Can add/remove items</li>
+        <li style="font-size:13.5px; padding:3px 0;"><span class="icon" style="font-size:14px;">✅</span>Access by index [0]</li>
+        <li style="font-size:13.5px; padding:3px 0;"><span class="icon" style="font-size:14px;">🎯</span>Use for: shopping lists, scores</li>
+      </ul>
+    </div>
+    <div style="background:#f5f3ff; border-radius:14px; padding:20px; border-top:5px solid #6d28d9;">
+      <div style="font-size:22px; margin-bottom:8px;">🔒 Tuple</div>
+      <div style="font-family:monospace; font-size:13px; background:#0f172a; color:#a78bfa; padding:10px 14px; border-radius:8px; margin-bottom:12px;">(1, 2, 3)</div>
+      <ul style="gap:0;">
+        <li style="font-size:13.5px; padding:3px 0;"><span class="icon" style="font-size:14px;">✅</span>Ordered</li>
+        <li style="font-size:13.5px; padding:3px 0;"><span class="icon" style="font-size:14px;">🔒</span>Cannot be changed</li>
+        <li style="font-size:13.5px; padding:3px 0;"><span class="icon" style="font-size:14px;">✅</span>Access by index [0]</li>
+        <li style="font-size:13.5px; padding:3px 0;"><span class="icon" style="font-size:14px;">🎯</span>Use for: GPS, RGB, weekdays</li>
+      </ul>
+    </div>
+    <div style="background:#fff1f2; border-radius:14px; padding:20px; border-top:5px solid #be185d;">
+      <div style="font-size:22px; margin-bottom:8px;">📖 Dictionary</div>
+      <div style="font-family:monospace; font-size:13px; background:#0f172a; color:#fb7185; padding:10px 14px; border-radius:8px; margin-bottom:12px;">{"k": v}</div>
+      <ul style="gap:0;">
+        <li style="font-size:13.5px; padding:3px 0;"><span class="icon" style="font-size:14px;">✅</span>Ordered (Python 3.7+)</li>
+        <li style="font-size:13.5px; padding:3px 0;"><span class="icon" style="font-size:14px;">✅</span>Can add/update/delete</li>
+        <li style="font-size:13.5px; padding:3px 0;"><span class="icon" style="font-size:14px;">🔑</span>Access by key ["name"]</li>
+        <li style="font-size:13.5px; padding:3px 0;"><span class="icon" style="font-size:14px;">🎯</span>Use for: profiles, phone books</li>
+      </ul>
+    </div>
+  </div>
+  <div class="highlight-box" style="margin-top:16px; font-size:14px;">
+    💡 Rule of thumb: if items have <strong>labels</strong> → dict. If order matters and things change → list. If things never change → tuple.
+  </div>
+  <div class="page-num">18 / 21</div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+  SLIDE 19 — CHEAT SHEET
+════════════════════════════════════════ -->
+<div class="slide content" style="padding:36px 52px;">
+  <h2 style="margin-bottom:14px;">Today's Cheat Sheet 📋</h2>
+  <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:12px; font-size:13px;">
+    <div>
+      <div style="font-size:11px; font-weight:800; color:#4f46e5; letter-spacing:2px; margin-bottom:8px; text-transform:uppercase;">Variables</div>
+      <pre style="font-size:12px;"><span class="var">x</span> <span class="op">=</span> <span class="nm">10</span>     <span class="cm"># create</span>
+<span class="var">x</span> <span class="op">=</span> <span class="nm">20</span>     <span class="cm"># update</span>
+<span class="fn">print</span>(<span class="var">x</span>)  <span class="cm"># use</span></pre>
+    </div>
+    <div>
+      <div style="font-size:11px; font-weight:800; color:#059669; letter-spacing:2px; margin-bottom:8px; text-transform:uppercase;">Strings</div>
+      <pre style="font-size:12px;"><span class="var">s</span><span class="op">.</span><span class="fn">upper</span>() <span class="op">.</span><span class="fn">lower</span>()
+<span class="fn">len</span>(<span class="var">s</span>)
+<span class="st">f"Hi <span style="color:#f472b6;">{</span><span style="color:#38bdf8;">name</span><span style="color:#f472b6;">}</span>"</span></pre>
+    </div>
+    <div>
+      <div style="font-size:11px; font-weight:800; color:#0284c7; letter-spacing:2px; margin-bottom:8px; text-transform:uppercase;">Numbers</div>
+      <pre style="font-size:12px;"><span class="op">+  -  *  /</span>
+<span class="op">//</span>  <span class="op">%</span>  <span class="op">**</span>
+<span class="fn">int</span>(<span class="fn">input</span>(<span class="st">"..."</span>))</pre>
+    </div>
+    <div>
+      <div style="font-size:11px; font-weight:800; color:#d97706; letter-spacing:2px; margin-bottom:8px; text-transform:uppercase;">Booleans</div>
+      <pre style="font-size:12px;"><span class="nm">True</span>  <span class="nm">False</span>
+<span class="op">==  !=  &gt;  &lt;</span>
+<span class="fn">type</span>(<span class="var">x</span>)</pre>
+    </div>
+    <div>
+      <div style="font-size:11px; font-weight:800; color:#0d9488; letter-spacing:2px; margin-bottom:8px; text-transform:uppercase;">Lists</div>
+      <pre style="font-size:12px;"><span class="var">a</span> <span class="op">=</span> <span class="op">[</span><span class="nm">1</span><span class="op">,</span><span class="nm">2</span><span class="op">,</span><span class="nm">3</span><span class="op">]</span>
+<span class="var">a</span><span class="op">[</span><span class="nm">0</span><span class="op">]</span>  <span class="var">a</span><span class="op">[-</span><span class="nm">1</span><span class="op">]</span>
+<span class="var">a</span><span class="op">.</span><span class="fn">append</span>() <span class="op">.</span><span class="fn">remove</span>()
+<span class="fn">max min sum sorted</span></pre>
+    </div>
+    <div>
+      <div style="font-size:11px; font-weight:800; color:#6d28d9; letter-spacing:2px; margin-bottom:8px; text-transform:uppercase;">Tuples</div>
+      <pre style="font-size:12px;"><span class="var">t</span> <span class="op">=</span> <span class="op">(</span><span class="nm">1</span><span class="op">,</span><span class="nm">2</span><span class="op">,</span><span class="nm">3</span><span class="op">)</span>
+<span class="var">t</span><span class="op">[</span><span class="nm">0</span><span class="op">]</span>  <span class="var">t</span><span class="op">[-</span><span class="nm">1</span><span class="op">]</span>
+<span class="fn">len</span>(<span class="var">t</span>)
+<span class="var">a</span><span class="op">,</span><span class="var">b</span> <span class="op">=</span> <span class="var">t</span>  <span class="cm"># unpack</span></pre>
+    </div>
+    <div>
+      <div style="font-size:11px; font-weight:800; color:#be185d; letter-spacing:2px; margin-bottom:8px; text-transform:uppercase;">Dictionaries</div>
+      <pre style="font-size:12px;"><span class="var">d</span> <span class="op">=</span> <span class="op">{</span><span class="key">"k"</span><span class="op">:</span><span class="var">v</span><span class="op">}</span>
+<span class="var">d</span><span class="op">[</span><span class="key">"k"</span><span class="op">]</span>   <span class="cm"># read</span>
+<span class="var">d</span><span class="op">[</span><span class="key">"k"</span><span class="op">]</span> <span class="op">=</span> <span class="nm">99</span> <span class="cm"># update</span>
+<span class="kw">del</span> <span class="var">d</span><span class="op">[</span><span class="key">"k"</span><span class="op">]</span></pre>
+    </div>
+    <div>
+      <div style="font-size:11px; font-weight:800; color:#6b7280; letter-spacing:2px; margin-bottom:8px; text-transform:uppercase;">Type Tools</div>
+      <pre style="font-size:12px;"><span class="fn">type</span>(<span class="var">x</span>)
+<span class="fn">int</span>() <span class="fn">float</span>()
+<span class="fn">str</span>() <span class="fn">bool</span>()
+<span class="fn">list</span>() <span class="fn">tuple</span>()</pre>
+    </div>
+  </div>
+  <div class="page-num">19 / 21</div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+  SLIDE 20 — CODING SESSION PLAN
+════════════════════════════════════════ -->
+<div class="slide content" style="padding:38px 58px;">
+  <h2 style="margin-bottom:12px;">Today's Coding Session 💻</h2>
+  <p style="margin-bottom:14px; font-size:15px;">Open your <code style="background:#f3f4f6; padding:2px 8px; border-radius:6px; font-family:monospace;">day_2</code> folder. Homework is yours to take home — we focus on the teaching files together.</p>
+  <div style="display:flex; flex-direction:column; gap:9px;">
+    <div style="display:flex; align-items:center; gap:16px; background:#f5f3ff; border-radius:12px; padding:12px 20px; border-left:4px solid #4f46e5;">
+      <div style="font-size:22px;">📦</div>
+      <div style="flex:1;"><div style="font-family:monospace; font-weight:700; color:#4f46e5; font-size:14px;">01_variables.py</div><div style="font-size:12px; color:#6b7280;">Profile Card — store and reuse info in variables</div></div>
+      <span class="pill pill-purple">8 min</span>
+    </div>
+    <div style="display:flex; align-items:center; gap:16px; background:#f0fdf4; border-radius:12px; padding:12px 20px; border-left:4px solid #059669;">
+      <div style="font-size:22px;">🔤</div>
+      <div style="flex:1;"><div style="font-family:monospace; font-weight:700; color:#059669; font-size:14px;">02_strings.py</div><div style="font-size:12px; color:#6b7280;">String Transformer — case, len, f-strings</div></div>
+      <span class="pill pill-green">10 min</span>
+    </div>
+    <div style="display:flex; align-items:center; gap:16px; background:#eff6ff; border-radius:12px; padding:12px 20px; border-left:4px solid #0284c7;">
+      <div style="font-size:22px;">🔢</div>
+      <div style="flex:1;"><div style="font-family:monospace; font-weight:700; color:#0284c7; font-size:14px;">03_numbers.py</div><div style="font-size:12px; color:#6b7280;">Mini Calculator + Receipt Maths</div></div>
+      <span class="pill pill-blue">10 min</span>
+    </div>
+    <div style="display:flex; align-items:center; gap:16px; background:#fffbeb; border-radius:12px; padding:12px 20px; border-left:4px solid #d97706;">
+      <div style="font-size:22px;">✅</div>
+      <div style="flex:1;"><div style="font-family:monospace; font-weight:700; color:#d97706; font-size:14px;">04_booleans.py</div><div style="font-size:12px; color:#6b7280;">Comparison Explorer + type() Detective</div></div>
+      <span class="pill pill-amber">8 min</span>
+    </div>
+    <div style="display:flex; align-items:center; gap:16px; background:#f0fdfa; border-radius:12px; padding:12px 20px; border-left:4px solid #0d9488;">
+      <div style="font-size:22px;">📋</div>
+      <div style="flex:1;"><div style="font-family:monospace; font-weight:700; color:#0d9488; font-size:14px;">05_lists.py</div><div style="font-size:12px; color:#6b7280;">Indexing, append, remove, max/min/sum</div></div>
+      <span class="pill pill-teal">12 min</span>
+    </div>
+    <div style="display:flex; align-items:center; gap:16px; background:#f5f3ff; border-radius:12px; padding:12px 20px; border-left:4px solid #6d28d9;">
+      <div style="font-size:22px;">🔒</div>
+      <div style="flex:1;"><div style="font-family:monospace; font-weight:700; color:#6d28d9; font-size:14px;">06_tuples.py</div><div style="font-size:12px; color:#6b7280;">Immutability + unpacking</div></div>
+      <span class="pill pill-violet">7 min</span>
+    </div>
+    <div style="display:flex; align-items:center; gap:16px; background:#fff1f2; border-radius:12px; padding:12px 20px; border-left:4px solid #be185d;">
+      <div style="font-size:22px;">📖</div>
+      <div style="flex:1;"><div style="font-family:monospace; font-weight:700; color:#be185d; font-size:14px;">07_dictionaries.py</div><div style="font-size:12px; color:#6b7280;">Key:Value pairs + Phone Book project</div></div>
+      <span class="pill pill-rose">10 min</span>
+    </div>
+  </div>
+  <div class="page-num">20 / 21</div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+  SLIDE 21 — LET'S CODE!
+════════════════════════════════════════ -->
+<div class="slide hero" style="background: linear-gradient(135deg, #0d9488 0%, #0284c7 50%, #6d28d9 100%);">
+  <div class="blob blob1" style="background:#a7f3d0;"></div>
+  <div class="blob blob2" style="background:#bae6fd;"></div>
+  <div style="font-size:72px; line-height:1; margin-bottom:18px;">🚀</div>
+  <div class="slide-title" style="font-size:58px;">Time to Code!</div>
+  <div class="slide-subtitle">Open VS Code · open your <code style="background:rgba(255,255,255,0.25); padding:2px 10px; border-radius:6px; font-family:monospace;">day_2</code> folder · let's go!</div>
+  <div style="margin-top:36px; display:flex; gap:12px; flex-wrap:wrap; justify-content:center;">
+    <div style="background:rgba(255,255,255,0.18); border-radius:10px; padding:10px 18px; font-family:monospace; font-size:14px; font-weight:700;">01_variables.py</div>
+    <div style="background:rgba(255,255,255,0.18); border-radius:10px; padding:10px 18px; font-family:monospace; font-size:14px; font-weight:700;">02_strings.py</div>
+    <div style="background:rgba(255,255,255,0.18); border-radius:10px; padding:10px 18px; font-family:monospace; font-size:14px; font-weight:700;">03_numbers.py</div>
+    <div style="background:rgba(255,255,255,0.18); border-radius:10px; padding:10px 18px; font-family:monospace; font-size:14px; font-weight:700;">04_booleans.py</div>
+    <div style="background:rgba(255,255,255,0.18); border-radius:10px; padding:10px 18px; font-family:monospace; font-size:14px; font-weight:700;">05_lists.py</div>
+    <div style="background:rgba(255,255,255,0.18); border-radius:10px; padding:10px 18px; font-family:monospace; font-size:14px; font-weight:700;">06_tuples.py</div>
+    <div style="background:rgba(255,255,255,0.18); border-radius:10px; padding:10px 18px; font-family:monospace; font-size:14px; font-weight:700;">07_dictionaries.py</div>
+  </div>
+  <div style="margin-top:24px; font-size:14px; opacity:0.8; font-weight:600;">
+    ✨ The only way to learn to code is to actually write code. Let's build something!
+  </div>
+  <div class="page-num" style="color:rgba(255,255,255,0.45);">21 / 21</div>
+</div>
+
+</body>
+</html>
