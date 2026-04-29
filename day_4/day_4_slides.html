@@ -1,0 +1,975 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Day 4: Loops 🐍</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800;900&family=Fira+Code:wght@400;600&display=swap');
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    @page { size: A4 landscape; margin: 0; }
+
+    body { font-family: 'Poppins', 'Segoe UI', sans-serif; background: #e8e8e8; }
+
+    .slide {
+      width: 297mm;
+      height: 210mm;
+      overflow: hidden;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      page-break-after: always;
+      break-after: page;
+    }
+    @media screen { .slide { margin: 20px auto; box-shadow: 0 8px 40px rgba(0,0,0,0.18); } }
+
+    .blob { position: absolute; border-radius: 50%; opacity: 0.15; pointer-events: none; }
+
+    /* ── Themes ─── */
+    .hero {
+      background: linear-gradient(135deg, #c2410c 0%, #dc2626 55%, #7c3aed 100%);
+      color: white; justify-content: center; align-items: center; text-align: center; padding: 60px;
+    }
+    .hero .blob1 { width: 280px; height: 280px; background: white; top: -80px; right: -60px; }
+    .hero .blob2 { width: 200px; height: 200px; background: #fed7aa; bottom: -60px; left: -40px; }
+
+    .section-intro { background: white; flex-direction: row; }
+    .section-intro .panel {
+      width: 36%; display: flex; flex-direction: column;
+      justify-content: center; align-items: center; padding: 50px 28px; color: white;
+    }
+    .section-intro .body { width: 64%; padding: 44px 52px; display: flex; flex-direction: column; justify-content: center; }
+
+    .content { background: white; padding: 48px 62px; }
+    .dark { background: #0f172a; color: #e2e8f0; padding: 46px 62px; }
+
+    /* ── Gradients ─── */
+    .purple { background: linear-gradient(135deg, #4f46e5, #7c3aed); }
+    .green  { background: linear-gradient(135deg, #059669, #10b981); }
+    .blue   { background: linear-gradient(135deg, #0284c7, #0ea5e9); }
+    .amber  { background: linear-gradient(135deg, #d97706, #f59e0b); }
+    .orange { background: linear-gradient(135deg, #c2410c, #ea580c); }
+    .teal   { background: linear-gradient(135deg, #0d9488, #14b8a6); }
+    .violet { background: linear-gradient(135deg, #6d28d9, #8b5cf6); }
+    .rose   { background: linear-gradient(135deg, #be185d, #e11d48); }
+    .red    { background: linear-gradient(135deg, #b91c1c, #dc2626); }
+    .emerald{ background: linear-gradient(135deg, #065f46, #059669); }
+
+    /* ── Typography ─── */
+    .slide-tag { font-size: 11px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; opacity: 0.7; margin-bottom: 10px; }
+    .slide-title { font-size: 52px; font-weight: 900; line-height: 1.1; }
+    .slide-subtitle { font-size: 22px; font-weight: 400; opacity: 0.85; margin-top: 14px; }
+    .section-emoji { font-size: 88px; line-height: 1; margin-bottom: 14px; }
+    .section-label { font-size: 19px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; }
+
+    h2 { font-size: 31px; font-weight: 800; color: #1e1b4b; margin-bottom: 20px; }
+    h3 { font-size: 20px; font-weight: 700; color: #1e1b4b; margin-bottom: 10px; }
+    .dark h2 { color: #e2e8f0; }
+    .dark h3 { color: #94a3b8; }
+
+    p { font-size: 16px; line-height: 1.65; color: #374151; }
+    .dark p { color: #cbd5e1; }
+
+    ul { list-style: none; margin-top: 6px; }
+    ul li { font-size: 16px; color: #374151; padding: 5px 0; display: flex; align-items: flex-start; gap: 10px; line-height: 1.5; }
+    .dark ul li { color: #cbd5e1; }
+    ul li .icon { flex-shrink: 0; font-size: 17px; margin-top: 1px; }
+
+    /* ── Code ─── */
+    pre {
+      background: #0f172a; border-radius: 12px; padding: 18px 22px;
+      font-family: 'Fira Code', 'Consolas', monospace; font-size: 14px;
+      line-height: 1.75; color: #e2e8f0; overflow: hidden;
+    }
+    .dark pre { background: #1e293b; }
+    pre .kw  { color: #c084fc; }
+    pre .fn  { color: #34d399; }
+    pre .st  { color: #fbbf24; }
+    pre .cm  { color: #4b5563; }
+    pre .nm  { color: #38bdf8; }
+    pre .op  { color: #f472b6; }
+    pre .var { color: #e2e8f0; }
+    pre .key { color: #fb923c; }
+    pre .hl  { background: rgba(251,191,36,0.15); display: block; margin: 0 -22px; padding: 0 22px; }
+
+    /* ── Layouts ─── */
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+    .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+
+    /* ── Cards ─── */
+    .card { background: #f8fafc; border-radius: 14px; padding: 18px 22px; border-left: 5px solid #4f46e5; }
+    .card.green-border  { border-left-color: #059669; }
+    .card.blue-border   { border-left-color: #0284c7; }
+    .card.amber-border  { border-left-color: #d97706; }
+    .card.orange-border { border-left-color: #ea580c; }
+    .card.teal-border   { border-left-color: #0d9488; }
+    .card.violet-border { border-left-color: #6d28d9; }
+    .card.rose-border   { border-left-color: #be185d; }
+    .card.red-border    { border-left-color: #dc2626; }
+
+    /* ── Pills ─── */
+    .pill { display: inline-block; padding: 4px 14px; border-radius: 999px; font-size: 12px; font-weight: 700; }
+    .pill-orange { background: #ffedd5; color: #9a3412; }
+    .pill-green  { background: #d1fae5; color: #065f46; }
+    .pill-blue   { background: #dbeafe; color: #1e40af; }
+    .pill-amber  { background: #fef3c7; color: #92400e; }
+    .pill-teal   { background: #ccfbf1; color: #134e4a; }
+    .pill-violet { background: #ede9fe; color: #4c1d95; }
+    .pill-rose   { background: #ffe4e6; color: #9f1239; }
+    .pill-red    { background: #fee2e2; color: #991b1b; }
+
+    /* ── Highlight box ─── */
+    .highlight-box {
+      background: #fef9c3; border: 2px solid #fde047; border-radius: 10px;
+      padding: 12px 18px; font-size: 15px; color: #713f12; margin-top: 16px; font-weight: 600;
+    }
+
+    /* ── Compare columns ─── */
+    .compare-row { display: flex; gap: 18px; margin-top: 14px; }
+    .compare-col { flex: 1; background: #f8fafc; border-radius: 12px; padding: 16px 20px; }
+    .compare-col.good { border-top: 4px solid #10b981; }
+    .compare-col.bad  { border-top: 4px solid #ef4444; }
+    .compare-col h4 { font-size: 14px; font-weight: 700; margin-bottom: 10px; }
+    .compare-col.good h4 { color: #065f46; }
+    .compare-col.bad  h4 { color: #991b1b; }
+    .compare-col ul li { font-size: 13.5px; padding: 3px 0; }
+
+    /* ── Loop trace table ─── */
+    .trace-table { border-collapse: collapse; width: 100%; margin-top: 12px; font-size: 13px; }
+    .trace-table th { background: #1e293b; color: #94a3b8; font-family: 'Fira Code', monospace; padding: 7px 14px; text-align: center; font-size: 12px; }
+    .trace-table td { font-family: 'Fira Code', monospace; padding: 6px 14px; text-align: center; border-bottom: 1px solid #f1f5f9; color: #374151; }
+    .trace-table tr:nth-child(even) td { background: #f8fafc; }
+    .trace-table .active { background: #fef9c3 !important; font-weight: 700; }
+
+    /* ── Range visual ─── */
+    .range-strip { display: flex; gap: 0; margin: 10px 0; }
+    .range-cell {
+      flex: 1; text-align: center; border: 2px solid #e2e8f0;
+      border-right: none; padding: 7px 4px;
+    }
+    .range-cell:last-child { border-right: 2px solid #e2e8f0; }
+    .range-cell .val { font-family: 'Fira Code', monospace; font-size: 14px; font-weight: 700; color: #1e1b4b; padding: 5px 0; }
+    .range-cell.included { background: #dbeafe; }
+    .range-cell.excluded { background: #fee2e2; }
+    .range-cell .lbl { font-size: 10px; color: #6b7280; padding: 3px 0; }
+
+    /* ── Page number ─── */
+    .page-num { position: absolute; bottom: 16px; right: 26px; font-size: 11px; font-weight: 600; opacity: 0.32; letter-spacing: 1px; }
+  </style>
+</head>
+<body>
+
+<!-- ════════════════════════════════════════
+  SLIDE 1 — TITLE
+════════════════════════════════════════ -->
+<div class="slide hero">
+  <div class="blob blob1"></div>
+  <div class="blob blob2"></div>
+  <div class="slide-tag">Python Crash Course · Day 4</div>
+  <div class="slide-title">Loops</div>
+  <div class="slide-subtitle">for · range() · Accumulator · while · break · continue · nested</div>
+  <div style="margin-top:30px; font-size:56px; line-height:1;">🔄</div>
+  <div style="margin-top:26px; font-size:12px; opacity:0.6; font-weight:600; letter-spacing:2px; text-transform:uppercase;">
+    Write once. Repeat as many times as you need.
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+  SLIDE 2 — AGENDA
+════════════════════════════════════════ -->
+<div class="slide content" style="padding:40px 58px;">
+  <h2 style="margin-bottom:14px;">Today's Roadmap 🗺️</h2>
+  <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px; margin-bottom:12px;">
+    <div class="card orange-border">
+      <div style="font-size:24px; margin-bottom:6px;">🔄</div>
+      <div style="font-weight:800; font-size:15px; color:#1e1b4b;">for loop</div>
+      <div style="font-size:12px; color:#6b7280; margin-top:3px;">From absolute scratch</div>
+    </div>
+    <div class="card blue-border">
+      <div style="font-size:24px; margin-bottom:6px;">🔢</div>
+      <div style="font-weight:800; font-size:15px; color:#1e1b4b;">range()</div>
+      <div style="font-size:12px; color:#6b7280; margin-top:3px;">Loop a fixed number of times</div>
+    </div>
+    <div class="card green-border">
+      <div style="font-size:24px; margin-bottom:6px;">🪣</div>
+      <div style="font-weight:800; font-size:15px; color:#1e1b4b;">Accumulator</div>
+      <div style="font-size:12px; color:#6b7280; margin-top:3px;">The most useful loop pattern</div>
+    </div>
+  </div>
+  <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px;">
+    <div class="card amber-border">
+      <div style="font-size:24px; margin-bottom:6px;">🔁</div>
+      <div style="font-weight:800; font-size:15px; color:#1e1b4b;">while loop</div>
+      <div style="font-size:12px; color:#6b7280; margin-top:3px;">Loop until something changes</div>
+    </div>
+    <div class="card red-border">
+      <div style="font-size:24px; margin-bottom:6px;">🎮</div>
+      <div style="font-weight:800; font-size:15px; color:#1e1b4b;">break &amp; continue</div>
+      <div style="font-size:12px; color:#6b7280; margin-top:3px;">Control the flow inside a loop</div>
+    </div>
+    <div class="card violet-border">
+      <div style="font-size:24px; margin-bottom:6px;">🪆</div>
+      <div style="font-weight:800; font-size:15px; color:#1e1b4b;">Nested loops</div>
+      <div style="font-size:12px; color:#6b7280; margin-top:3px;">A loop inside a loop</div>
+    </div>
+  </div>
+  <div class="highlight-box" style="margin-top:14px; font-size:14px;">
+    💡 Day 3 gave us a preview — today we master every form of loop from the very beginning, step by step!
+  </div>
+  <div class="page-num">2 / 21</div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+  SLIDE 3 — WHY LOOPS?
+════════════════════════════════════════ -->
+<div class="slide content" style="padding:44px 60px;">
+  <h2>Why Do We Need Loops? 🤔</h2>
+  <p style="margin-bottom:18px;">Without a loop, repeating an action means copy-pasting the same code over and over. That's tedious, error-prone, and impossible to scale.</p>
+  <div class="compare-row">
+    <div class="compare-col bad" style="flex:0.9;">
+      <h4>❌ Without a loop (5 friends)</h4>
+      <pre style="font-size:13px; background:#fef2f2; color:#991b1b; border:none; padding:12px 16px; border-radius:8px;"><span style="font-family:monospace;">print("Hello, Alice!")
+print("Hello, Bob!")
+print("Hello, Charlie!")
+print("Hello, Diana!")
+print("Hello, Eve!")
+<span style="color:#94a3b8; font-size:11px;">→ 100 friends = 100 lines? 😱</span></span></pre>
+    </div>
+    <div style="display:flex; align-items:center; font-size:28px; color:#94a3b8; padding: 0 8px;">→</div>
+    <div class="compare-col good" style="flex:1.1;">
+      <h4>✅ With a loop (any number of friends)</h4>
+      <pre style="font-size:13px; background:#f0fdf4; color:#065f46; border:none; padding:12px 16px; border-radius:8px;"><span style="font-family:monospace;"><span style="color:#374151;">friends = ["Alice","Bob","Charlie",
+           "Diana","Eve", <span style="color:#94a3b8;">...100 more</span>]</span>
+
+<span style="color:#059669;">for</span> name <span style="color:#059669;">in</span> friends:
+    print(f"Hello, {name}!")</span>
+
+<span style="font-size:11px; color:#94a3b8;">→ Works for 5, 500, or 5 million friends!</span></pre>
+    </div>
+  </div>
+  <div class="highlight-box" style="margin-top:16px; font-size:14px;">
+    🧠 A loop is Python's way of saying: <strong>"do this for every item"</strong> or <strong>"keep doing this until I tell you to stop"</strong>.
+  </div>
+  <div class="page-num">3 / 21</div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+  SLIDE 4 — FOR LOOP (section intro)
+════════════════════════════════════════ -->
+<div class="slide section-intro">
+  <div class="panel orange">
+    <div class="section-emoji">🔄</div>
+    <div class="section-label">The for Loop</div>
+    <div style="font-size:13px; margin-top:8px; opacity:0.85; text-align:center;">Loop over items in a list</div>
+  </div>
+  <div class="body">
+    <h2>The for Loop — Building Blocks</h2>
+    <p style="margin-bottom:14px;">A <strong>for loop</strong> takes each item from a list (or any sequence), puts it in a variable, and runs the indented block. Then it moves to the next item.</p>
+    <pre><span class="var">friends</span> <span class="op">=</span> <span class="op">[</span><span class="st">"Alice"</span><span class="op">,</span> <span class="st">"Bob"</span><span class="op">,</span> <span class="st">"Charlie"</span><span class="op">]</span>
+<span class="cm">#          ↑ the list Python will loop over</span>
+
+<span class="kw">for</span> <span class="var">name</span> <span class="kw">in</span> <span class="var">friends</span><span class="op">:</span>
+<span class="cm">#    ↑         ↑</span>
+<span class="cm"># loop var    the list</span>
+    <span class="fn">print</span>(<span class="st">f"Hello, <span style="color:#f472b6;">{</span><span style="color:#38bdf8;">name</span><span style="color:#f472b6;">}</span>!"</span>)
+<span class="cm"># ↑ indented — runs every round</span></pre>
+    <div class="highlight-box" style="font-size:13px; margin-top:12px;">
+      ⚠️ The <strong>colon :</strong> after <code style="background:#fde047;padding:0 4px;border-radius:3px;">for ... in ...:</code> is required. The body MUST be indented 4 spaces!
+    </div>
+  </div>
+  <div class="page-num">4 / 21</div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+  SLIDE 5 — LOOP TRACE / STEP BY STEP
+════════════════════════════════════════ -->
+<div class="slide content" style="padding:42px 60px;">
+  <h2>How the Loop Actually Runs — Step by Step 🔍</h2>
+  <div class="grid-2" style="gap:28px; margin-top:8px;">
+    <div>
+      <pre style="font-size:13.5px;"><span class="var">fruits</span> <span class="op">=</span> <span class="op">[</span><span class="st">"apple"</span><span class="op">,</span> <span class="st">"banana"</span><span class="op">,</span> <span class="st">"mango"</span><span class="op">]</span>
+
+<span class="kw">for</span> <span class="var">fruit</span> <span class="kw">in</span> <span class="var">fruits</span><span class="op">:</span>
+    <span class="fn">print</span>(<span class="st">f"I love <span style="color:#f472b6;">{</span><span style="color:#38bdf8;">fruit</span><span style="color:#f472b6;">}</span>!"</span>)</pre>
+      <div style="margin-top:16px; background:#f8fafc; border-radius:12px; padding:14px 18px;">
+        <div style="font-size:11px; font-weight:800; color:#6b7280; letter-spacing:2px; margin-bottom:10px;">WHAT PYTHON DOES INSIDE</div>
+        <ul style="gap:0;">
+          <li style="font-size:13.5px; padding:4px 0;"><span style="font-family:monospace; background:#dbeafe; padding:1px 6px; border-radius:4px; color:#1e40af;">Round 1</span>&nbsp; fruit = "apple" → prints "I love apple!"</li>
+          <li style="font-size:13.5px; padding:4px 0;"><span style="font-family:monospace; background:#d1fae5; padding:1px 6px; border-radius:4px; color:#065f46;">Round 2</span>&nbsp; fruit = "banana" → prints "I love banana!"</li>
+          <li style="font-size:13.5px; padding:4px 0;"><span style="font-family:monospace; background:#fef9c3; padding:1px 6px; border-radius:4px; color:#713f12;">Round 3</span>&nbsp; fruit = "mango" → prints "I love mango!"</li>
+          <li style="font-size:13.5px; padding:4px 0; color:#94a3b8;"><span style="font-family:monospace; background:#f1f5f9; padding:1px 6px; border-radius:4px;">Done</span>&nbsp; no more items → loop ends</li>
+        </ul>
+      </div>
+    </div>
+    <div>
+      <div style="font-size:12px; font-weight:800; color:#ea580c; letter-spacing:2px; margin-bottom:10px; text-transform:uppercase;">Trace Table</div>
+      <table class="trace-table">
+        <tr><th>Round</th><th>fruit =</th><th>Prints</th></tr>
+        <tr><td>1</td><td>"apple"</td><td>I love apple!</td></tr>
+        <tr><td>2</td><td>"banana"</td><td>I love banana!</td></tr>
+        <tr><td>3</td><td>"mango"</td><td>I love mango!</td></tr>
+        <tr style="color:#94a3b8;"><td>—</td><td>list empty</td><td>loop ends</td></tr>
+      </table>
+      <div style="margin-top:16px; background:#fff7ed; border-radius:12px; padding:14px 18px; border-left:4px solid #ea580c;">
+        <div style="font-size:13px; font-weight:700; color:#9a3412; margin-bottom:6px;">Key rule: indentation</div>
+        <ul style="gap:0;">
+          <li style="font-size:13px; padding:2px 0;"><span class="icon">✅</span>Indented = runs every round</li>
+          <li style="font-size:13px; padding:2px 0;"><span class="icon">❌</span>Not indented = runs once, after loop</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="page-num">5 / 21</div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+  SLIDE 6 — FOR LOOP IN ACTION
+════════════════════════════════════════ -->
+<div class="slide dark">
+  <h2 style="color:#fb923c; margin-bottom:14px;">for Loop in Action 🔥</h2>
+  <div class="grid-2" style="gap:22px;">
+    <div>
+      <div style="font-size:11px; font-weight:700; color:#64748b; letter-spacing:2px; margin-bottom:10px;">LOOP BODY CAN HAVE MANY LINES</div>
+      <pre><span class="var">fruits</span> <span class="op">=</span> <span class="op">[</span><span class="st">"apple"</span><span class="op">,</span> <span class="st">"banana"</span><span class="op">,</span> <span class="st">"mango"</span><span class="op">]</span>
+
+<span class="kw">for</span> <span class="var">fruit</span> <span class="kw">in</span> <span class="var">fruits</span><span class="op">:</span>
+    <span class="var">upper</span>  <span class="op">=</span> <span class="var">fruit</span><span class="op">.</span><span class="fn">upper</span>()     <span class="cm"># ← inside</span>
+    <span class="var">length</span> <span class="op">=</span> <span class="fn">len</span>(<span class="var">fruit</span>)        <span class="cm"># ← inside</span>
+    <span class="fn">print</span>(<span class="st">f"<span style="color:#f472b6;">{</span><span style="color:#38bdf8;">upper</span><span style="color:#f472b6;">}</span> — <span style="color:#f472b6;">{</span><span style="color:#38bdf8;">length</span><span style="color:#f472b6;">}</span> letters"</span>)  <span class="cm"># ← inside</span>
+
+<span class="fn">print</span>(<span class="st">"Done!"</span>)  <span class="cm"># ← NOT indented — runs once</span></pre>
+      <div style="margin-top:14px; background:#1e293b; border-radius:10px; padding:10px 14px; font-size:13px; color:#fb923c; font-weight:600; border-left:3px solid #ea580c;">
+        Everything at the same indent level is part of the loop — and all of it repeats every round!
+      </div>
+    </div>
+    <div>
+      <div style="font-size:11px; font-weight:700; color:#64748b; letter-spacing:2px; margin-bottom:10px;">LOOP + IF — THE POWER COMBO</div>
+      <pre><span class="var">scores</span> <span class="op">=</span> <span class="op">[</span><span class="nm">85</span><span class="op">,</span> <span class="nm">42</span><span class="op">,</span> <span class="nm">91</span><span class="op">,</span> <span class="nm">38</span><span class="op">,</span> <span class="nm">77</span><span class="op">,</span> <span class="nm">55</span><span class="op">]</span>
+
+<span class="kw">for</span> <span class="var">score</span> <span class="kw">in</span> <span class="var">scores</span><span class="op">:</span>
+    <span class="kw">if</span> <span class="var">score</span> <span class="op">&gt;=</span> <span class="nm">60</span><span class="op">:</span>
+        <span class="fn">print</span>(<span class="st">f"<span style="color:#f472b6;">{</span><span style="color:#38bdf8;">score</span><span style="color:#f472b6;">}</span> → PASS ✅"</span>)
+    <span class="kw">else</span><span class="op">:</span>
+        <span class="fn">print</span>(<span class="st">f"<span style="color:#f472b6;">{</span><span style="color:#38bdf8;">score</span><span style="color:#f472b6;">}</span> → FAIL ❌"</span>)
+
+<span class="cm"># Output:</span>
+<span class="cm"># 85 → PASS ✅</span>
+<span class="cm"># 42 → FAIL ❌</span>
+<span class="cm"># 91 → PASS ✅  ... etc.</span></pre>
+      <div style="margin-top:14px; background:#1e293b; border-radius:10px; padding:10px 14px; font-size:13px; color:#2dd4bf; font-weight:600; border-left:3px solid #0d9488;">
+        💡 Combining a loop with an if is the most common pattern in all of Python!
+      </div>
+    </div>
+  </div>
+  <div class="page-num">6 / 21</div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+  SLIDE 7 — range() (section intro)
+════════════════════════════════════════ -->
+<div class="slide section-intro">
+  <div class="panel blue">
+    <div class="section-emoji">🔢</div>
+    <div class="section-label">range()</div>
+    <div style="font-size:13px; margin-top:8px; opacity:0.85; text-align:center;">Loop a fixed number of times</div>
+  </div>
+  <div class="body">
+    <h2>range() — Count for Me, Python!</h2>
+    <p style="margin-bottom:14px;">When you don't have a list to loop over but you need to repeat something N times, use <strong>range()</strong> to generate the numbers automatically.</p>
+    <pre><span class="cm"># range(5) generates: 0, 1, 2, 3, 4</span>
+<span class="kw">for</span> <span class="var">i</span> <span class="kw">in</span> <span class="fn">range</span>(<span class="nm">5</span>)<span class="op">:</span>
+    <span class="fn">print</span>(<span class="st">f"Round <span style="color:#f472b6;">{</span><span style="color:#38bdf8;">i</span><span style="color:#f472b6;">}</span>"</span>)
+<span class="cm"># Prints: Round 0, Round 1, Round 2, Round 3, Round 4</span>
+
+<span class="cm"># range(1, 6) generates: 1, 2, 3, 4, 5</span>
+<span class="kw">for</span> <span class="var">i</span> <span class="kw">in</span> <span class="fn">range</span>(<span class="nm">1</span><span class="op">,</span> <span class="nm">6</span>)<span class="op">:</span>
+    <span class="fn">print</span>(<span class="st">f"5 × <span style="color:#f472b6;">{</span><span style="color:#38bdf8;">i</span><span style="color:#f472b6;">}</span> = <span style="color:#f472b6;">{</span><span class="nm">5</span> <span class="op">*</span> <span style="color:#38bdf8;">i</span><span style="color:#f472b6;">}</span>"</span>)</pre>
+    <div class="highlight-box" style="font-size:13px; margin-top:12px;">
+      🔑 <code style="background:#fde047;padding:0 4px;border-radius:3px;">range(n)</code> starts at <strong>0</strong> and stops <strong>before</strong> n. The stop number is <strong>never</strong> included!
+    </div>
+  </div>
+  <div class="page-num">7 / 21</div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+  SLIDE 8 — range() THREE FORMS
+════════════════════════════════════════ -->
+<div class="slide content" style="padding:40px 58px;">
+  <h2>range() — Three Forms 📐</h2>
+  <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px; margin-top:4px;">
+
+    <div style="background:#eff6ff; border-radius:14px; padding:18px 20px; border-top:5px solid #0284c7;">
+      <div style="font-family:monospace; font-size:17px; font-weight:800; color:#1e40af; margin-bottom:8px;">range(n)</div>
+      <div style="font-size:13px; color:#374151; margin-bottom:10px;">Start at 0, stop <em>before</em> n</div>
+      <div class="range-strip">
+        <div class="range-cell included"><div class="val">0</div><div class="lbl">in</div></div>
+        <div class="range-cell included"><div class="val">1</div><div class="lbl">in</div></div>
+        <div class="range-cell included"><div class="val">2</div><div class="lbl">in</div></div>
+        <div class="range-cell included"><div class="val">3</div><div class="lbl">in</div></div>
+        <div class="range-cell excluded"><div class="val">4</div><div class="lbl">stop</div></div>
+      </div>
+      <pre style="font-size:12px; margin-top:10px;"><span class="kw">for</span> <span class="var">i</span> <span class="kw">in</span> <span class="fn">range</span>(<span class="nm">4</span>)<span class="op">:</span>
+    <span class="fn">print</span>(<span class="var">i</span>)
+<span class="cm"># 0  1  2  3</span></pre>
+    </div>
+
+    <div style="background:#f0fdf4; border-radius:14px; padding:18px 20px; border-top:5px solid #059669;">
+      <div style="font-family:monospace; font-size:17px; font-weight:800; color:#065f46; margin-bottom:8px;">range(a, b)</div>
+      <div style="font-size:13px; color:#374151; margin-bottom:10px;">Start at a, stop <em>before</em> b</div>
+      <div class="range-strip">
+        <div class="range-cell excluded" style="background:#fee2e2;"><div class="val">0</div><div class="lbl">skip</div></div>
+        <div class="range-cell included"><div class="val">1</div><div class="lbl">in</div></div>
+        <div class="range-cell included"><div class="val">2</div><div class="lbl">in</div></div>
+        <div class="range-cell included"><div class="val">3</div><div class="lbl">in</div></div>
+        <div class="range-cell excluded"><div class="val">4</div><div class="lbl">stop</div></div>
+      </div>
+      <pre style="font-size:12px; margin-top:10px;"><span class="kw">for</span> <span class="var">i</span> <span class="kw">in</span> <span class="fn">range</span>(<span class="nm">1</span><span class="op">,</span> <span class="nm">4</span>)<span class="op">:</span>
+    <span class="fn">print</span>(<span class="var">i</span>)
+<span class="cm"># 1  2  3</span></pre>
+    </div>
+
+    <div style="background:#fff7ed; border-radius:14px; padding:18px 20px; border-top:5px solid #ea580c;">
+      <div style="font-family:monospace; font-size:17px; font-weight:800; color:#9a3412; margin-bottom:8px;">range(a, b, step)</div>
+      <div style="font-size:13px; color:#374151; margin-bottom:10px;">Skip by step each time</div>
+      <div class="range-strip">
+        <div class="range-cell included"><div class="val">1</div><div class="lbl">in</div></div>
+        <div class="range-cell excluded" style="background:#f1f5f9;"><div class="val">2</div><div class="lbl">skip</div></div>
+        <div class="range-cell included"><div class="val">3</div><div class="lbl">in</div></div>
+        <div class="range-cell excluded" style="background:#f1f5f9;"><div class="val">4</div><div class="lbl">skip</div></div>
+        <div class="range-cell included"><div class="val">5</div><div class="lbl">in</div></div>
+      </div>
+      <pre style="font-size:12px; margin-top:10px;"><span class="kw">for</span> <span class="var">i</span> <span class="kw">in</span> <span class="fn">range</span>(<span class="nm">1</span><span class="op">,</span> <span class="nm">6</span><span class="op">,</span> <span class="nm">2</span>)<span class="op">:</span>
+    <span class="fn">print</span>(<span class="var">i</span>)
+<span class="cm"># 1  3  5</span></pre>
+    </div>
+  </div>
+  <div class="highlight-box" style="margin-top:14px; font-size:14px;">
+    💡 Countdown: use a <strong>negative step</strong> → <code style="background:#fde047;padding:0 4px;border-radius:3px;">range(10, 0, -1)</code> gives 10, 9, 8 … 1
+  </div>
+  <div class="page-num">8 / 21</div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+  SLIDE 9 — range() IN ACTION
+════════════════════════════════════════ -->
+<div class="slide dark">
+  <h2 style="color:#38bdf8; margin-bottom:14px;">range() in Action 🚀</h2>
+  <div class="grid-2" style="gap:22px;">
+    <div>
+      <div style="font-size:11px; font-weight:700; color:#64748b; letter-spacing:2px; margin-bottom:10px;">MULTIPLICATION TABLE</div>
+      <pre><span class="kw">for</span> <span class="var">i</span> <span class="kw">in</span> <span class="fn">range</span>(<span class="nm">1</span><span class="op">,</span> <span class="nm">11</span>)<span class="op">:</span>
+    <span class="fn">print</span>(<span class="st">f"7 × <span style="color:#f472b6;">{</span><span style="color:#38bdf8;">i</span><span style="color:#f472b6;">}</span> = <span style="color:#f472b6;">{</span><span class="nm">7</span> <span class="op">*</span> <span style="color:#38bdf8;">i</span><span style="color:#f472b6;">}</span>"</span>)
+<span class="cm"># 7×1=7, 7×2=14, ... 7×10=70</span></pre>
+
+      <div style="font-size:11px; font-weight:700; color:#64748b; letter-spacing:2px; margin: 14px 0 10px;">EVEN NUMBERS</div>
+      <pre><span class="kw">for</span> <span class="var">i</span> <span class="kw">in</span> <span class="fn">range</span>(<span class="nm">0</span><span class="op">,</span> <span class="nm">11</span><span class="op">,</span> <span class="nm">2</span>)<span class="op">:</span>
+    <span class="fn">print</span>(<span class="var">i</span><span class="op">,</span> <span class="key">end</span><span class="op">=</span><span class="st">"  "</span>)
+<span class="cm"># 0  2  4  6  8  10</span></pre>
+
+      <div style="font-size:11px; font-weight:700; color:#64748b; letter-spacing:2px; margin: 14px 0 10px;">COUNTDOWN</div>
+      <pre><span class="kw">for</span> <span class="var">i</span> <span class="kw">in</span> <span class="fn">range</span>(<span class="nm">5</span><span class="op">,</span> <span class="nm">0</span><span class="op">,</span> <span class="op">-</span><span class="nm">1</span>)<span class="op">:</span>
+    <span class="fn">print</span>(<span class="st">f"T minus <span style="color:#f472b6;">{</span><span style="color:#38bdf8;">i</span><span style="color:#f472b6;">}</span>..."</span>)
+<span class="fn">print</span>(<span class="st">"Liftoff! 🚀"</span>)</pre>
+    </div>
+    <div>
+      <div style="font-size:11px; font-weight:700; color:#64748b; letter-spacing:2px; margin-bottom:10px;">RANGE + INDEX — enumerate() SHORTCUT</div>
+      <pre><span class="var">students</span> <span class="op">=</span> <span class="op">[</span><span class="st">"Alice"</span><span class="op">,</span><span class="st">"Bob"</span><span class="op">,</span><span class="st">"Charlie"</span><span class="op">]</span>
+
+<span class="cm"># Manual way (range + index)</span>
+<span class="kw">for</span> <span class="var">i</span> <span class="kw">in</span> <span class="fn">range</span>(<span class="fn">len</span>(<span class="var">students</span>))<span class="op">:</span>
+    <span class="fn">print</span>(<span class="st">f"<span style="color:#f472b6;">{</span><span style="color:#38bdf8;">i</span><span style="color:#f472b6;">}</span>: <span style="color:#f472b6;">{</span><span style="color:#38bdf8;">students</span><span style="color:#f472b6;">[</span><span style="color:#38bdf8;">i</span><span style="color:#f472b6;">]</span><span style="color:#f472b6;">}</span>"</span>)
+
+<span class="cm"># Cleaner way — enumerate()</span>
+<span class="kw">for</span> <span class="var">i</span><span class="op">,</span> <span class="var">name</span> <span class="kw">in</span> <span class="fn">enumerate</span>(<span class="var">students</span><span class="op">,</span> <span class="key">start</span><span class="op">=</span><span class="nm">1</span>)<span class="op">:</span>
+    <span class="fn">print</span>(<span class="st">f"Seat <span style="color:#f472b6;">{</span><span style="color:#38bdf8;">i</span><span style="color:#f472b6;">}</span>: <span style="color:#f472b6;">{</span><span style="color:#38bdf8;">name</span><span style="color:#f472b6;">}</span>"</span>)
+<span class="cm"># Seat 1: Alice</span>
+<span class="cm"># Seat 2: Bob</span>
+<span class="cm"># Seat 3: Charlie</span></pre>
+      <div style="margin-top:14px; background:#1e293b; border-radius:10px; padding:11px 16px; font-size:13px; color:#38bdf8; font-weight:600; border-left:3px solid #0284c7;">
+        💡 <code style="font-family:monospace;">enumerate(list, start=1)</code> gives you the index AND the item at the same time — super handy!
+      </div>
+    </div>
+  </div>
+  <div class="page-num">9 / 21</div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+  SLIDE 10 — ACCUMULATOR (section intro)
+════════════════════════════════════════ -->
+<div class="slide section-intro">
+  <div class="panel emerald">
+    <div class="section-emoji">🪣</div>
+    <div class="section-label">Accumulator</div>
+    <div style="font-size:13px; margin-top:8px; opacity:0.85; text-align:center;">The #1 loop pattern</div>
+  </div>
+  <div class="body">
+    <h2>The Accumulator Pattern</h2>
+    <p style="margin-bottom:14px;">The most important loop pattern: create a <strong>bucket variable</strong> before the loop, fill it up a little each round, read the result after the loop ends.</p>
+    <div style="display:flex; align-items:center; gap:16px; margin-bottom:14px;">
+      <div style="text-align:center; flex:1;">
+        <div style="font-size:36px;">🪣</div>
+        <div style="font-size:12px; color:#6b7280; margin-top:4px; font-weight:700;">bucket = 0<br><em>(before loop)</em></div>
+      </div>
+      <div style="font-size:24px; color:#94a3b8;">→</div>
+      <div style="text-align:center; flex:2; background:#f0fdf4; border-radius:12px; padding:12px;">
+        <div style="font-size:28px;">🔄</div>
+        <div style="font-size:12px; color:#374151; font-weight:700; margin-top:4px;">for each item:<br>bucket += item</div>
+      </div>
+      <div style="font-size:24px; color:#94a3b8;">→</div>
+      <div style="text-align:center; flex:1;">
+        <div style="font-size:36px;">📊</div>
+        <div style="font-size:12px; color:#6b7280; margin-top:4px; font-weight:700;">print(bucket)<br><em>(after loop)</em></div>
+      </div>
+    </div>
+    <pre style="font-size:13px;"><span class="var">prices</span> <span class="op">=</span> <span class="op">[</span><span class="nm">120</span><span class="op">,</span> <span class="nm">250</span><span class="op">,</span> <span class="nm">75</span><span class="op">,</span> <span class="nm">340</span><span class="op">]</span>
+<span class="var">total</span> <span class="op">=</span> <span class="nm">0</span>                    <span class="cm"># ← bucket starts empty</span>
+<span class="kw">for</span> <span class="var">price</span> <span class="kw">in</span> <span class="var">prices</span><span class="op">:</span>
+    <span class="var">total</span> <span class="op">+=</span> <span class="var">price</span>           <span class="cm"># ← fill it each round</span>
+<span class="fn">print</span>(<span class="st">f"Total: Rs. <span style="color:#f472b6;">{</span><span style="color:#38bdf8;">total</span><span style="color:#f472b6;">}</span>"</span>)   <span class="cm"># ← read it after</span></pre>
+  </div>
+  <div class="page-num">10 / 21</div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+  SLIDE 11 — ACCUMULATOR IN ACTION
+════════════════════════════════════════ -->
+<div class="slide content" style="padding:40px 58px;">
+  <h2>Accumulator — Four Flavours 🍦</h2>
+  <div style="display:grid; grid-template-columns:1fr 1fr; gap:18px; margin-top:6px;">
+
+    <div style="background:#f0fdf4; border-radius:14px; padding:16px 20px; border-left:5px solid #059669;">
+      <div style="font-size:13px; font-weight:800; color:#065f46; margin-bottom:8px; text-transform:uppercase; letter-spacing:1px;">Sum</div>
+      <pre style="font-size:12.5px;"><span class="var">total</span> <span class="op">=</span> <span class="nm">0</span>          <span class="cm"># bucket</span>
+<span class="kw">for</span> <span class="var">price</span> <span class="kw">in</span> <span class="var">prices</span><span class="op">:</span>
+    <span class="var">total</span> <span class="op">+=</span> <span class="var">price</span></pre>
+    </div>
+
+    <div style="background:#eff6ff; border-radius:14px; padding:16px 20px; border-left:5px solid #0284c7;">
+      <div style="font-size:13px; font-weight:800; color:#1e40af; margin-bottom:8px; text-transform:uppercase; letter-spacing:1px;">Count matching items</div>
+      <pre style="font-size:12.5px;"><span class="var">passing</span> <span class="op">=</span> <span class="nm">0</span>         <span class="cm"># counter</span>
+<span class="kw">for</span> <span class="var">score</span> <span class="kw">in</span> <span class="var">scores</span><span class="op">:</span>
+    <span class="kw">if</span> <span class="var">score</span> <span class="op">&gt;=</span> <span class="nm">60</span><span class="op">:</span>
+        <span class="var">passing</span> <span class="op">+=</span> <span class="nm">1</span></pre>
+    </div>
+
+    <div style="background:#fff7ed; border-radius:14px; padding:16px 20px; border-left:5px solid #ea580c;">
+      <div style="font-size:13px; font-weight:800; color:#9a3412; margin-bottom:8px; text-transform:uppercase; letter-spacing:1px;">Build a new list</div>
+      <pre style="font-size:12.5px;"><span class="var">evens</span> <span class="op">=</span> <span class="op">[]</span>          <span class="cm"># empty list</span>
+<span class="kw">for</span> <span class="var">n</span> <span class="kw">in</span> <span class="var">numbers</span><span class="op">:</span>
+    <span class="kw">if</span> <span class="var">n</span> <span class="op">%</span> <span class="nm">2</span> <span class="op">==</span> <span class="nm">0</span><span class="op">:</span>
+        <span class="var">evens</span><span class="op">.</span><span class="fn">append</span>(<span class="var">n</span>)</pre>
+    </div>
+
+    <div style="background:#f5f3ff; border-radius:14px; padding:16px 20px; border-left:5px solid #6d28d9;">
+      <div style="font-size:13px; font-weight:800; color:#4c1d95; margin-bottom:8px; text-transform:uppercase; letter-spacing:1px;">Find the maximum</div>
+      <pre style="font-size:12.5px;"><span class="var">biggest</span> <span class="op">=</span> <span class="var">nums</span><span class="op">[</span><span class="nm">0</span><span class="op">]</span>   <span class="cm"># start</span>
+<span class="kw">for</span> <span class="var">n</span> <span class="kw">in</span> <span class="var">nums</span><span class="op">:</span>
+    <span class="kw">if</span> <span class="var">n</span> <span class="op">&gt;</span> <span class="var">biggest</span><span class="op">:</span>
+        <span class="var">biggest</span> <span class="op">=</span> <span class="var">n</span></pre>
+    </div>
+
+  </div>
+  <div class="highlight-box" style="margin-top:14px; font-size:14px;">
+    🧠 The three rules: (1) create the bucket <strong>before</strong> the loop &nbsp; (2) update it <strong>inside</strong> the loop &nbsp; (3) use it <strong>after</strong> the loop
+  </div>
+  <div class="page-num">11 / 21</div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+  SLIDE 12 — WHILE LOOP (section intro)
+════════════════════════════════════════ -->
+<div class="slide section-intro">
+  <div class="panel amber">
+    <div class="section-emoji">🔁</div>
+    <div class="section-label">while Loop</div>
+    <div style="font-size:13px; margin-top:8px; opacity:0.85; text-align:center;">Loop until something changes</div>
+  </div>
+  <div class="body">
+    <h2>The while Loop</h2>
+    <p style="margin-bottom:14px;">A <strong>while loop</strong> keeps repeating as long as a condition stays <strong>True</strong>. You use it when you don't know in advance how many rounds you'll need.</p>
+    <pre><span class="cm"># Anatomy</span>
+<span class="kw">while</span> <span class="var">condition</span><span class="op">:</span>
+    <span class="cm"># this block runs again and again</span>
+    <span class="cm"># as long as condition is True</span>
+
+<span class="cm"># Real example</span>
+<span class="var">countdown</span> <span class="op">=</span> <span class="nm">3</span>
+
+<span class="kw">while</span> <span class="var">countdown</span> <span class="op">&gt;</span> <span class="nm">0</span><span class="op">:</span>
+    <span class="fn">print</span>(<span class="st">f"T minus <span style="color:#f472b6;">{</span><span style="color:#38bdf8;">countdown</span><span style="color:#f472b6;">}</span>..."</span>)
+    <span class="var">countdown</span> <span class="op">-=</span> <span class="nm">1</span>   <span class="cm"># ← MUST change the variable!</span>
+
+<span class="fn">print</span>(<span class="st">"Liftoff! 🚀"</span>)</pre>
+    <div class="highlight-box" style="font-size:13px; margin-top:12px;">
+      ⚠️ You <strong>must</strong> change the variable inside the loop, otherwise the condition stays True forever — an <strong>infinite loop</strong>!
+    </div>
+  </div>
+  <div class="page-num">12 / 21</div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+  SLIDE 13 — WHILE LOOP TRACE + PATTERNS
+════════════════════════════════════════ -->
+<div class="slide content" style="padding:40px 58px;">
+  <h2>while Loop — How It Actually Works 🔍</h2>
+  <div class="grid-2" style="gap:24px; margin-top:6px;">
+    <div>
+      <pre style="font-size:13px;"><span class="var">countdown</span> <span class="op">=</span> <span class="nm">3</span>
+
+<span class="kw">while</span> <span class="var">countdown</span> <span class="op">&gt;</span> <span class="nm">0</span><span class="op">:</span>
+    <span class="fn">print</span>(<span class="var">countdown</span>)
+    <span class="var">countdown</span> <span class="op">-=</span> <span class="nm">1</span></pre>
+      <table class="trace-table" style="margin-top:12px;">
+        <tr><th>Check</th><th>countdown</th><th>3 &gt; 0?</th><th>Action</th></tr>
+        <tr><td>1st</td><td>3</td><td style="color:#059669; font-weight:700;">True</td><td>print 3, countdown→2</td></tr>
+        <tr><td>2nd</td><td>2</td><td style="color:#059669; font-weight:700;">True</td><td>print 2, countdown→1</td></tr>
+        <tr><td>3rd</td><td>1</td><td style="color:#059669; font-weight:700;">True</td><td>print 1, countdown→0</td></tr>
+        <tr><td>4th</td><td>0</td><td style="color:#ef4444; font-weight:700;">False</td><td>EXIT loop</td></tr>
+      </table>
+    </div>
+    <div>
+      <h3 style="margin-bottom:10px; font-size:17px;">Useful Pattern: Ask Until Valid</h3>
+      <pre style="font-size:13px;"><span class="var">answer</span> <span class="op">=</span> <span class="fn">input</span>(<span class="st">"Password: "</span>)
+
+<span class="kw">while</span> <span class="var">answer</span> <span class="op">!=</span> <span class="st">"python"</span><span class="op">:</span>
+    <span class="fn">print</span>(<span class="st">"Wrong! Try again."</span>)
+    <span class="var">answer</span> <span class="op">=</span> <span class="fn">input</span>(<span class="st">"Password: "</span>)
+
+<span class="fn">print</span>(<span class="st">"Correct! 🎉"</span>)</pre>
+      <div style="margin-top:12px; background:#fef9c3; border-radius:10px; padding:11px 16px; font-size:13px; color:#713f12; font-weight:600; border-left:3px solid #fde047;">
+        💡 A <strong>for loop</strong> would not work here — you don't know how many wrong guesses the user will make. This is why <strong>while</strong> exists!
+      </div>
+    </div>
+  </div>
+  <div class="page-num">13 / 21</div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+  SLIDE 14 — INFINITE LOOP DANGER
+════════════════════════════════════════ -->
+<div class="slide dark">
+  <h2 style="color:#f87171; margin-bottom:14px;">⚠️ The Infinite Loop — Most Common Mistake</h2>
+  <div class="grid-2" style="gap:22px;">
+    <div>
+      <div style="font-size:11px; font-weight:700; color:#ef4444; letter-spacing:2px; margin-bottom:10px;">DANGER — LOOPS FOREVER 💀</div>
+      <pre><span class="var">countdown</span> <span class="op">=</span> <span class="nm">5</span>
+
+<span class="kw">while</span> <span class="var">countdown</span> <span class="op">&gt;</span> <span class="nm">0</span><span class="op">:</span>
+    <span class="fn">print</span>(<span class="var">countdown</span>)
+    <span class="cm"># ← forgot: countdown -= 1 !!!</span>
+
+<span class="cm"># prints 5, 5, 5, 5, 5 ... forever</span>
+<span class="cm"># Press Ctrl+C to stop it!</span></pre>
+      <div style="margin-top:14px; background:#1e293b; border-radius:10px; padding:12px 16px; font-size:13px; color:#f87171; font-weight:600; border-left:3px solid #ef4444;">
+        ❌ <code style="font-family:monospace;">countdown</code> never changes → condition never becomes False → loops forever!
+      </div>
+    </div>
+    <div>
+      <div style="font-size:11px; font-weight:700; color:#34d399; letter-spacing:2px; margin-bottom:10px;">SAFE — ALWAYS MAKE PROGRESS ✅</div>
+      <pre><span class="var">countdown</span> <span class="op">=</span> <span class="nm">5</span>
+
+<span class="kw">while</span> <span class="var">countdown</span> <span class="op">&gt;</span> <span class="nm">0</span><span class="op">:</span>
+    <span class="fn">print</span>(<span class="var">countdown</span>)
+    <span class="var">countdown</span> <span class="op">-=</span> <span class="nm">1</span>  <span class="cm"># ← this line is essential!</span>
+
+<span class="cm"># prints 5, 4, 3, 2, 1 → done</span></pre>
+      <div style="margin-top:14px; background:#1e293b; border-radius:10px; padding:12px 16px; font-size:13px; color:#34d399; font-weight:600; border-left:3px solid #34d399;">
+        ✅ Every round, <code style="font-family:monospace;">countdown</code> gets smaller → eventually hits 0 → condition becomes False → loop stops safely.
+      </div>
+      <div style="margin-top:12px; background:#1e293b; border-radius:10px; padding:11px 16px; font-size:13px; color:#fbbf24; font-weight:600; border-left:3px solid #fbbf24;">
+        🆘 Stuck in an infinite loop? Press <strong>Ctrl + C</strong> in the terminal to force-stop it!
+      </div>
+    </div>
+  </div>
+  <div class="page-num">14 / 21</div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+  SLIDE 15 — break & continue (section intro)
+════════════════════════════════════════ -->
+<div class="slide section-intro">
+  <div class="panel red">
+    <div class="section-emoji">🎮</div>
+    <div class="section-label">break &amp; continue</div>
+    <div style="font-size:13px; margin-top:8px; opacity:0.85; text-align:center;">Control inside a loop</div>
+  </div>
+  <div class="body">
+    <h2>break &amp; continue — Remote Controls for Loops</h2>
+    <p style="margin-bottom:16px;">Two keywords let you take manual control of what happens during a loop:</p>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:14px;">
+      <div style="background:#fee2e2; border-radius:12px; padding:14px 18px; border-left:5px solid #dc2626;">
+        <div style="font-family:monospace; font-size:18px; font-weight:800; color:#991b1b; margin-bottom:6px;">break</div>
+        <div style="font-size:14px; color:#374151;"><strong>EXIT</strong> the entire loop immediately.<br>No more rounds. Done.</div>
+      </div>
+      <div style="background:#fef9c3; border-radius:12px; padding:14px 18px; border-left:5px solid #d97706;">
+        <div style="font-family:monospace; font-size:18px; font-weight:800; color:#92400e; margin-bottom:6px;">continue</div>
+        <div style="font-size:14px; color:#374151;"><strong>SKIP</strong> the rest of this round.<br>Jump to the next item.</div>
+      </div>
+    </div>
+    <pre style="font-size:13px;"><span class="cm"># break: stop when you find what you're looking for</span>
+<span class="kw">for</span> <span class="var">fruit</span> <span class="kw">in</span> <span class="op">[</span><span class="st">"apple"</span><span class="op">,</span> <span class="st">"banana"</span><span class="op">,</span> <span class="st">"mango"</span><span class="op">]</span><span class="op">:</span>
+    <span class="kw">if</span> <span class="var">fruit</span> <span class="op">==</span> <span class="st">"banana"</span><span class="op">:</span> <span class="kw">break</span>
+    <span class="fn">print</span>(<span class="var">fruit</span>)    <span class="cm"># only prints: apple</span></pre>
+  </div>
+  <div class="page-num">15 / 21</div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+  SLIDE 16 — break & continue IN ACTION
+════════════════════════════════════════ -->
+<div class="slide dark">
+  <h2 style="color:#fbbf24; margin-bottom:14px;">break &amp; continue — Side by Side 🔬</h2>
+  <div class="grid-2" style="gap:22px;">
+    <div>
+      <div style="font-size:11px; font-weight:700; color:#ef4444; letter-spacing:2px; margin-bottom:10px;">break — EXITS the whole loop</div>
+      <pre><span class="var">data</span> <span class="op">=</span> <span class="op">[</span><span class="nm">1</span><span class="op">,</span> <span class="nm">2</span><span class="op">,</span> <span class="op">-</span><span class="nm">99</span><span class="op">,</span> <span class="nm">4</span><span class="op">,</span> <span class="nm">5</span><span class="op">]</span>
+
+<span class="kw">for</span> <span class="var">x</span> <span class="kw">in</span> <span class="var">data</span><span class="op">:</span>
+    <span class="kw">if</span> <span class="var">x</span> <span class="op">==</span> <span class="op">-</span><span class="nm">99</span><span class="op">:</span>
+        <span class="kw">break</span>        <span class="cm"># stop everything</span>
+    <span class="fn">print</span>(<span class="var">x</span>)
+
+<span class="cm"># Prints: 1  2</span>
+<span class="cm"># (stops at -99, never reaches 4 or 5)</span></pre>
+      <div style="margin-top:14px; background:#1e293b; border-radius:10px; padding:10px 14px; font-size:13px; color:#f87171; font-weight:600; border-left:3px solid #ef4444;">
+        Use break to <strong>stop searching</strong> once you've found what you need.
+      </div>
+    </div>
+    <div>
+      <div style="font-size:11px; font-weight:700; color:#fbbf24; letter-spacing:2px; margin-bottom:10px;">continue — SKIPS this round, loop keeps going</div>
+      <pre><span class="var">data</span> <span class="op">=</span> <span class="op">[</span><span class="nm">1</span><span class="op">,</span> <span class="nm">2</span><span class="op">,</span> <span class="op">-</span><span class="nm">99</span><span class="op">,</span> <span class="nm">4</span><span class="op">,</span> <span class="nm">5</span><span class="op">]</span>
+
+<span class="kw">for</span> <span class="var">x</span> <span class="kw">in</span> <span class="var">data</span><span class="op">:</span>
+    <span class="kw">if</span> <span class="var">x</span> <span class="op">==</span> <span class="op">-</span><span class="nm">99</span><span class="op">:</span>
+        <span class="kw">continue</span>     <span class="cm"># skip -99, go next</span>
+    <span class="fn">print</span>(<span class="var">x</span>)
+
+<span class="cm"># Prints: 1  2  4  5</span>
+<span class="cm"># (-99 is skipped, 4 and 5 still run)</span></pre>
+      <div style="margin-top:14px; background:#1e293b; border-radius:10px; padding:10px 14px; font-size:13px; color:#fbbf24; font-weight:600; border-left:3px solid #d97706;">
+        Use continue to <strong>skip unwanted items</strong> while still processing the rest.
+      </div>
+    </div>
+  </div>
+  <div style="margin-top:14px; background:#1e293b; border-radius:10px; padding:11px 16px; font-size:13px; color:#94a3b8; border-left:3px solid #475569;">
+    🧠 Memory trick: <strong>break</strong> = "I'm done, go home" &nbsp;|&nbsp; <strong>continue</strong> = "skip this one, keep going"
+  </div>
+  <div class="page-num">16 / 21</div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+  SLIDE 17 — NESTED LOOPS (section intro)
+════════════════════════════════════════ -->
+<div class="slide section-intro">
+  <div class="panel violet">
+    <div class="section-emoji">🪆</div>
+    <div class="section-label">Nested Loops</div>
+    <div style="font-size:13px; margin-top:8px; opacity:0.85; text-align:center;">A loop inside a loop</div>
+  </div>
+  <div class="body">
+    <h2>Nested Loops — Outer × Inner</h2>
+    <p style="margin-bottom:14px;">A <strong>nested loop</strong> is a loop written inside another loop. For <em>every single round</em> of the outer loop, the inner loop runs <em>completely</em> from start to finish.</p>
+    <pre><span class="kw">for</span> <span class="var">i</span> <span class="kw">in</span> <span class="fn">range</span>(<span class="nm">1</span><span class="op">,</span> <span class="nm">4</span>)<span class="op">:</span>         <span class="cm"># outer: 1, 2, 3</span>
+    <span class="kw">for</span> <span class="var">j</span> <span class="kw">in</span> <span class="fn">range</span>(<span class="nm">1</span><span class="op">,</span> <span class="nm">4</span>)<span class="op">:</span>     <span class="cm"># inner: 1, 2, 3 (runs fully each outer round)</span>
+        <span class="fn">print</span>(<span class="st">f"({i},{j})"</span><span class="op">,</span> <span class="key">end</span><span class="op">=</span><span class="st">" "</span>)
+    <span class="fn">print</span>()            <span class="cm"># newline after inner completes</span>
+<span class="cm"># (1,1)(1,2)(1,3)</span>
+<span class="cm"># (2,1)(2,2)(2,3)</span>
+<span class="cm"># (3,1)(3,2)(3,3)   → 3×3 = 9 pairs total</span></pre>
+    <div class="highlight-box" style="font-size:13px; margin-top:12px;">
+      🕐 Think of a clock: the minute hand (inner) completes a full circle every time the hour hand (outer) moves one step.
+    </div>
+  </div>
+  <div class="page-num">17 / 21</div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+  SLIDE 18 — NESTED LOOPS IN ACTION
+════════════════════════════════════════ -->
+<div class="slide dark">
+  <h2 style="color:#a78bfa; margin-bottom:14px;">Nested Loops in Action — Patterns &amp; Tables 🔢</h2>
+  <div class="grid-2" style="gap:22px;">
+    <div>
+      <div style="font-size:11px; font-weight:700; color:#64748b; letter-spacing:2px; margin-bottom:10px;">MULTIPLICATION TABLE (3×3)</div>
+      <pre style="font-size:13px;"><span class="kw">for</span> <span class="var">row</span> <span class="kw">in</span> <span class="fn">range</span>(<span class="nm">1</span><span class="op">,</span> <span class="nm">4</span>)<span class="op">:</span>     <span class="cm"># 1, 2, 3</span>
+    <span class="kw">for</span> <span class="var">col</span> <span class="kw">in</span> <span class="fn">range</span>(<span class="nm">1</span><span class="op">,</span> <span class="nm">4</span>)<span class="op">:</span> <span class="cm"># 1, 2, 3</span>
+        <span class="fn">print</span>(<span class="st">f"<span style="color:#f472b6;">{</span><span style="color:#38bdf8;">row</span> <span class="op">*</span> <span style="color:#38bdf8;">col</span><span style="color:#f472b6;">}</span>"</span><span class="op">,</span> <span class="key">end</span><span class="op">=</span><span class="st">"\t"</span>)
+    <span class="fn">print</span>()
+
+<span class="cm"># 1  2  3</span>
+<span class="cm"># 2  4  6</span>
+<span class="cm"># 3  6  9</span></pre>
+    </div>
+    <div>
+      <div style="font-size:11px; font-weight:700; color:#64748b; letter-spacing:2px; margin-bottom:10px;">STAR TRIANGLE</div>
+      <pre style="font-size:13px;"><span class="var">rows</span> <span class="op">=</span> <span class="nm">5</span>
+
+<span class="kw">for</span> <span class="var">i</span> <span class="kw">in</span> <span class="fn">range</span>(<span class="nm">1</span><span class="op">,</span> <span class="var">rows</span> <span class="op">+</span> <span class="nm">1</span>)<span class="op">:</span>
+    <span class="kw">for</span> <span class="var">j</span> <span class="kw">in</span> <span class="fn">range</span>(<span class="var">i</span>)<span class="op">:</span>    <span class="cm"># grows each row</span>
+        <span class="fn">print</span>(<span class="st">"★"</span><span class="op">,</span> <span class="key">end</span><span class="op">=</span><span class="st">" "</span>)
+    <span class="fn">print</span>()
+
+<span class="cm"># ★</span>
+<span class="cm"># ★ ★</span>
+<span class="cm"># ★ ★ ★</span>
+<span class="cm"># ★ ★ ★ ★</span>
+<span class="cm"># ★ ★ ★ ★ ★</span></pre>
+      <div style="margin-top:14px; background:#1e293b; border-radius:10px; padding:11px 16px; font-size:13px; color:#a78bfa; font-weight:600; border-left:3px solid #6d28d9;">
+        🪆 The inner loop runs <code style="font-family:monospace;">i</code> times each row — so row 1 has 1 star, row 2 has 2, etc. The outer loop controls which row we're on.
+      </div>
+    </div>
+  </div>
+  <div class="page-num">18 / 21</div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+  SLIDE 19 — CHEAT SHEET
+════════════════════════════════════════ -->
+<div class="slide content" style="padding:36px 52px;">
+  <h2 style="margin-bottom:14px;">Today's Cheat Sheet 📋</h2>
+  <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:14px;">
+
+    <div>
+      <div style="font-size:11px; font-weight:800; color:#ea580c; letter-spacing:2px; margin-bottom:8px; text-transform:uppercase;">for loop</div>
+      <pre style="font-size:12px;"><span class="kw">for</span> <span class="var">item</span> <span class="kw">in</span> <span class="var">my_list</span><span class="op">:</span>
+    <span class="fn">print</span>(<span class="var">item</span>)
+
+<span class="kw">for</span> <span class="var">i</span> <span class="kw">in</span> <span class="fn">range</span>(<span class="nm">5</span>)<span class="op">:</span>
+    <span class="fn">print</span>(<span class="var">i</span>)  <span class="cm"># 0..4</span></pre>
+    </div>
+
+    <div>
+      <div style="font-size:11px; font-weight:800; color:#0284c7; letter-spacing:2px; margin-bottom:8px; text-transform:uppercase;">range()</div>
+      <pre style="font-size:12px;"><span class="fn">range</span>(<span class="nm">n</span>)          <span class="cm"># 0..n-1</span>
+<span class="fn">range</span>(<span class="nm">a</span><span class="op">,</span><span class="nm">b</span>)       <span class="cm"># a..b-1</span>
+<span class="fn">range</span>(<span class="nm">a</span><span class="op">,</span><span class="nm">b</span><span class="op">,</span><span class="var">step</span>)  <span class="cm"># skip</span>
+<span class="fn">range</span>(<span class="nm">5</span><span class="op">,</span><span class="nm">0</span><span class="op">,-</span><span class="nm">1</span>)    <span class="cm"># down</span></pre>
+    </div>
+
+    <div>
+      <div style="font-size:11px; font-weight:800; color:#059669; letter-spacing:2px; margin-bottom:8px; text-transform:uppercase;">Accumulator</div>
+      <pre style="font-size:12px;"><span class="var">total</span> <span class="op">=</span> <span class="nm">0</span>         <span class="cm"># before</span>
+<span class="kw">for</span> <span class="var">x</span> <span class="kw">in</span> <span class="var">nums</span><span class="op">:</span>
+    <span class="var">total</span> <span class="op">+=</span> <span class="var">x</span>    <span class="cm"># inside</span>
+<span class="fn">print</span>(<span class="var">total</span>)      <span class="cm"># after</span></pre>
+    </div>
+
+    <div>
+      <div style="font-size:11px; font-weight:800; color:#d97706; letter-spacing:2px; margin-bottom:8px; text-transform:uppercase;">while loop</div>
+      <pre style="font-size:12px;"><span class="var">x</span> <span class="op">=</span> <span class="nm">5</span>
+<span class="kw">while</span> <span class="var">x</span> <span class="op">&gt;</span> <span class="nm">0</span><span class="op">:</span>
+    <span class="fn">print</span>(<span class="var">x</span>)
+    <span class="var">x</span> <span class="op">-=</span> <span class="nm">1</span>    <span class="cm"># MUST change!</span></pre>
+    </div>
+
+    <div>
+      <div style="font-size:11px; font-weight:800; color:#dc2626; letter-spacing:2px; margin-bottom:8px; text-transform:uppercase;">break &amp; continue</div>
+      <pre style="font-size:12px;"><span class="kw">for</span> <span class="var">x</span> <span class="kw">in</span> <span class="var">items</span><span class="op">:</span>
+    <span class="kw">if</span> <span class="var">x</span> <span class="op">==</span> <span class="nm">0</span><span class="op">:</span>
+        <span class="kw">break</span>    <span class="cm"># EXIT loop</span>
+    <span class="kw">if</span> <span class="var">x</span> <span class="op">&lt;</span> <span class="nm">0</span><span class="op">:</span>
+        <span class="kw">continue</span> <span class="cm"># skip this</span></pre>
+    </div>
+
+    <div>
+      <div style="font-size:11px; font-weight:800; color:#6d28d9; letter-spacing:2px; margin-bottom:8px; text-transform:uppercase;">Nested loops</div>
+      <pre style="font-size:12px;"><span class="kw">for</span> <span class="var">i</span> <span class="kw">in</span> <span class="fn">range</span>(<span class="nm">3</span>)<span class="op">:</span>
+    <span class="kw">for</span> <span class="var">j</span> <span class="kw">in</span> <span class="fn">range</span>(<span class="nm">3</span>)<span class="op">:</span>
+        <span class="fn">print</span>(<span class="var">i</span><span class="op">*</span><span class="var">j</span><span class="op">,</span><span class="key">end</span><span class="op">=</span><span class="st">" "</span>)
+    <span class="fn">print</span>()  <span class="cm"># new row</span></pre>
+    </div>
+
+  </div>
+  <div class="highlight-box" style="margin-top:14px; font-size:13.5px;">
+    🧠 Quick guide: <strong>for</strong> = known count or list &nbsp;|&nbsp; <strong>while</strong> = unknown count &nbsp;|&nbsp; <strong>break</strong> = exit &nbsp;|&nbsp; <strong>continue</strong> = skip
+  </div>
+  <div class="page-num">19 / 21</div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+  SLIDE 20 — CODING SESSION PLAN
+════════════════════════════════════════ -->
+<div class="slide content" style="padding:36px 56px;">
+  <h2 style="margin-bottom:12px;">Today's Coding Session 💻</h2>
+  <p style="margin-bottom:12px; font-size:15px;">Open your <code style="background:#f3f4f6; padding:2px 8px; border-radius:6px; font-family:monospace;">day_4</code> folder. We build up loops from scratch — one small step at a time.</p>
+  <div style="display:flex; flex-direction:column; gap:8px;">
+    <div style="display:flex; align-items:center; gap:16px; background:#fff7ed; border-radius:12px; padding:11px 20px; border-left:4px solid #ea580c;">
+      <div style="font-size:22px;">🔄</div>
+      <div style="flex:1;"><div style="font-family:monospace; font-weight:700; color:#ea580c; font-size:14px;">01_for_loop_basics.py</div><div style="font-size:12px; color:#6b7280;">Loop variable · indented block · loop + if combo</div></div>
+      <span class="pill pill-orange">10 min</span>
+    </div>
+    <div style="display:flex; align-items:center; gap:16px; background:#eff6ff; border-radius:12px; padding:11px 20px; border-left:4px solid #0284c7;">
+      <div style="font-size:22px;">🔢</div>
+      <div style="flex:1;"><div style="font-family:monospace; font-weight:700; color:#0284c7; font-size:14px;">02_range.py</div><div style="font-size:12px; color:#6b7280;">range(n) · range(a,b) · range(a,b,step) · countdown · enumerate</div></div>
+      <span class="pill pill-blue">10 min</span>
+    </div>
+    <div style="display:flex; align-items:center; gap:16px; background:#f0fdf4; border-radius:12px; padding:11px 20px; border-left:4px solid #059669;">
+      <div style="font-size:22px;">🪣</div>
+      <div style="flex:1;"><div style="font-family:monospace; font-weight:700; color:#059669; font-size:14px;">03_accumulator.py</div><div style="font-size:12px; color:#6b7280;">Sum · count · find max · build a list · class report</div></div>
+      <span class="pill pill-green">12 min</span>
+    </div>
+    <div style="display:flex; align-items:center; gap:16px; background:#fffbeb; border-radius:12px; padding:11px 20px; border-left:4px solid #d97706;">
+      <div style="font-size:22px;">🔁</div>
+      <div style="flex:1;"><div style="font-family:monospace; font-weight:700; color:#d97706; font-size:14px;">04_while_loop.py</div><div style="font-size:12px; color:#6b7280;">Countdown · password retry · limited attempts · flag variable</div></div>
+      <span class="pill pill-amber">10 min</span>
+    </div>
+    <div style="display:flex; align-items:center; gap:16px; background:#fef2f2; border-radius:12px; padding:11px 20px; border-left:4px solid #dc2626;">
+      <div style="font-size:22px;">🎮</div>
+      <div style="flex:1;"><div style="font-family:monospace; font-weight:700; color:#dc2626; font-size:14px;">05_break_continue.py</div><div style="font-size:12px; color:#6b7280;">break · continue · side-by-side comparison · search with flag</div></div>
+      <span class="pill pill-red">8 min</span>
+    </div>
+    <div style="display:flex; align-items:center; gap:16px; background:#f5f3ff; border-radius:12px; padding:11px 20px; border-left:4px solid #6d28d9;">
+      <div style="font-size:22px;">🪆</div>
+      <div style="flex:1;"><div style="font-family:monospace; font-weight:700; color:#6d28d9; font-size:14px;">06_nested_loops.py</div><div style="font-size:12px; color:#6b7280;">Outer × inner concept · multiplication table · star patterns</div></div>
+      <span class="pill pill-violet">10 min</span>
+    </div>
+  </div>
+  <div class="page-num">20 / 21</div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+  SLIDE 21 — LET'S CODE!
+════════════════════════════════════════ -->
+<div class="slide hero" style="background: linear-gradient(135deg, #c2410c 0%, #dc2626 45%, #7c3aed 100%);">
+  <div class="blob blob1" style="background:#fed7aa;"></div>
+  <div class="blob blob2" style="background:#fecaca;"></div>
+  <div style="font-size:72px; line-height:1; margin-bottom:18px;">🔄</div>
+  <div class="slide-title" style="font-size:58px;">Time to Code!</div>
+  <div class="slide-subtitle">Open VS Code · open your <code style="background:rgba(255,255,255,0.25); padding:2px 10px; border-radius:6px; font-family:monospace;">day_4</code> folder · let's loop!</div>
+  <div style="margin-top:36px; display:flex; gap:10px; flex-wrap:wrap; justify-content:center;">
+    <div style="background:rgba(255,255,255,0.18); border-radius:10px; padding:10px 18px; font-family:monospace; font-size:13px; font-weight:700;">01_for_loop_basics.py</div>
+    <div style="background:rgba(255,255,255,0.18); border-radius:10px; padding:10px 18px; font-family:monospace; font-size:13px; font-weight:700;">02_range.py</div>
+    <div style="background:rgba(255,255,255,0.18); border-radius:10px; padding:10px 18px; font-family:monospace; font-size:13px; font-weight:700;">03_accumulator.py</div>
+    <div style="background:rgba(255,255,255,0.18); border-radius:10px; padding:10px 18px; font-family:monospace; font-size:13px; font-weight:700;">04_while_loop.py</div>
+    <div style="background:rgba(255,255,255,0.18); border-radius:10px; padding:10px 18px; font-family:monospace; font-size:13px; font-weight:700;">05_break_continue.py</div>
+    <div style="background:rgba(255,255,255,0.18); border-radius:10px; padding:10px 18px; font-family:monospace; font-size:13px; font-weight:700;">06_nested_loops.py</div>
+  </div>
+  <div style="margin-top:24px; font-size:14px; opacity:0.8; font-weight:600;">
+    ✨ Loops are the engine of every program. Once you get these, everything clicks.
+  </div>
+  <div class="page-num" style="color:rgba(255,255,255,0.45);">21 / 21</div>
+</div>
+
+</body>
+</html>
