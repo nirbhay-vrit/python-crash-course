@@ -1,0 +1,948 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Day 3: Conditions &amp; Loops 🐍</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800;900&family=Fira+Code:wght@400;600&display=swap');
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    @page { size: A4 landscape; margin: 0; }
+
+    body { font-family: 'Poppins', 'Segoe UI', sans-serif; background: #e8e8e8; }
+
+    .slide {
+      width: 297mm;
+      height: 210mm;
+      overflow: hidden;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      page-break-after: always;
+      break-after: page;
+    }
+    @media screen { .slide { margin: 20px auto; box-shadow: 0 8px 40px rgba(0,0,0,0.18); } }
+
+    .blob { position: absolute; border-radius: 50%; opacity: 0.15; pointer-events: none; }
+
+    /* ── Themes ─── */
+    .hero {
+      background: linear-gradient(135deg, #0f766e 0%, #0284c7 60%, #4f46e5 100%);
+      color: white; justify-content: center; align-items: center; text-align: center; padding: 60px;
+    }
+    .hero .blob1 { width: 280px; height: 280px; background: white; top: -80px; right: -60px; }
+    .hero .blob2 { width: 200px; height: 200px; background: #99f6e4; bottom: -60px; left: -40px; }
+
+    .section-intro { background: white; flex-direction: row; }
+    .section-intro .panel {
+      width: 36%; display: flex; flex-direction: column;
+      justify-content: center; align-items: center; padding: 50px 28px; color: white;
+    }
+    .section-intro .body { width: 64%; padding: 44px 52px; display: flex; flex-direction: column; justify-content: center; }
+
+    .content { background: white; padding: 48px 62px; }
+    .dark { background: #0f172a; color: #e2e8f0; padding: 46px 62px; }
+
+    /* ── Gradients ─── */
+    .purple { background: linear-gradient(135deg, #4f46e5, #7c3aed); }
+    .green  { background: linear-gradient(135deg, #059669, #10b981); }
+    .blue   { background: linear-gradient(135deg, #0284c7, #0ea5e9); }
+    .amber  { background: linear-gradient(135deg, #d97706, #f59e0b); }
+    .teal   { background: linear-gradient(135deg, #0d9488, #14b8a6); }
+    .violet { background: linear-gradient(135deg, #6d28d9, #8b5cf6); }
+    .rose   { background: linear-gradient(135deg, #be185d, #e11d48); }
+    .indigo { background: linear-gradient(135deg, #3730a3, #4f46e5); }
+    .cyan   { background: linear-gradient(135deg, #0e7490, #0891b2); }
+
+    /* ── Typography ─── */
+    .slide-tag { font-size: 11px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; opacity: 0.7; margin-bottom: 10px; }
+    .slide-title { font-size: 52px; font-weight: 900; line-height: 1.1; }
+    .slide-subtitle { font-size: 22px; font-weight: 400; opacity: 0.85; margin-top: 14px; }
+    .section-emoji { font-size: 88px; line-height: 1; margin-bottom: 14px; }
+    .section-label { font-size: 19px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; }
+
+    h2 { font-size: 31px; font-weight: 800; color: #1e1b4b; margin-bottom: 20px; }
+    h3 { font-size: 20px; font-weight: 700; color: #1e1b4b; margin-bottom: 10px; }
+    .dark h2 { color: #e2e8f0; }
+    .dark h3 { color: #94a3b8; }
+
+    p { font-size: 16px; line-height: 1.65; color: #374151; }
+    .dark p { color: #cbd5e1; }
+
+    ul { list-style: none; margin-top: 6px; }
+    ul li { font-size: 16px; color: #374151; padding: 5px 0; display: flex; align-items: flex-start; gap: 10px; line-height: 1.5; }
+    .dark ul li { color: #cbd5e1; }
+    ul li .icon { flex-shrink: 0; font-size: 17px; margin-top: 1px; }
+
+    /* ── Code ─── */
+    pre {
+      background: #0f172a; border-radius: 12px; padding: 18px 22px;
+      font-family: 'Fira Code', 'Consolas', monospace; font-size: 14px;
+      line-height: 1.75; color: #e2e8f0; overflow: hidden;
+    }
+    .dark pre { background: #1e293b; }
+    pre .kw  { color: #c084fc; }
+    pre .fn  { color: #34d399; }
+    pre .st  { color: #fbbf24; }
+    pre .cm  { color: #4b5563; }
+    pre .nm  { color: #38bdf8; }
+    pre .op  { color: #f472b6; }
+    pre .var { color: #e2e8f0; }
+    pre .key { color: #fb923c; }
+
+    /* ── Layouts ─── */
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+    .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+    .grid-4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 14px; }
+
+    /* ── Cards ─── */
+    .card { background: #f8fafc; border-radius: 14px; padding: 18px 22px; border-left: 5px solid #4f46e5; }
+    .card.green-border  { border-left-color: #059669; }
+    .card.blue-border   { border-left-color: #0284c7; }
+    .card.amber-border  { border-left-color: #d97706; }
+    .card.teal-border   { border-left-color: #0d9488; }
+    .card.violet-border { border-left-color: #6d28d9; }
+    .card.rose-border   { border-left-color: #be185d; }
+    .card.cyan-border   { border-left-color: #0e7490; }
+
+    /* ── Pills ─── */
+    .pill { display: inline-block; padding: 4px 14px; border-radius: 999px; font-size: 12px; font-weight: 700; }
+    .pill-purple { background: #ede9fe; color: #5b21b6; }
+    .pill-green  { background: #d1fae5; color: #065f46; }
+    .pill-blue   { background: #dbeafe; color: #1e40af; }
+    .pill-amber  { background: #fef3c7; color: #92400e; }
+    .pill-teal   { background: #ccfbf1; color: #134e4a; }
+    .pill-violet { background: #ede9fe; color: #4c1d95; }
+    .pill-rose   { background: #ffe4e6; color: #9f1239; }
+    .pill-cyan   { background: #cffafe; color: #164e63; }
+
+    /* ── Highlight box ─── */
+    .highlight-box {
+      background: #fef9c3; border: 2px solid #fde047; border-radius: 10px;
+      padding: 12px 18px; font-size: 15px; color: #713f12; margin-top: 16px; font-weight: 600;
+    }
+
+    /* ── Compare columns ─── */
+    .compare-row { display: flex; gap: 18px; margin-top: 14px; }
+    .compare-col { flex: 1; background: #f8fafc; border-radius: 12px; padding: 16px 20px; }
+    .compare-col.good { border-top: 4px solid #10b981; }
+    .compare-col.bad  { border-top: 4px solid #ef4444; }
+    .compare-col h4 { font-size: 14px; font-weight: 700; margin-bottom: 10px; }
+    .compare-col.good h4 { color: #065f46; }
+    .compare-col.bad  h4 { color: #991b1b; }
+    .compare-col ul li { font-size: 13.5px; padding: 3px 0; }
+
+    /* ── Flow diagram ─── */
+    .flow-box {
+      border-radius: 10px; padding: 10px 18px; text-align: center;
+      font-family: 'Fira Code', monospace; font-size: 13px; font-weight: 700;
+    }
+    .flow-diamond {
+      background: #fef3c7; border: 2px solid #d97706; color: #92400e;
+    }
+    .flow-action {
+      background: #dbeafe; border: 2px solid #3b82f6; color: #1e40af;
+    }
+    .flow-skip {
+      background: #f1f5f9; border: 2px dashed #94a3b8; color: #64748b;
+    }
+    .flow-arrow { text-align: center; font-size: 18px; color: #94a3b8; line-height: 1.2; }
+
+    /* ── Operator grid ─── */
+    .op-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; margin-top: 14px; }
+    .op-cell { background: #f8fafc; border-radius: 10px; padding: 14px 10px; text-align: center; }
+    .op-cell .sym  { font-family: 'Fira Code', monospace; font-size: 22px; font-weight: 700; color: #4f46e5; }
+    .op-cell .desc { font-size: 11px; color: #6b7280; margin-top: 3px; }
+    .op-cell .ex   { font-family: 'Fira Code', monospace; font-size: 11px; color: #374151; margin-top: 5px; }
+
+    /* ── Truth table ─── */
+    .truth-table { border-collapse: collapse; width: 100%; margin-top: 12px; }
+    .truth-table th { background: #1e293b; color: #94a3b8; font-family: 'Fira Code', monospace; font-size: 13px; padding: 8px 14px; text-align: center; }
+    .truth-table td { font-family: 'Fira Code', monospace; font-size: 13px; padding: 7px 14px; text-align: center; border-bottom: 1px solid #f1f5f9; }
+    .truth-table tr:nth-child(even) td { background: #f8fafc; }
+    .t  { color: #059669; font-weight: 700; }
+    .f  { color: #ef4444; font-weight: 700; }
+
+    /* ── Page number ─── */
+    .page-num { position: absolute; bottom: 16px; right: 26px; font-size: 11px; font-weight: 600; opacity: 0.32; letter-spacing: 1px; }
+  </style>
+</head>
+<body>
+
+<!-- ════════════════════════════════════════
+  SLIDE 1 — TITLE
+════════════════════════════════════════ -->
+<div class="slide hero">
+  <div class="blob blob1"></div>
+  <div class="blob blob2"></div>
+  <div class="slide-tag">Python Crash Course · Day 3</div>
+  <div class="slide-title">Conditions &amp; Loops</div>
+  <div class="slide-subtitle">if · elif · else · and · or · not · for · while</div>
+  <div style="margin-top:30px; font-size:56px; line-height:1;">🔀</div>
+  <div style="margin-top:26px; font-size:12px; opacity:0.6; font-weight:600; letter-spacing:2px; text-transform:uppercase;">
+    Make Python think, decide, and repeat
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+  SLIDE 2 — AGENDA
+════════════════════════════════════════ -->
+<div class="slide content" style="padding:40px 58px;">
+  <h2 style="margin-bottom:14px;">Today's Roadmap 🗺️</h2>
+  <div style="display:grid; grid-template-columns:1fr 1fr 1fr 1fr; gap:12px; margin-bottom:14px;">
+    <div class="card" style="border-left-color:#0d9488;">
+      <div style="font-size:24px; margin-bottom:6px;">🔀</div>
+      <div style="font-weight:800; font-size:15px; color:#1e1b4b;">if / else</div>
+      <div style="font-size:12px; color:#6b7280; margin-top:3px;">Two-path decisions</div>
+    </div>
+    <div class="card blue-border">
+      <div style="font-size:24px; margin-bottom:6px;">🎛️</div>
+      <div style="font-weight:800; font-size:15px; color:#1e1b4b;">elif</div>
+      <div style="font-size:12px; color:#6b7280; margin-top:3px;">Multiple choices</div>
+    </div>
+    <div class="card amber-border">
+      <div style="font-size:24px; margin-bottom:6px;">🔗</div>
+      <div style="font-weight:800; font-size:15px; color:#1e1b4b;">and · or · not</div>
+      <div style="font-size:12px; color:#6b7280; margin-top:3px;">Combining conditions</div>
+    </div>
+    <div class="card violet-border">
+      <div style="font-size:24px; margin-bottom:6px;">🪆</div>
+      <div style="font-weight:800; font-size:15px; color:#1e1b4b;">Nested if</div>
+      <div style="font-size:12px; color:#6b7280; margin-top:3px;">Decisions inside decisions</div>
+    </div>
+  </div>
+  <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px;">
+    <div class="card green-border">
+      <div style="font-size:24px; margin-bottom:6px;">💡</div>
+      <div style="font-weight:800; font-size:15px; color:#1e1b4b;">Truthy &amp; Falsy</div>
+      <div style="font-size:12px; color:#6b7280; margin-top:3px;">What Python treats as True/False</div>
+    </div>
+    <div class="card cyan-border">
+      <div style="font-size:24px; margin-bottom:6px;">🔄</div>
+      <div style="font-weight:800; font-size:15px; color:#1e1b4b;">for loop</div>
+      <div style="font-size:12px; color:#6b7280; margin-top:3px;">Loop over sequences</div>
+    </div>
+    <div class="card rose-border">
+      <div style="font-size:24px; margin-bottom:6px;">♾️</div>
+      <div style="font-weight:800; font-size:15px; color:#1e1b4b;">while loop</div>
+      <div style="font-size:12px; color:#6b7280; margin-top:3px;">Loop until condition changes</div>
+    </div>
+  </div>
+  <div class="highlight-box" style="margin-top:14px; font-size:14px;">
+    💡 Goal: by the end of today your programs can <strong>make decisions</strong> and <strong>repeat actions</strong> — they actually feel alive!
+  </div>
+  <div class="page-num">2 / 21</div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+  SLIDE 3 — QUICK RECAP
+════════════════════════════════════════ -->
+<div class="slide section-intro">
+  <div class="panel teal">
+    <div class="section-emoji">⏮️</div>
+    <div class="section-label">Quick Recap</div>
+    <div style="font-size:13px; margin-top:8px; opacity:0.85; text-align:center;">Day 2 highlights</div>
+  </div>
+  <div class="body">
+    <h2>What We Already Know</h2>
+    <ul>
+      <li><span class="icon">📦</span><span><strong>Variables</strong> — labelled boxes that store any kind of data</span></li>
+      <li><span class="icon">🔤</span><span><strong>Strings</strong> — text, f-strings, .upper() .lower() len()</span></li>
+      <li><span class="icon">🔢</span><span><strong>Numbers</strong> — int &amp; float, all arithmetic operators, int(input())</span></li>
+      <li><span class="icon">✅</span><span><strong>Booleans</strong> — True / False; comparison operators ==  !=  &gt;  &lt;  &gt;=  &lt;=</span></li>
+      <li><span class="icon">📋</span><span><strong>Lists, Tuples, Dicts</strong> — store multiple values, access by index or key</span></li>
+    </ul>
+    <div class="highlight-box">✅ All of that is still available today. We build on top of it!</div>
+  </div>
+  <div class="page-num">3 / 21</div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+  SLIDE 4 — WHAT ARE CONDITIONS?
+════════════════════════════════════════ -->
+<div class="slide content">
+  <h2>What are Conditions? 🔀</h2>
+  <div class="grid-2" style="gap:28px; margin-top:8px;">
+    <div>
+      <p>Every day you make decisions based on conditions:</p>
+      <ul style="margin-top:14px;">
+        <li><span class="icon">🌧️</span><span><em>If</em> it's raining, take an umbrella</span></li>
+        <li><span class="icon">🚦</span><span><em>If</em> the light is red, stop — <em>else</em> go</span></li>
+        <li><span class="icon">🎓</span><span><em>If</em> score &ge; 60, you pass — <em>else</em> you fail</span></li>
+        <li><span class="icon">🔑</span><span><em>If</em> password is correct, log in</span></li>
+      </ul>
+      <p style="margin-top:14px;">Python uses <strong>conditions</strong> the same way — a question with a <strong>True or False</strong> answer determines what code runs.</p>
+      <div class="highlight-box" style="font-size:13.5px;">
+        🧠 Conditions turn data into <strong>decisions</strong>. This is where your programs start to feel intelligent!
+      </div>
+    </div>
+    <div>
+      <div style="display:flex; flex-direction:column; align-items:center; gap:6px; padding-top:8px;">
+        <div class="flow-box flow-diamond" style="width:70%; padding:14px;">Is it raining?</div>
+        <div class="flow-arrow">▼</div>
+        <div style="display:flex; gap:20px; width:100%; justify-content:center;">
+          <div style="display:flex; flex-direction:column; align-items:center; gap:4px;">
+            <div style="font-size:12px; font-weight:700; color:#059669;">YES (True)</div>
+            <div class="flow-box flow-action" style="width:130px;">Take umbrella ☂️</div>
+          </div>
+          <div style="display:flex; flex-direction:column; align-items:center; gap:4px;">
+            <div style="font-size:12px; font-weight:700; color:#ef4444;">NO (False)</div>
+            <div class="flow-box flow-skip" style="width:130px;">No umbrella ☀️</div>
+          </div>
+        </div>
+        <div class="flow-arrow" style="margin-top:6px;">▼</div>
+        <div class="flow-box" style="background:#f0fdf4; border:2px solid #10b981; color:#065f46; width:70%; padding:12px;">Continue with your day</div>
+      </div>
+    </div>
+  </div>
+  <div class="page-num">4 / 21</div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+  SLIDE 5 — IF STATEMENT (section intro)
+════════════════════════════════════════ -->
+<div class="slide section-intro">
+  <div class="panel teal">
+    <div class="section-emoji">🔀</div>
+    <div class="section-label">if / else</div>
+    <div style="font-size:13px; margin-top:8px; opacity:0.85; text-align:center;">The foundation</div>
+  </div>
+  <div class="body">
+    <h2>The if Statement — Two Paths</h2>
+    <p style="margin-bottom:14px;">The <strong>if</strong> block runs only when the condition is <strong>True</strong>. The <strong>else</strong> block runs when it's <strong>False</strong>.</p>
+    <pre><span class="cm"># Anatomy of an if/else</span>
+<span class="kw">if</span> <span class="var">condition</span><span class="op">:</span>
+    <span class="cm"># runs when condition is TRUE</span>
+    <span class="fn">print</span>(<span class="st">"Yes!"</span>)
+<span class="kw">else</span><span class="op">:</span>
+    <span class="cm"># runs when condition is FALSE</span>
+    <span class="fn">print</span>(<span class="st">"No!"</span>)
+
+<span class="cm"># Real example</span>
+<span class="var">age</span> <span class="op">=</span> <span class="nm">16</span>
+
+<span class="kw">if</span> <span class="var">age</span> <span class="op">&gt;=</span> <span class="nm">18</span><span class="op">:</span>
+    <span class="fn">print</span>(<span class="st">"You can vote! 🗳️"</span>)
+<span class="kw">else</span><span class="op">:</span>
+    <span class="fn">print</span>(<span class="st">"Too young to vote."</span>)</pre>
+    <div class="highlight-box" style="font-size:13px; margin-top:12px;">
+      ⚠️ The <strong>colon :</strong> at the end of <code style="background:#fde047;padding:0 4px;border-radius:3px;">if</code> and <code style="background:#fde047;padding:0 4px;border-radius:3px;">else</code> is required. The body must be <strong>indented</strong> with 4 spaces!
+    </div>
+  </div>
+  <div class="page-num">5 / 21</div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+  SLIDE 6 — IF / ELSE IN ACTION
+════════════════════════════════════════ -->
+<div class="slide dark">
+  <h2 style="color:#2dd4bf; margin-bottom:14px;">if / else in Action 💡</h2>
+  <div class="grid-2" style="gap:22px;">
+    <div>
+      <div style="font-size:11px; font-weight:700; color:#64748b; letter-spacing:2px; margin-bottom:10px;">EXAMPLE 1 — PASSWORD CHECKER</div>
+      <pre><span class="var">password</span> <span class="op">=</span> <span class="fn">input</span>(<span class="st">"Enter password: "</span>)
+
+<span class="kw">if</span> <span class="var">password</span> <span class="op">==</span> <span class="st">"python123"</span><span class="op">:</span>
+    <span class="fn">print</span>(<span class="st">"✅ Access granted!"</span>)
+<span class="kw">else</span><span class="op">:</span>
+    <span class="fn">print</span>(<span class="st">"❌ Wrong password!"</span>)</pre>
+      <div style="margin-top:14px; background:#1e293b; border-radius:10px; padding:12px 16px; font-size:13px; color:#2dd4bf; font-weight:600; border-left:3px solid #2dd4bf;">
+        💡 <code style="font-family:monospace;">==</code> compares (asks "are these equal?"). <code style="font-family:monospace;">=</code> assigns. Don't mix them up!
+      </div>
+    </div>
+    <div>
+      <div style="font-size:11px; font-weight:700; color:#64748b; letter-spacing:2px; margin-bottom:10px;">EXAMPLE 2 — INDENTATION RULES</div>
+      <pre><span class="var">score</span> <span class="op">=</span> <span class="nm">75</span>
+
+<span class="kw">if</span> <span class="var">score</span> <span class="op">&gt;=</span> <span class="nm">60</span><span class="op">:</span>
+    <span class="fn">print</span>(<span class="st">"You passed! 🎉"</span>)   <span class="cm"># ← inside if</span>
+    <span class="fn">print</span>(<span class="st">"Well done!"</span>)        <span class="cm"># ← still inside if</span>
+<span class="kw">else</span><span class="op">:</span>
+    <span class="fn">print</span>(<span class="st">"You failed. 😔"</span>)    <span class="cm"># ← inside else</span>
+
+<span class="fn">print</span>(<span class="st">"Exam is over."</span>)       <span class="cm"># ← NOT indented, always runs</span></pre>
+      <div style="margin-top:14px; background:#1e293b; border-radius:10px; padding:12px 16px; font-size:13px; color:#fbbf24; font-weight:600; border-left:3px solid #fbbf24;">
+        ⚠️ Python uses indentation (4 spaces) to know what is "inside" a block. Wrong indentation = error!
+      </div>
+    </div>
+  </div>
+  <div class="page-num">6 / 21</div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+  SLIDE 7 — ELIF (section intro)
+════════════════════════════════════════ -->
+<div class="slide section-intro">
+  <div class="panel blue">
+    <div class="section-emoji">🎛️</div>
+    <div class="section-label">elif</div>
+    <div style="font-size:13px; margin-top:8px; opacity:0.85; text-align:center;">Multiple choices</div>
+  </div>
+  <div class="body">
+    <h2>elif — More Than Two Paths</h2>
+    <p style="margin-bottom:14px;"><strong>elif</strong> stands for "else if". It adds more branches — Python checks them <em>one at a time from top to bottom</em>, and runs the FIRST one that is True.</p>
+    <pre><span class="var">score</span> <span class="op">=</span> <span class="nm">82</span>
+
+<span class="kw">if</span>   <span class="var">score</span> <span class="op">&gt;=</span> <span class="nm">90</span><span class="op">:</span>  <span class="fn">print</span>(<span class="st">"A"</span>)   <span class="cm"># 90–100</span>
+<span class="kw">elif</span> <span class="var">score</span> <span class="op">&gt;=</span> <span class="nm">80</span><span class="op">:</span>  <span class="fn">print</span>(<span class="st">"B"</span>)   <span class="cm"># 80–89  ← runs for 82</span>
+<span class="kw">elif</span> <span class="var">score</span> <span class="op">&gt;=</span> <span class="nm">70</span><span class="op">:</span>  <span class="fn">print</span>(<span class="st">"C"</span>)   <span class="cm"># 70–79</span>
+<span class="kw">elif</span> <span class="var">score</span> <span class="op">&gt;=</span> <span class="nm">60</span><span class="op">:</span>  <span class="fn">print</span>(<span class="st">"D"</span>)   <span class="cm"># 60–69</span>
+<span class="kw">else</span><span class="op">:</span>              <span class="fn">print</span>(<span class="st">"F"</span>)   <span class="cm"># below 60</span></pre>
+    <div class="highlight-box" style="font-size:13px; margin-top:12px;">
+      🔑 You can have as many <code style="background:#fde047;padding:0 4px;border-radius:3px;">elif</code> branches as you need. The <code style="background:#fde047;padding:0 4px;border-radius:3px;">else</code> at the end is optional — it catches everything that didn't match.
+    </div>
+  </div>
+  <div class="page-num">7 / 21</div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+  SLIDE 8 — ELIF IN ACTION
+════════════════════════════════════════ -->
+<div class="slide content">
+  <h2>elif in Action 🚦</h2>
+  <div class="grid-2" style="gap:22px; margin-top:8px;">
+    <div>
+      <h3 style="margin-bottom:12px;">Traffic Light</h3>
+      <pre><span class="var">light</span> <span class="op">=</span> <span class="fn">input</span>(<span class="st">"Colour? "</span>)<span class="op">.</span><span class="fn">lower</span>()
+
+<span class="kw">if</span> <span class="var">light</span> <span class="op">==</span> <span class="st">"red"</span><span class="op">:</span>
+    <span class="fn">print</span>(<span class="st">"STOP! 🔴"</span>)
+<span class="kw">elif</span> <span class="var">light</span> <span class="op">==</span> <span class="st">"yellow"</span><span class="op">:</span>
+    <span class="fn">print</span>(<span class="st">"Get ready... 🟡"</span>)
+<span class="kw">elif</span> <span class="var">light</span> <span class="op">==</span> <span class="st">"green"</span><span class="op">:</span>
+    <span class="fn">print</span>(<span class="st">"GO! 🟢"</span>)
+<span class="kw">else</span><span class="op">:</span>
+    <span class="fn">print</span>(<span class="st">"Unknown colour!"</span>)</pre>
+      <div style="margin-top:10px; background:#dbeafe; border-radius:10px; padding:10px 14px; font-size:13px; color:#1e40af; font-weight:600; border-left:4px solid #3b82f6;">
+        💡 <code style="font-family:monospace;">.lower()</code> converts input to lowercase so "Red", "RED", "red" all match!
+      </div>
+    </div>
+    <div>
+      <h3 style="margin-bottom:12px;">Shortcut: <code style="font-family:monospace; font-size:17px;">in</code> with a list</h3>
+      <pre><span class="var">month</span> <span class="op">=</span> <span class="fn">int</span>(<span class="fn">input</span>(<span class="st">"Month (1–12): "</span>))
+
+<span class="kw">if</span> <span class="var">month</span> <span class="kw">in</span> <span class="op">[</span><span class="nm">12</span><span class="op">,</span> <span class="nm">1</span><span class="op">,</span> <span class="nm">2</span><span class="op">]</span><span class="op">:</span>
+    <span class="fn">print</span>(<span class="st">"Winter ❄️"</span>)
+<span class="kw">elif</span> <span class="var">month</span> <span class="kw">in</span> <span class="op">[</span><span class="nm">3</span><span class="op">,</span> <span class="nm">4</span><span class="op">,</span> <span class="nm">5</span><span class="op">]</span><span class="op">:</span>
+    <span class="fn">print</span>(<span class="st">"Spring 🌸"</span>)
+<span class="kw">elif</span> <span class="var">month</span> <span class="kw">in</span> <span class="op">[</span><span class="nm">6</span><span class="op">,</span> <span class="nm">7</span><span class="op">,</span> <span class="nm">8</span><span class="op">]</span><span class="op">:</span>
+    <span class="fn">print</span>(<span class="st">"Summer ☀️"</span>)
+<span class="kw">else</span><span class="op">:</span>
+    <span class="fn">print</span>(<span class="st">"Autumn 🍂"</span>)</pre>
+      <div style="margin-top:10px; background:#d1fae5; border-radius:10px; padding:10px 14px; font-size:13px; color:#065f46; font-weight:600; border-left:4px solid #059669;">
+        ✨ <code style="font-family:monospace;">value in [a, b, c]</code> is a clean way to check multiple values in one line!
+      </div>
+    </div>
+  </div>
+  <div class="page-num">8 / 21</div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+  SLIDE 9 — LOGICAL OPERATORS (section intro)
+════════════════════════════════════════ -->
+<div class="slide section-intro">
+  <div class="panel amber">
+    <div class="section-emoji">🔗</div>
+    <div class="section-label">Logical Operators</div>
+    <div style="font-size:13px; margin-top:8px; opacity:0.85; text-align:center;">and · or · not</div>
+  </div>
+  <div class="body">
+    <h2>Combining Conditions</h2>
+    <p style="margin-bottom:16px;">What if you need to check <strong>two things at once</strong>? Logical operators let you combine conditions!</p>
+    <div class="op-grid">
+      <div class="op-cell" style="background:#d1fae5;">
+        <div class="sym" style="color:#059669;">and</div>
+        <div class="desc">BOTH must be True</div>
+        <div class="ex">age &gt;= 18 and has_id</div>
+      </div>
+      <div class="op-cell" style="background:#dbeafe;">
+        <div class="sym" style="color:#0284c7;">or</div>
+        <div class="desc">AT LEAST ONE True</div>
+        <div class="ex">is_member or has_coupon</div>
+      </div>
+      <div class="op-cell" style="background:#ffe4e6;">
+        <div class="sym" style="color:#be185d;">not</div>
+        <div class="desc">FLIPS True ↔ False</div>
+        <div class="ex">not is_raining</div>
+      </div>
+    </div>
+    <pre style="margin-top:14px;"><span class="var">age</span>    <span class="op">=</span> <span class="nm">20</span>
+<span class="var">has_id</span> <span class="op">=</span> <span class="nm">True</span>
+
+<span class="kw">if</span> <span class="var">age</span> <span class="op">&gt;=</span> <span class="nm">18</span> <span class="kw">and</span> <span class="var">has_id</span><span class="op">:</span>
+    <span class="fn">print</span>(<span class="st">"Welcome! You may enter. ✅"</span>)
+<span class="kw">else</span><span class="op">:</span>
+    <span class="fn">print</span>(<span class="st">"Entry denied. ❌"</span>)</pre>
+  </div>
+  <div class="page-num">9 / 21</div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+  SLIDE 10 — AND / OR / NOT IN DEPTH
+════════════════════════════════════════ -->
+<div class="slide dark">
+  <h2 style="color:#fbbf24; margin-bottom:14px;">and · or · not — In Depth 🔬</h2>
+  <div class="grid-2" style="gap:22px;">
+    <div>
+      <pre style="font-size:13px;"><span class="cm"># AND — both must be True</span>
+<span class="var">is_member</span>   <span class="op">=</span> <span class="nm">True</span>
+<span class="var">has_points</span>  <span class="op">=</span> <span class="nm">False</span>
+
+<span class="kw">if</span> <span class="var">is_member</span> <span class="kw">and</span> <span class="var">has_points</span><span class="op">:</span>
+    <span class="fn">print</span>(<span class="st">"Free gift! 🎁"</span>)   <span class="cm"># won't run — has_points is False</span>
+
+<span class="cm"># OR — at least one True</span>
+<span class="kw">if</span> <span class="var">is_member</span> <span class="kw">or</span> <span class="var">has_points</span><span class="op">:</span>
+    <span class="fn">print</span>(<span class="st">"You get a discount!"</span>) <span class="cm"># runs — is_member is True</span>
+
+<span class="cm"># NOT — flips the boolean</span>
+<span class="var">is_raining</span> <span class="op">=</span> <span class="nm">False</span>
+<span class="kw">if</span> <span class="kw">not</span> <span class="var">is_raining</span><span class="op">:</span>
+    <span class="fn">print</span>(<span class="st">"Great day for a walk! ☀️"</span>)</pre>
+    </div>
+    <div>
+      <div style="font-size:11px; font-weight:700; color:#64748b; letter-spacing:2px; margin-bottom:10px;">TRUTH TABLE</div>
+      <table class="truth-table">
+        <tr><th>A</th><th>B</th><th>A and B</th><th>A or B</th><th>not A</th></tr>
+        <tr><td class="t">True</td><td class="t">True</td><td class="t">True</td><td class="t">True</td><td class="f">False</td></tr>
+        <tr><td class="t">True</td><td class="f">False</td><td class="f">False</td><td class="t">True</td><td class="f">False</td></tr>
+        <tr><td class="f">False</td><td class="t">True</td><td class="f">False</td><td class="t">True</td><td class="t">True</td></tr>
+        <tr><td class="f">False</td><td class="f">False</td><td class="f">False</td><td class="f">False</td><td class="t">True</td></tr>
+      </table>
+      <div style="margin-top:14px; background:#1e293b; border-radius:10px; padding:11px 16px; font-size:13px; color:#fbbf24; font-weight:600; border-left:3px solid #fbbf24;">
+        🧠 <strong>and</strong> is strict — both must pass. <strong>or</strong> is generous — one is enough. <strong>not</strong> reverses the answer!
+      </div>
+    </div>
+  </div>
+  <div class="page-num">10 / 21</div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+  SLIDE 11 — TRUTHY & FALSY
+════════════════════════════════════════ -->
+<div class="slide content">
+  <h2>Truthy &amp; Falsy Values 💡</h2>
+  <p style="margin-bottom:16px;">Python doesn't need an actual <code style="font-family:monospace; background:#f3f4f6; padding:2px 6px; border-radius:4px;">True</code> or <code style="font-family:monospace; background:#f3f4f6; padding:2px 6px; border-radius:4px;">False</code> in a condition. Every value has a "truthiness"!</p>
+  <div class="grid-2" style="gap:22px; margin-top:4px;">
+    <div>
+      <div style="background:#fef2f2; border-radius:14px; padding:18px 22px; border-top:4px solid #ef4444;">
+        <div style="font-size:15px; font-weight:800; color:#991b1b; margin-bottom:12px;">😴 FALSY — acts like False</div>
+        <pre style="font-size:13px;"><span class="fn">bool</span>(<span class="nm">0</span>)        <span class="cm"># False — zero</span>
+<span class="fn">bool</span>(<span class="nm">0.0</span>)      <span class="cm"># False — zero float</span>
+<span class="fn">bool</span>(<span class="st">""</span>)        <span class="cm"># False — empty string</span>
+<span class="fn">bool</span>(<span class="op">[]</span>)        <span class="cm"># False — empty list</span>
+<span class="fn">bool</span>(<span class="op">{}</span>)        <span class="cm"># False — empty dict</span>
+<span class="fn">bool</span>(<span class="nm">None</span>)      <span class="cm"># False — no value at all</span></pre>
+      </div>
+    </div>
+    <div>
+      <div style="background:#f0fdf4; border-radius:14px; padding:18px 22px; border-top:4px solid #10b981;">
+        <div style="font-size:15px; font-weight:800; color:#065f46; margin-bottom:12px;">✅ TRUTHY — acts like True</div>
+        <pre style="font-size:13px;"><span class="fn">bool</span>(<span class="nm">1</span>)        <span class="cm"># True — any non-zero number</span>
+<span class="fn">bool</span>(<span class="nm">-5</span>)       <span class="cm"># True — negative too!</span>
+<span class="fn">bool</span>(<span class="st">"hello"</span>)  <span class="cm"># True — any non-empty string</span>
+<span class="fn">bool</span>(<span class="op">[</span><span class="nm">1</span><span class="op">,</span><span class="nm">2</span><span class="op">]</span>)    <span class="cm"># True — non-empty list</span>
+<span class="fn">bool</span>(<span class="nm">True</span>)     <span class="cm"># True — obviously!</span></pre>
+      </div>
+    </div>
+  </div>
+  <div style="margin-top:16px; background:#0f172a; border-radius:12px; padding:14px 20px; font-size:13.5px; color:#e2e8f0;">
+    <span style="font-family:monospace; color:#c084fc;">name</span> = <span style="font-family:monospace; color:#fbbf24;">input</span>(<span style="font-family:monospace; color:#fbbf24;">"Your name: "</span>)<br>
+    <span style="font-family:monospace; color:#c084fc;">if</span> <span style="font-family:monospace; color:#e2e8f0;">name</span>:  &nbsp;&nbsp;&nbsp;<span style="font-family:monospace; color:#4b5563;"># True if user typed something, False if they just pressed Enter</span><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;<span style="font-family:monospace; color:#34d399;">print</span>(<span style="font-family:monospace; color:#fbbf24;">f"Hello, {name}!"</span>)
+  </div>
+  <div class="page-num">11 / 21</div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+  SLIDE 12 — NESTED CONDITIONS (section intro)
+════════════════════════════════════════ -->
+<div class="slide section-intro">
+  <div class="panel violet">
+    <div class="section-emoji">🪆</div>
+    <div class="section-label">Nested if</div>
+    <div style="font-size:13px; margin-top:8px; opacity:0.85; text-align:center;">Decisions inside decisions</div>
+  </div>
+  <div class="body">
+    <h2>Nested Conditions — Boxes Within Boxes</h2>
+    <p style="margin-bottom:14px;">Sometimes a second question only makes sense <em>after</em> the first one is already True. Put an <strong>if inside an if</strong>!</p>
+    <pre><span class="var">age</span> <span class="op">=</span> <span class="fn">int</span>(<span class="fn">input</span>(<span class="st">"Age: "</span>))
+<span class="var">has_id</span> <span class="op">=</span> <span class="fn">input</span>(<span class="st">"Have ID? (yes/no): "</span>)
+
+<span class="kw">if</span> <span class="var">age</span> <span class="op">&gt;=</span> <span class="nm">18</span><span class="op">:</span>
+    <span class="cm"># Old enough — now check if they have ID</span>
+    <span class="kw">if</span> <span class="var">has_id</span> <span class="op">==</span> <span class="st">"yes"</span><span class="op">:</span>
+        <span class="fn">print</span>(<span class="st">"Welcome! ✅"</span>)
+    <span class="kw">else</span><span class="op">:</span>
+        <span class="fn">print</span>(<span class="st">"Age OK, but no ID. ❌"</span>)
+<span class="kw">else</span><span class="op">:</span>
+    <span class="fn">print</span>(<span class="st">"Too young. ❌"</span>)</pre>
+    <div class="highlight-box" style="font-size:13px; margin-top:12px;">
+      💡 Each level of nesting adds 4 more spaces. If you find yourself 3+ levels deep, consider using <strong>and / or</strong> to flatten the logic instead!
+    </div>
+  </div>
+  <div class="page-num">12 / 21</div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+  SLIDE 13 — NESTED CONDITIONS IN ACTION
+════════════════════════════════════════ -->
+<div class="slide dark">
+  <h2 style="color:#a78bfa; margin-bottom:14px;">Nested Conditions — ATM Simulation 🏧</h2>
+  <div class="grid-2" style="gap:22px;">
+    <pre><span class="var">balance</span> <span class="op">=</span> <span class="nm">5000</span>
+<span class="var">pin</span>     <span class="op">=</span> <span class="st">"4321"</span>
+
+<span class="var">entered</span> <span class="op">=</span> <span class="fn">input</span>(<span class="st">"Enter PIN: "</span>)
+
+<span class="kw">if</span> <span class="var">entered</span> <span class="op">==</span> <span class="var">pin</span><span class="op">:</span>
+    <span class="fn">print</span>(<span class="st">"PIN accepted ✅"</span>)
+    <span class="var">amount</span> <span class="op">=</span> <span class="fn">int</span>(<span class="fn">input</span>(<span class="st">"Withdraw Rs. "</span>))
+
+    <span class="kw">if</span> <span class="var">amount</span> <span class="op">&lt;=</span> <span class="nm">0</span><span class="op">:</span>
+        <span class="fn">print</span>(<span class="st">"Invalid amount."</span>)
+    <span class="kw">elif</span> <span class="var">amount</span> <span class="op">&gt;</span> <span class="var">balance</span><span class="op">:</span>
+        <span class="fn">print</span>(<span class="st">"Insufficient funds."</span>)
+    <span class="kw">else</span><span class="op">:</span>
+        <span class="var">balance</span> <span class="op">-=</span> <span class="var">amount</span>
+        <span class="fn">print</span>(<span class="st">f"Dispensed Rs. <span style="color:#f472b6;">{</span><span style="color:#38bdf8;">amount</span><span style="color:#f472b6;">}</span>"</span>)
+        <span class="fn">print</span>(<span class="st">f"Balance: Rs. <span style="color:#f472b6;">{</span><span style="color:#38bdf8;">balance</span><span style="color:#f472b6;">}</span>"</span>)
+<span class="kw">else</span><span class="op">:</span>
+    <span class="fn">print</span>(<span class="st">"Wrong PIN. Card blocked! 🔒"</span>)</pre>
+    <div>
+      <div style="font-size:11px; font-weight:700; color:#64748b; letter-spacing:2px; margin-bottom:12px;">NEW SHORTHAND OPERATOR</div>
+      <div style="background:#1e293b; border-radius:12px; padding:16px 20px;">
+        <pre style="background:transparent; padding:0; font-size:13.5px;"><span class="cm"># -= means subtract and update</span>
+<span class="var">balance</span> <span class="op">-=</span> <span class="var">amount</span>
+<span class="cm"># same as:</span>
+<span class="var">balance</span> <span class="op">=</span> <span class="var">balance</span> <span class="op">-</span> <span class="var">amount</span>
+
+<span class="cm"># Other shorthands:</span>
+<span class="var">x</span> <span class="op">+=</span> <span class="nm">5</span>   <span class="cm"># x = x + 5</span>
+<span class="var">x</span> <span class="op">*=</span> <span class="nm">2</span>   <span class="cm"># x = x * 2</span>
+<span class="var">x</span> <span class="op">//=</span> <span class="nm">3</span>  <span class="cm"># x = x // 3</span></pre>
+      </div>
+      <div style="margin-top:14px; background:#1e293b; border-radius:10px; padding:11px 16px; font-size:13px; color:#a78bfa; font-weight:600; border-left:3px solid #a78bfa;">
+        🪆 The inner if/elif/else only runs when the outer <code style="font-family:monospace;">if</code> is True. This is the power of nesting!
+      </div>
+    </div>
+  </div>
+  <div class="page-num">13 / 21</div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+  SLIDE 14 — REAL-WORLD: GRADE CALCULATOR
+════════════════════════════════════════ -->
+<div class="slide content">
+  <h2>Putting It All Together — Grade Calculator 🎓</h2>
+  <div class="grid-2" style="gap:22px; margin-top:8px;">
+    <div>
+      <pre><span class="var">name</span>  <span class="op">=</span> <span class="fn">input</span>(<span class="st">"Student name: "</span>)
+<span class="var">score</span> <span class="op">=</span> <span class="fn">int</span>(<span class="fn">input</span>(<span class="st">"Score (0–100): "</span>))
+
+<span class="kw">if</span> <span class="var">score</span> <span class="op">&lt;</span> <span class="nm">0</span> <span class="kw">or</span> <span class="var">score</span> <span class="op">&gt;</span> <span class="nm">100</span><span class="op">:</span>
+    <span class="fn">print</span>(<span class="st">"Invalid score!"</span>)
+<span class="kw">elif</span> <span class="var">score</span> <span class="op">&gt;=</span> <span class="nm">90</span><span class="op">:</span>
+    <span class="fn">print</span>(<span class="st">f"{name}: A — Distinction! 🌟"</span>)
+<span class="kw">elif</span> <span class="var">score</span> <span class="op">&gt;=</span> <span class="nm">80</span><span class="op">:</span>
+    <span class="fn">print</span>(<span class="st">f"{name}: B — Well done! 👍"</span>)
+<span class="kw">elif</span> <span class="var">score</span> <span class="op">&gt;=</span> <span class="nm">70</span><span class="op">:</span>
+    <span class="fn">print</span>(<span class="st">f"{name}: C — Good effort."</span>)
+<span class="kw">elif</span> <span class="var">score</span> <span class="op">&gt;=</span> <span class="nm">60</span><span class="op">:</span>
+    <span class="fn">print</span>(<span class="st">f"{name}: D — Passing."</span>)
+<span class="kw">else</span><span class="op">:</span>
+    <span class="fn">print</span>(<span class="st">f"{name}: F — Study harder! 📚"</span>)</pre>
+    </div>
+    <div>
+      <h3 style="margin-bottom:12px;">Concepts used in this one program</h3>
+      <ul>
+        <li><span class="icon">📥</span><span><strong>int(input())</strong> — read and convert user input</span></li>
+        <li><span class="icon">🔗</span><span><strong>or</strong> — validate the score is in range</span></li>
+        <li><span class="icon">🎛️</span><span><strong>elif chain</strong> — grade bands from A to F</span></li>
+        <li><span class="icon">🔤</span><span><strong>f-string</strong> — personalised output with the name</span></li>
+        <li><span class="icon">🏆</span><span><strong>else</strong> — catches anything below 60</span></li>
+      </ul>
+      <div class="highlight-box" style="margin-top:16px; font-size:13.5px;">
+        ✅ This is a complete, working program — and you understand every single line of it!
+      </div>
+    </div>
+  </div>
+  <div class="page-num">14 / 21</div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+  SLIDE 15 — CONDITIONS CHEAT SHEET
+════════════════════════════════════════ -->
+<div class="slide content" style="padding:38px 55px;">
+  <h2 style="margin-bottom:14px;">Conditions Cheat Sheet 📋</h2>
+  <div class="grid-2" style="gap:20px;">
+    <div>
+      <div style="font-size:11px; font-weight:800; color:#0d9488; letter-spacing:2px; margin-bottom:8px; text-transform:uppercase;">Structure</div>
+      <pre style="font-size:12.5px;"><span class="kw">if</span> <span class="var">condition</span><span class="op">:</span>
+    <span class="cm"># runs if True</span>
+<span class="kw">elif</span> <span class="var">other_condition</span><span class="op">:</span>
+    <span class="cm"># runs if first False, this True</span>
+<span class="kw">else</span><span class="op">:</span>
+    <span class="cm"># runs if NOTHING matched</span></pre>
+      <div style="font-size:11px; font-weight:800; color:#0284c7; letter-spacing:2px; margin-bottom:8px; margin-top:14px; text-transform:uppercase;">Comparison Operators</div>
+      <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:6px;">
+        <div style="background:#f8fafc; border-radius:8px; padding:8px; text-align:center;"><div style="font-family:monospace; font-weight:700; color:#4f46e5;">==</div><div style="font-size:11px; color:#6b7280;">equal</div></div>
+        <div style="background:#f8fafc; border-radius:8px; padding:8px; text-align:center;"><div style="font-family:monospace; font-weight:700; color:#4f46e5;">!=</div><div style="font-size:11px; color:#6b7280;">not equal</div></div>
+        <div style="background:#f8fafc; border-radius:8px; padding:8px; text-align:center;"><div style="font-family:monospace; font-weight:700; color:#4f46e5;">&gt;</div><div style="font-size:11px; color:#6b7280;">greater</div></div>
+        <div style="background:#f8fafc; border-radius:8px; padding:8px; text-align:center;"><div style="font-family:monospace; font-weight:700; color:#4f46e5;">&lt;</div><div style="font-size:11px; color:#6b7280;">less</div></div>
+        <div style="background:#f8fafc; border-radius:8px; padding:8px; text-align:center;"><div style="font-family:monospace; font-weight:700; color:#4f46e5;">&gt;=</div><div style="font-size:11px; color:#6b7280;">greater/equal</div></div>
+        <div style="background:#f8fafc; border-radius:8px; padding:8px; text-align:center;"><div style="font-family:monospace; font-weight:700; color:#4f46e5;">&lt;=</div><div style="font-size:11px; color:#6b7280;">less/equal</div></div>
+      </div>
+    </div>
+    <div>
+      <div style="font-size:11px; font-weight:800; color:#d97706; letter-spacing:2px; margin-bottom:8px; text-transform:uppercase;">Logical Operators</div>
+      <pre style="font-size:12.5px;"><span class="cm"># and — both must be True</span>
+<span class="var">a</span> <span class="op">&gt;</span> <span class="nm">0</span> <span class="kw">and</span> <span class="var">b</span> <span class="op">&gt;</span> <span class="nm">0</span>
+
+<span class="cm"># or — at least one True</span>
+<span class="var">x</span> <span class="op">==</span> <span class="st">"yes"</span> <span class="kw">or</span> <span class="var">y</span> <span class="op">==</span> <span class="st">"ok"</span>
+
+<span class="cm"># not — flip the result</span>
+<span class="kw">not</span> <span class="var">is_banned</span>
+
+<span class="cm"># in — membership check</span>
+<span class="var">month</span> <span class="kw">in</span> <span class="op">[</span><span class="nm">1</span><span class="op">,</span> <span class="nm">2</span><span class="op">,</span> <span class="nm">12</span><span class="op">]</span></pre>
+      <div style="font-size:11px; font-weight:800; color:#6d28d9; letter-spacing:2px; margin-bottom:8px; margin-top:12px; text-transform:uppercase;">Falsy values (= False in an if)</div>
+      <pre style="font-size:12.5px;"><span class="nm">0</span>  <span class="st">""</span>  <span class="op">[]</span>  <span class="op">{}</span>  <span class="nm">None</span>  <span class="nm">False</span></pre>
+    </div>
+  </div>
+  <div class="page-num">15 / 21</div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+  SLIDE 16 — LOOPS (section intro)
+════════════════════════════════════════ -->
+<div class="slide section-intro">
+  <div class="panel cyan">
+    <div class="section-emoji">🔄</div>
+    <div class="section-label">Loops</div>
+    <div style="font-size:13px; margin-top:8px; opacity:0.85; text-align:center;">for &amp; while — brief intro</div>
+  </div>
+  <div class="body">
+    <h2>Loops — Don't Repeat Yourself!</h2>
+    <p style="margin-bottom:14px;">Without loops you'd have to copy-paste the same code hundreds of times. A <strong>loop</strong> tells Python "repeat this block of code".</p>
+    <div class="compare-row" style="margin-top:0;">
+      <div class="compare-col bad">
+        <h4>❌ Without a loop</h4>
+        <pre style="font-size:12px; background:#fef2f2; color:#991b1b; border:none; padding:10px 14px;"><span style="font-family:monospace;">print("Hello 1")
+print("Hello 2")
+print("Hello 3")
+<span style="color:#94a3b8;">... 97 more lines!</span></span></pre>
+      </div>
+      <div class="compare-col good">
+        <h4>✅ With a loop</h4>
+        <pre style="font-size:12px; background:#f0fdf4; color:#065f46; border:none; padding:10px 14px;"><span style="font-family:monospace;"><span style="color:#059669;">for</span> i <span style="color:#059669;">in</span> range(100):
+    print(f"Hello {i+1}")</span></pre>
+      </div>
+    </div>
+    <div class="highlight-box" style="margin-top:14px; font-size:14px;">
+      Python has two types of loops: <strong>for</strong> (loop a known number of times or over a list) and <strong>while</strong> (loop until a condition changes).
+    </div>
+  </div>
+  <div class="page-num">16 / 21</div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+  SLIDE 17 — FOR LOOP
+════════════════════════════════════════ -->
+<div class="slide content">
+  <h2>The for Loop 🔄</h2>
+  <div class="grid-2" style="gap:22px; margin-top:8px;">
+    <div>
+      <h3 style="margin-bottom:12px;">Loop over a list</h3>
+      <pre><span class="var">fruits</span> <span class="op">=</span> <span class="op">[</span><span class="st">"apple"</span><span class="op">,</span> <span class="st">"banana"</span><span class="op">,</span> <span class="st">"mango"</span><span class="op">]</span>
+
+<span class="kw">for</span> <span class="var">fruit</span> <span class="kw">in</span> <span class="var">fruits</span><span class="op">:</span>
+    <span class="fn">print</span>(<span class="st">f"I love <span style="color:#f472b6;">{</span><span style="color:#38bdf8;">fruit</span><span style="color:#f472b6;">}</span>!"</span>)
+
+<span class="cm"># Output:</span>
+<span class="cm"># I love apple!</span>
+<span class="cm"># I love banana!</span>
+<span class="cm"># I love mango!</span></pre>
+      <div style="margin-top:12px; background:#cffafe; border-radius:10px; padding:10px 14px; font-size:13px; color:#164e63; font-weight:600; border-left:4px solid #0e7490;">
+        📌 <code style="font-family:monospace;">fruit</code> is a temporary variable — it changes to the next item every loop round.
+      </div>
+    </div>
+    <div>
+      <h3 style="margin-bottom:12px;">range() — loop a fixed number of times</h3>
+      <pre><span class="kw">for</span> <span class="var">i</span> <span class="kw">in</span> <span class="fn">range</span>(<span class="nm">5</span>)<span class="op">:</span>          <span class="cm"># 0,1,2,3,4</span>
+    <span class="fn">print</span>(<span class="var">i</span>)
+
+<span class="kw">for</span> <span class="var">i</span> <span class="kw">in</span> <span class="fn">range</span>(<span class="nm">1</span><span class="op">,</span> <span class="nm">6</span>)<span class="op">:</span>        <span class="cm"># 1,2,3,4,5</span>
+    <span class="fn">print</span>(<span class="var">i</span>)
+
+<span class="kw">for</span> <span class="var">i</span> <span class="kw">in</span> <span class="fn">range</span>(<span class="nm">0</span><span class="op">,</span> <span class="nm">11</span><span class="op">,</span> <span class="nm">2</span>)<span class="op">:</span>   <span class="cm"># 0,2,4,6,8,10</span>
+    <span class="fn">print</span>(<span class="var">i</span><span class="op">,</span> <span class="key">end</span><span class="op">=</span><span class="st">" "</span>)</pre>
+      <div style="margin-top:12px; display:flex; gap:8px;">
+        <div style="flex:1; background:#f8fafc; border-radius:10px; padding:10px 12px; text-align:center; font-size:12px;">
+          <div style="font-family:monospace; font-weight:700; color:#4f46e5;">range(n)</div>
+          <div style="color:#6b7280; margin-top:3px;">0 to n-1</div>
+        </div>
+        <div style="flex:1; background:#f8fafc; border-radius:10px; padding:10px 12px; text-align:center; font-size:12px;">
+          <div style="font-family:monospace; font-weight:700; color:#4f46e5;">range(a,b)</div>
+          <div style="color:#6b7280; margin-top:3px;">a to b-1</div>
+        </div>
+        <div style="flex:1; background:#f8fafc; border-radius:10px; padding:10px 12px; text-align:center; font-size:12px;">
+          <div style="font-family:monospace; font-weight:700; color:#4f46e5;">range(a,b,step)</div>
+          <div style="color:#6b7280; margin-top:3px;">with skip</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="page-num">17 / 21</div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+  SLIDE 18 — WHILE LOOP
+════════════════════════════════════════ -->
+<div class="slide dark">
+  <h2 style="color:#34d399; margin-bottom:14px;">The while Loop ♾️</h2>
+  <div class="grid-2" style="gap:22px;">
+    <div>
+      <div style="font-size:11px; font-weight:700; color:#64748b; letter-spacing:2px; margin-bottom:10px;">COUNTDOWN EXAMPLE</div>
+      <pre><span class="var">countdown</span> <span class="op">=</span> <span class="nm">5</span>
+
+<span class="kw">while</span> <span class="var">countdown</span> <span class="op">&gt;</span> <span class="nm">0</span><span class="op">:</span>
+    <span class="fn">print</span>(<span class="st">f"T minus <span style="color:#f472b6;">{</span><span style="color:#38bdf8;">countdown</span><span style="color:#f472b6;">}</span>..."</span>)
+    <span class="var">countdown</span> <span class="op">-=</span> <span class="nm">1</span>   <span class="cm"># ← MUST change the variable!</span>
+
+<span class="fn">print</span>(<span class="st">"Liftoff! 🚀"</span>)</pre>
+      <div style="margin-top:14px; background:#1e293b; border-radius:10px; padding:12px 16px; font-size:13px; color:#f87171; font-weight:600; border-left:3px solid #ef4444;">
+        ⚠️ Always make sure the condition eventually becomes <code style="font-family:monospace; color:#fbbf24;">False</code>. If the variable never changes, you get an <strong>infinite loop</strong> that runs forever!
+      </div>
+    </div>
+    <div>
+      <div style="font-size:11px; font-weight:700; color:#64748b; letter-spacing:2px; margin-bottom:10px;">BREAK — EXIT EARLY</div>
+      <pre><span class="kw">for</span> <span class="var">num</span> <span class="kw">in</span> <span class="fn">range</span>(<span class="nm">1</span><span class="op">,</span> <span class="nm">11</span>)<span class="op">:</span>
+    <span class="kw">if</span> <span class="var">num</span> <span class="op">==</span> <span class="nm">5</span><span class="op">:</span>
+        <span class="fn">print</span>(<span class="st">"Found 5! Stopping."</span>)
+        <span class="kw">break</span>        <span class="cm"># jump OUT of the loop</span>
+    <span class="fn">print</span>(<span class="var">num</span>)
+<span class="cm"># prints: 1 2 3 4  Found 5! Stopping.</span></pre>
+      <div style="margin-top:14px; background:#1e293b; border-radius:10px; padding:12px 16px; font-size:13px; color:#34d399; font-weight:600; border-left:3px solid #34d399;">
+        💡 <code style="font-family:monospace;">break</code> works in both <code style="font-family:monospace;">for</code> and <code style="font-family:monospace;">while</code> loops — it immediately exits the nearest loop.
+      </div>
+    </div>
+  </div>
+  <div class="page-num">18 / 21</div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+  SLIDE 19 — FOR vs WHILE
+════════════════════════════════════════ -->
+<div class="slide content" style="padding:42px 58px;">
+  <h2 style="margin-bottom:16px;">for vs while — When to Use Each ⚡</h2>
+  <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-bottom:18px;">
+    <div style="background:#f0fdfa; border-radius:14px; padding:20px; border-top:5px solid #0d9488;">
+      <div style="font-size:22px; margin-bottom:8px;">🔄 for loop</div>
+      <div style="font-family:monospace; font-size:13px; background:#0f172a; color:#2dd4bf; padding:10px 14px; border-radius:8px; margin-bottom:12px;">for item in collection:</div>
+      <ul style="gap:0;">
+        <li style="font-size:13.5px; padding:3px 0;"><span class="icon">✅</span>You know HOW MANY times to repeat</li>
+        <li style="font-size:13.5px; padding:3px 0;"><span class="icon">✅</span>Looping over a list, string, range</li>
+        <li style="font-size:13.5px; padding:3px 0;"><span class="icon">🎯</span>Print multiplication table (10 times)</li>
+        <li style="font-size:13.5px; padding:3px 0;"><span class="icon">🎯</span>Sum every item in a list</li>
+      </ul>
+    </div>
+    <div style="background:#fefce8; border-radius:14px; padding:20px; border-top:5px solid #d97706;">
+      <div style="font-size:22px; margin-bottom:8px;">♾️ while loop</div>
+      <div style="font-family:monospace; font-size:13px; background:#0f172a; color:#fbbf24; padding:10px 14px; border-radius:8px; margin-bottom:12px;">while condition is True:</div>
+      <ul style="gap:0;">
+        <li style="font-size:13.5px; padding:3px 0;"><span class="icon">✅</span>You DON'T know how many times yet</li>
+        <li style="font-size:13.5px; padding:3px 0;"><span class="icon">✅</span>Keep going until something changes</li>
+        <li style="font-size:13.5px; padding:3px 0;"><span class="icon">🎯</span>Keep asking until correct password</li>
+        <li style="font-size:13.5px; padding:3px 0;"><span class="icon">🎯</span>Game loop — play until player quits</li>
+      </ul>
+    </div>
+  </div>
+  <div class="highlight-box" style="font-size:14px;">
+    💡 Rule of thumb: <strong>for</strong> = "do this N times / for each item". &nbsp;&nbsp;<strong>while</strong> = "keep doing this until something changes". When in doubt, <strong>for</strong> is usually the safer choice!
+  </div>
+  <div class="page-num">19 / 21</div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+  SLIDE 20 — CODING SESSION PLAN
+════════════════════════════════════════ -->
+<div class="slide content" style="padding:38px 58px;">
+  <h2 style="margin-bottom:12px;">Today's Coding Session 💻</h2>
+  <p style="margin-bottom:14px; font-size:15px;">Open your <code style="background:#f3f4f6; padding:2px 8px; border-radius:6px; font-family:monospace;">day_3</code> folder. We work through the teaching files together — homework is yours to take home.</p>
+  <div style="display:flex; flex-direction:column; gap:9px;">
+    <div style="display:flex; align-items:center; gap:16px; background:#f0fdfa; border-radius:12px; padding:12px 20px; border-left:4px solid #0d9488;">
+      <div style="font-size:22px;">🔀</div>
+      <div style="flex:1;"><div style="font-family:monospace; font-weight:700; color:#0d9488; font-size:14px;">01_if_else.py</div><div style="font-size:12px; color:#6b7280;">Password checker, score evaluator, indentation rules</div></div>
+      <span class="pill pill-teal">10 min</span>
+    </div>
+    <div style="display:flex; align-items:center; gap:16px; background:#eff6ff; border-radius:12px; padding:12px 20px; border-left:4px solid #0284c7;">
+      <div style="font-size:22px;">🎛️</div>
+      <div style="flex:1;"><div style="font-family:monospace; font-weight:700; color:#0284c7; font-size:14px;">02_elif.py</div><div style="font-size:12px; color:#6b7280;">Grade calculator, traffic light, season checker</div></div>
+      <span class="pill pill-blue">10 min</span>
+    </div>
+    <div style="display:flex; align-items:center; gap:16px; background:#fffbeb; border-radius:12px; padding:12px 20px; border-left:4px solid #d97706;">
+      <div style="font-size:22px;">🔗</div>
+      <div style="flex:1;"><div style="font-family:monospace; font-weight:700; color:#d97706; font-size:14px;">03_logical_operators.py</div><div style="font-size:12px; color:#6b7280;">and · or · not · truthy/falsy · truth table</div></div>
+      <span class="pill pill-amber">12 min</span>
+    </div>
+    <div style="display:flex; align-items:center; gap:16px; background:#f5f3ff; border-radius:12px; padding:12px 20px; border-left:4px solid #6d28d9;">
+      <div style="font-size:22px;">🪆</div>
+      <div style="flex:1;"><div style="font-family:monospace; font-weight:700; color:#6d28d9; font-size:14px;">04_nested_conditions.py</div><div style="font-size:12px; color:#6b7280;">Cinema ticket system · ATM simulation · -= shorthand</div></div>
+      <span class="pill pill-violet">10 min</span>
+    </div>
+    <div style="display:flex; align-items:center; gap:16px; background:#ecfeff; border-radius:12px; padding:12px 20px; border-left:4px solid #0e7490;">
+      <div style="font-size:22px;">🔄</div>
+      <div style="flex:1;"><div style="font-family:monospace; font-weight:700; color:#0e7490; font-size:14px;">05_loops_intro.py</div><div style="font-size:12px; color:#6b7280;">for loop · range() · while loop · break · total sum</div></div>
+      <span class="pill pill-cyan">10 min</span>
+    </div>
+  </div>
+  <div class="page-num">20 / 21</div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+  SLIDE 21 — LET'S CODE!
+════════════════════════════════════════ -->
+<div class="slide hero" style="background: linear-gradient(135deg, #0f766e 0%, #0284c7 50%, #6d28d9 100%);">
+  <div class="blob blob1" style="background:#a7f3d0;"></div>
+  <div class="blob blob2" style="background:#bfdbfe;"></div>
+  <div style="font-size:72px; line-height:1; margin-bottom:18px;">🚀</div>
+  <div class="slide-title" style="font-size:58px;">Time to Code!</div>
+  <div class="slide-subtitle">Open VS Code · open your <code style="background:rgba(255,255,255,0.25); padding:2px 10px; border-radius:6px; font-family:monospace;">day_3</code> folder · let's go!</div>
+  <div style="margin-top:36px; display:flex; gap:12px; flex-wrap:wrap; justify-content:center;">
+    <div style="background:rgba(255,255,255,0.18); border-radius:10px; padding:10px 18px; font-family:monospace; font-size:14px; font-weight:700;">01_if_else.py</div>
+    <div style="background:rgba(255,255,255,0.18); border-radius:10px; padding:10px 18px; font-family:monospace; font-size:14px; font-weight:700;">02_elif.py</div>
+    <div style="background:rgba(255,255,255,0.18); border-radius:10px; padding:10px 18px; font-family:monospace; font-size:14px; font-weight:700;">03_logical_operators.py</div>
+    <div style="background:rgba(255,255,255,0.18); border-radius:10px; padding:10px 18px; font-family:monospace; font-size:14px; font-weight:700;">04_nested_conditions.py</div>
+    <div style="background:rgba(255,255,255,0.18); border-radius:10px; padding:10px 18px; font-family:monospace; font-size:14px; font-weight:700;">05_loops_intro.py</div>
+  </div>
+  <div style="margin-top:24px; font-size:14px; opacity:0.8; font-weight:600;">
+    ✨ Your programs can now think, decide, and repeat. That's real programming!
+  </div>
+  <div class="page-num" style="color:rgba(255,255,255,0.45);">21 / 21</div>
+</div>
+
+</body>
+</html>
