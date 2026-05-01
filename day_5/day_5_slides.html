@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Day 5: Functions 🐍</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800;900&family=Fira+Code:wght@400;600&display=swap');
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    @page { size: A4 landscape; margin: 0; }
+
+    body { font-family: 'Poppins', 'Segoe UI', sans-serif; background: #e8e8e8; }
+
+    .slide {
+      width: 297mm;
+      height: 210mm;
+      overflow: hidden;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      page-break-after: always;
+      break-after: page;
+    }
+    @media screen { .slide { margin: 20px auto; box-shadow: 0 8px 40px rgba(0,0,0,0.18); } }
+
+    .blob { position: absolute; border-radius: 50%; opacity: 0.15; pointer-events: none; }
+
+    /* ── Themes ─── */
+    .hero {
+      background: linear-gradient(135deg, #7c3aed 0%, #2563eb 55%, #0891b2 100%);
+      color: white; justify-content: center; align-items: center; text-align: center; padding: 60px;
+    }
+    .hero .blob1 { width: 280px; height: 280px; background: white; top: -80px; right: -60px; }
+    .hero .blob2 { width: 200px; height: 200px; background: #c4b5fd; bottom: -60px; left: -40px; }
+
+    .section-intro { background: white; flex-direction: row; }
+    .section-intro .panel {
+      width: 36%; display: flex; flex-direction: column;
+      justify-content: center; align-items: center; padding: 50px 28px; color: white;
+    }
+    .section-intro .body { width: 64%; padding: 44px 52px; display: flex; flex-direction: column; justify-content: center; }
+
+    .content { background: white; padding: 48px 62px; }
+    .dark { background: #0f172a; color: #e2e8f0; padding: 46px 62px; }
+
+    /* ── Gradients ─── */
+    .purple { background: linear-gradient(135deg, #4f46e5, #7c3aed); }
+    .green  { background: linear-gradient(135deg, #059669, #10b981); }
+    .blue   { background: linear-gradient(135deg, #0284c7, #0ea5e9); }
+    .amber  { background: linear-gradient(135deg, #d97706, #f59e0b); }
+    .teal   { background: linear-gradient(135deg, #0d9488, #14b8a6); }
+    .violet { background: linear-gradient(135deg, #6d28d9, #8b5cf6); }
+    .rose   { background: linear-gradient(135deg, #be185d, #e11d48); }
+    .indigo { background: linear-gradient(135deg, #3730a3, #4f46e5); }
+    .cyan   { background: linear-gradient(135deg, #0e7490, #0891b2); }
+
+    /* ── Typography ─── */
+    .slide-tag { font-size: 11px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; opacity: 0.7; margin-bottom: 10px; }
+    .slide-title { font-size: 52px; font-weight: 900; line-height: 1.1; }
+    .slide-subtitle { font-size: 22px; font-weight: 400; opacity: 0.85; margin-top: 14px; }
+    .section-emoji { font-size: 88px; line-height: 1; margin-bottom: 14px; }
+    .section-label { font-size: 19px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; }
+
+    h2 { font-size: 31px; font-weight: 800; color: #1e1b4b; margin-bottom: 20px; }
+    h3 { font-size: 20px; font-weight: 700; color: #1e1b4b; margin-bottom: 10px; }
+    .dark h2 { color: #e2e8f0; }
+    .dark h3 { color: #94a3b8; }
+
+    p { font-size: 16px; line-height: 1.65; color: #374151; }
+    .dark p { color: #cbd5e1; }
+
+    ul { list-style: none; margin-top: 6px; }
+    ul li { font-size: 16px; color: #374151; padding: 5px 0; display: flex; align-items: flex-start; gap: 10px; line-height: 1.5; }
+    .dark ul li { color: #cbd5e1; }
+    ul li .icon { flex-shrink: 0; font-size: 17px; margin-top: 1px; }
+
+    /* ── Code ─── */
+    pre {
+      background: #0f172a; border-radius: 12px; padding: 18px 22px;
+      font-family: 'Fira Code', 'Consolas', monospace; font-size: 14px;
+      line-height: 1.75; color: #e2e8f0; overflow: hidden;
+    }
+    .dark pre { background: #1e293b; }
+    pre .kw  { color: #c084fc; }
+    pre .fn  { color: #34d399; }
+    pre .st  { color: #fbbf24; }
+    pre .cm  { color: #4b5563; }
+    pre .nm  { color: #38bdf8; }
+    pre .op  { color: #f472b6; }
+    pre .var { color: #e2e8f0; }
+    pre .key { color: #fb923c; }
+    pre .hl  { background: rgba(251,191,36,0.15); display: block; margin: 0 -22px; padding: 0 22px; }
+
+    /* ── Layouts ─── */
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+    .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+
+    /* ── Cards ─── */
+    .card { background: #f8fafc; border-radius: 14px; padding: 18px 22px; border-left: 5px solid #4f46e5; }
+    .card.green-border  { border-left-color: #059669; }
+    .card.blue-border   { border-left-color: #0284c7; }
+    .card.amber-border  { border-left-color: #d97706; }
+    .card.teal-border   { border-left-color: #0d9488; }
+    .card.violet-border { border-left-color: #6d28d9; }
+    .card.rose-border   { border-left-color: #be185d; }
+    .card.indigo-border { border-left-color: #4f46e5; }
+    .card.cyan-border   { border-left-color: #0891b2; }
+
+    /* ── Pills ─── */
+    .pill { display: inline-block; padding: 4px 14px; border-radius: 999px; font-size: 12px; font-weight: 700; }
+    .pill-green  { background: #d1fae5; color: #065f46; }
+    .pill-blue   { background: #dbeafe; color: #1e40af; }
+    .pill-amber  { background: #fef3c7; color: #92400e; }
+    .pill-teal   { background: #ccfbf1; color: #134e4a; }
+    .pill-violet { background: #ede9fe; color: #4c1d95; }
+    .pill-rose   { background: #ffe4e6; color: #9f1239; }
+
+    /* ── Highlight box ─── */
+    .highlight-box {
+      background: #fef9c3; border: 2px solid #fde047; border-radius: 10px;
+      padding: 12px 18px; font-size: 15px; color: #713f12; margin-top: 16px; font-weight: 600;
+    }
+
+    /* ── Compare columns ─── */
+    .compare-row { display: flex; gap: 18px; margin-top: 14px; }
+    .compare-col { flex: 1; background: #f8fafc; border-radius: 12px; padding: 16px 20px; }
+    .compare-col.good { border-top: 4px solid #10b981; }
+    .compare-col.bad  { border-top: 4px solid #ef4444; }
+    .compare-col h4 { font-size: 14px; font-weight: 700; margin-bottom: 10px; }
+    .compare-col.good h4 { color: #065f46; }
+    .compare-col.bad  h4 { color: #991b1b; }
+    .compare-col ul li { font-size: 13.5px; padding: 3px 0; }
+
+    /* ── Anatomy diagram ─── */
+    .anatomy-box { background: #f1f5f9; border-radius: 12px; padding: 20px; margin-top: 10px; }
+    .anatomy-line { font-family: 'Fira Code', monospace; font-size: 15px; margin: 4px 0; }
+    .anatomy-label { font-size: 11px; color: #64748b; margin-left: 20px; }
+
+    /* ── Page number ─── */
+    .page-num { position: absolute; bottom: 16px; right: 26px; font-size: 11px; font-weight: 600; opacity: 0.32; letter-spacing: 1px; }
+  </style>
+</head>
+<body>
+
+<!-- ════════════════════════════════════════
+  SLIDE 1 — TITLE
+════════════════════════════════════════ -->
+<div class="slide hero">
+  <div class="blob blob1"></div>
+  <div class="blob blob2"></div>
+  <div class="slide-tag">Python Crash Course · Day 5</div>
+  <div class="slide-title">Functions</div>
+  <div class="slide-subtitle">def · parameters · return · default · keyword · scope</div>
+  <div style="margin-top:30px; font-size:56px; line-height:1;">🧩</div>
+  <div style="margin-top:26px; font-size:12px; opacity:0.6; font-weight:600; letter-spacing:2px; text-transform:uppercase;">
+    Write once. Reuse everywhere.
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+  SLIDE 2 — AGENDA
+════════════════════════════════════════ -->
+<div class="slide content" style="padding:40px 58px;">
+  <h2 style="margin-bottom:14px;">Today's Roadmap 🗺️</h2>
+  <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px; margin-bottom:12px;">
+    <div class="card indigo-border">
+      <div style="font-size:24px; margin-bottom:6px;">🧩</div>
+      <div style="font-weight:800; font-size:15px; color:#1e1b4b;">What is a Function?</div>
+      <div style="font-size:12px; color:#6b7280; margin-top:3px;">Reusable blocks of code</div>
+    </div>
+    <div class="card green-border">
+      <div style="font-size:24px; margin-bottom:6px;">📬</div>
+      <div style="font-weight:800; font-size:15px; color:#1e1b4b;">Parameters</div>
+      <div style="font-size:12px; color:#6b7280; margin-top:3px;">Give data to functions</div>
+    </div>
+    <div class="card blue-border">
+      <div style="font-size:24px; margin-bottom:6px;">📤</div>
+      <div style="font-weight:800; font-size:15px; color:#1e1b4b;">Return Values</div>
+      <div style="font-size:12px; color:#6b7280; margin-top:3px;">Get data back from functions</div>
+    </div>
+  </div>
+  <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px;">
+    <div class="card amber-border">
+      <div style="font-size:24px; margin-bottom:6px;">🎯</div>
+      <div style="font-weight:800; font-size:15px; color:#1e1b4b;">Default Parameters</div>
+      <div style="font-size:12px; color:#6b7280; margin-top:3px;">Make arguments optional</div>
+    </div>
+    <div class="card teal-border">
+      <div style="font-size:24px; margin-bottom:6px;">🏷️</div>
+      <div style="font-weight:800; font-size:15px; color:#1e1b4b;">Keyword Arguments</div>
+      <div style="font-size:12px; color:#6b7280; margin-top:3px;">Name your values</div>
+    </div>
+    <div class="card violet-border">
+      <div style="font-size:24px; margin-bottom:6px;">🌍</div>
+      <div style="font-weight:800; font-size:15px; color:#1e1b4b;">Scope</div>
+      <div style="font-size:12px; color:#6b7280; margin-top:3px;">Where variables live</div>
+    </div>
+  </div>
+  <div class="compare-row">
+    <div class="compare-col bad" style="flex:0.9;">
+      <h4>❌ Without functions</h4>
+      <pre style="font-size:13px; background:#fef2f2; color:#991b1b; border:none; padding:12px 16px; border-radius:8px;"><span style="font-family:monospace;">print("Hello, friend!")
+print("Let's learn Python!")
+print("Have a great day!")
+
+print("Hello, friend!")
+print("Let's learn Python!")
+print("Have a great day!")
+
+<span style="color:#94a3b8; font-size:11px;">→ 9 lines for 3 greetings? 😱</span></span></pre>
+    </div>
+    <div style="display:flex; align-items:center; font-size:28px; color:#94a3b8; padding: 0 8px;">→</div>
+    <div class="compare-col good" style="flex:1.1;">
+      <h4>✅ With functions</h4>
+      <pre style="font-size:13px; background:#f0fdf4; color:#065f46; border:none; padding:12px 16px; border-radius:8px;"><span style="font-family:monospace;"><span style="color:#374151;">def greet():</span>
+    print("Hello, friend!")
+    print("Let's learn Python!")
+    print("Have a great day!")
+
+<span style="color:#059669;">greet()
+</span><span style="color:#059669;">greet()
+</span><span style="color:#059669;">greet()</span>
+
+<span style="font-size:11px; color:#94a3b8;">→ 6 lines, reusable forever!</span></span></pre>
+    </div>
+  </div>
+  <div class="highlight-box" style="margin-top:16px; font-size:14px;">
+    🧠 A function is Python's way of saying: <strong>"remember this code, I'll ask you to run it later."</strong>
+  </div>
+  <div class="page-num">3 / 18</div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+  SLIDE 4 — WHAT IS A FUNCTION (section intro)
+════════════════════════════════════════ -->
+<div class="slide section-intro">
+  <div class="panel indigo">
+    <div class="section-emoji">🧩</div>
+    <div class="section-label">What is a Function?</div>
+    <div style="font-size:13px; margin-top:8px; opacity:0.85; text-align:center;">The building blocks of code</div>
+  </div>
+  <div class="body">
+    <h2>Defining and Calling Functions</h2>
+    <p style="margin-bottom:14px;">A <strong>function</strong> is a named block of code you can run whenever you want. Define it once with <code>def</code>, call it as many times as you need.</p>
+    <pre><span class="kw">def</span> <span class="fn">say_hello</span><span class="op">():</span>
+<span class="cm">#  ↑ keyword  ↑ name  ↑ () required</span>
+    <span class="fn">print</span>(<span class="st">"Hello, world!"</span>)
+<span class="cm">#   ↑ indented body — runs when called</span>
+
+<span class="fn">say_hello</span><span class="op">()</span>  <span class="cm"># ← call to run the function</span></pre>
+    <div class="highlight-box" style="font-size:13px; margin-top:12px;">
+      ⚠️ <strong>def</strong> creates the function. The function doesn't run until you <strong>call</strong> it with parentheses ().
+    </div>
+  </div>
+  <div class="page-num">4 / 18</div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+  SLIDE 5 — FUNCTION ANATOMY
+════════════════════════════════════════ -->
+<div class="slide content" style="padding:42px 60px;">
+  <h2 style="margin-bottom:16px;">Function Anatomy — Every Part Explained 🔍</h2>
+  <div class="anatomy-box">
+    <div class="anatomy-line"><span style="color:#c084fc;">def</span> <span style="color:#34d399;">greet_user</span><span style="color:#f472b6;">(</span><span style="color:#38bdf8;">name</span><span style="color:#f472b6;">)</span><span style="color:#f472b6;">:</span></div>
+    <div class="anatomy-label">↑ keyword&nbsp;&nbsp;&nbsp;&nbsp;↑ function name&nbsp;&nbsp;&nbsp;&nbsp;↑ parameter (input)&nbsp;&nbsp;&nbsp;&nbsp;↑ colon required</div>
+    <div class="anatomy-line">&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#fbbf24;">"""Greet someone by name."""</span>&nbsp;&nbsp;<span style="color:#4b5563;">← docstring (optional but recommended)</span></div>
+    <div class="anatomy-line">&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#fb923c;">print</span><span style="color:#f472b6;">(</span><span style="color:#fbbf24;">f"Hello, </span><span style="color:#f472b6;">{</span><span style="color:#38bdf8;">name</span><span style="color:#f472b6;">}</span><span style="color:#fbbf24;">!"</span><span style="color:#f472b6;">)</span>&nbsp;&nbsp;<span style="color:#4b5563;">← function body (indented 4 spaces)</span></div>
+    <div style="margin-top:16px; padding-top:16px; border-top:1px dashed #cbd5e1;">
+      <div class="anatomy-line"><span style="color:#34d399;">greet_user</span><span style="color:#f472b6;">(</span><span style="color:#fbbf24;">"Alice"</span><span style="color:#f472b6;">)</span>&nbsp;&nbsp;<span style="color:#4b5563;">← calling the function with an argument</span></div>
+      <div class="anatomy-label">↑ function name&nbsp;&nbsp;&nbsp;&nbsp;↑ argument (value passed)</div>
+    </div>
+  </div>
+  <div class="grid-2" style="margin-top:20px; gap:16px;">
+    <div class="card indigo-border" style="padding:14px 18px;">
+      <div style="font-weight:700; color:#4f46e5; margin-bottom:6px;">📋 Definition</div>
+      <ul style="margin-top:0; gap:0;">
+        <li style="padding:3px 0; font-size:14px;"><span class="icon">•</span>Starts with <code style="background:#ede9fe;padding:2px 5px;border-radius:3px;">def</code></li>
+        <li style="padding:3px 0; font-size:14px;"><span class="icon">•</span>Followed by function name</li>
+        <li style="padding:3px 0; font-size:14px;"><span class="icon">•</span>Parentheses <code style="background:#ede9fe;padding:2px 5px;border-radius:3px;">()</code> — empty or with parameters</li>
+        <li style="padding:3px 0; font-size:14px;"><span class="icon">•</span>Colon <code style="background:#ede9fe;padding:2px 5px;border-radius:3px;">:</code> at the end</li>
+        <li style="padding:3px 0; font-size:14px;"><span class="icon">•</span>Body indented 4 spaces</li>
+      </ul>
+    </div>
+    <div class="card green-border" style="padding:14px 18px;">
+      <div style="font-weight:700; color:#059669; margin-bottom:6px;">📞 Calling</div>
+      <ul style="margin-top:0; gap:0;">
+        <li style="padding:3px 0; font-size:14px;"><span class="icon">•</span>Use the function name</li>
+        <li style="padding:3px 0; font-size:14px;"><span class="icon">•</span>Add parentheses <code style="background:#d1fae5;padding:2px 5px;border-radius:3px;">()</code></li>
+        <li style="padding:3px 0; font-size:14px;"><span class="icon">•</span>Pass arguments inside if needed</li>
+        <li style="padding:3px 0; font-size:14px;"><span class="icon">•</span>Python runs the body</li>
+      </ul>
+    </div>
+  </div>
+  <div class="page-num">5 / 18</div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+  SLIDE 6 — PARAMETERS (section intro)
+════════════════════════════════════════ -->
+<div class="slide section-intro">
+  <div class="panel green">
+    <div class="section-emoji">📬</div>
+    <div class="section-label">Parameters</div>
+    <div style="font-size:13px; margin-top:8px; opacity:0.85; text-align:center;">Give data to functions</div>
+  </div>
+  <div class="body">
+    <h2>Parameters — Functions That Accept Input</h2>
+    <p style="margin-bottom:14px;"><strong>Parameters</strong> let you pass data into a function. The function can then use that data to do its job differently each time.</p>
+    <pre><span class="kw">def</span> <span class="fn">greet_person</span><span class="op">(</span><span class="var">name</span><span class="op">)</span><span class="op">:</span>      <span class="cm"># 'name' is a PARAMETER</span>
+    <span class="fn">print</span>(<span class="st">f"Hello, </span><span style="color:#f472b6;">{</span><span style="color:#38bdf8;">name</span><span style="color:#f472b6;">}</span><span class="st">!"</span>)
+
+<span class="fn">greet_person</span>(<span class="st">"Alice"</span>)        <span class="cm"># "Alice" is an ARGUMENT</span>
+<span class="fn">greet_person</span>(<span class="st">"Bob"</span>)          <span class="cm"># "Bob" is an ARGUMENT</span></pre>
+    <div style="display:flex; gap:12px; margin-top:14px;">
+      <div class="pill pill-green">Parameter = variable in def</div>
+      <div class="pill pill-blue">Argument = value in call</div>
+    </div>
+  </div>
+  <div class="page-num">6 / 18</div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+  SLIDE 7 — MULTIPLE PARAMETERS
+════════════════════════════════════════ -->
+<div class="slide dark">
+  <h2 style="color:#34d399; margin-bottom:14px;">Multiple Parameters 🔢</h2>
+  <div class="grid-2" style="gap:22px;">
+    <div>
+      <div style="font-size:11px; font-weight:700; color:#64748b; letter-spacing:2px; margin-bottom:10px;">SEPARATE WITH COMMAS</div>
+      <pre><span class="kw">def</span> <span class="fn">describe_pet</span><span class="op">(</span><span class="var">pet_name</span><span class="op">,</span> <span class="var">animal_type</span><span class="op">)</span><span class="op">:</span>
+    <span class="fn">print</span>(<span class="st">f"I have a </span><span style="color:#f472b6;">{</span><span style="color:#38bdf8;">animal_type</span><span style="color:#f472b6;">}</span><span class="st"> named </span><span style="color:#f472b6;">{</span><span style="color:#38bdf8;">pet_name</span><span style="color:#f472b6;">}</span><span class="st">."</span>)
+
+<span class="fn">describe_pet</span>(<span class="st">"Fluffy"</span><span class="op">,</span> <span class="st">"cat"</span>)
+<span class="fn">describe_pet</span>(<span class="st">"Rex"</span><span class="op">,</span> <span class="st">"dog"</span>)
+<span class="fn">describe_pet</span>(<span class="st">"Nemo"</span><span class="op">,</span> <span class="st">"fish"</span>)</pre>
+      <div style="margin-top:14px; background:#1e293b; border-radius:10px; padding:10px 14px; font-size:13px; color:#fb923c; font-weight:600; border-left:3px solid #ea580c;">
+        Arguments are matched to parameters <strong>left to right</strong>!
+      </div>
+    </div>
+    <div>
+      <div style="font-size:11px; font-weight:700; color:#64748b; letter-spacing:2px; margin-bottom:10px;">ORDER MATTERS</div>
+      <div style="background:#1e293b; border-radius:10px; padding:14px;">
+        <div style="font-size:13px; color:#94a3b8; margin-bottom:10px;">✅ Correct order:</div>
+        <pre style="background:transparent; padding:0; font-size:13px;"><span class="fn">describe_pet</span>(<span class="st">"Fluffy"</span><span class="op">,</span> <span class="st">"cat"</span>)
+<span class="cm"># → "I have a cat named Fluffy."</span></pre>
+        <div style="font-size:13px; color:#f87171; margin:14px 0 10px;">❌ Wrong order:</div>
+        <pre style="background:transparent; padding:0; font-size:13px;"><span class="fn">describe_pet</span>(<span class="st">"cat"</span><span class="op">,</span> <span class="st">"Fluffy"</span>)
+<span class="cm"># → "I have a Fluffy named cat." 😵</span></pre>
+      </div>
+    </div>
+  </div>
+  <div class="page-num">7 / 18</div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+  SLIDE 8 — RETURN VALUES (section intro)
+════════════════════════════════════════ -->
+<div class="slide section-intro">
+  <div class="panel blue">
+    <div class="section-emoji">📤</div>
+    <div class="section-label">Return Values</div>
+    <div style="font-size:13px; margin-top:8px; opacity:0.85; text-align:center;">Get data back from functions</div>
+  </div>
+  <div class="body">
+    <h2>Return — Sending Data Back</h2>
+    <p style="margin-bottom:14px;">Functions that only <code>print</code> give you nothing to work with. Use <strong>return</strong> to send a value back to the caller!</p>
+    <pre><span class="kw">def</span> <span class="fn">add_numbers</span><span class="op">(</span><span class="var">a</span><span class="op">,</span> <span class="var">b</span><span class="op">)</span><span class="op">:</span>
+    <span class="var">total</span> <span class="op">=</span> <span class="var">a</span> <span class="op">+</span> <span class="var">b</span>
+    <span class="kw">return</span> <span class="var">total</span>       <span class="cm"># ← sends 'total' back</span>
+
+<span class="var">answer</span> <span class="op">=</span> <span class="fn">add_numbers</span>(<span class="nm">3</span><span class="op">,</span> <span class="nm">5</span>)    <span class="cm"># ← store the returned value</span>
+<span class="fn">print</span>(<span class="var">answer</span>)              <span class="cm"># 8</span>
+
+<span class="cm"># Can use directly too:</span>
+<span class="fn">print</span>(<span class="fn">add_numbers</span>(<span class="nm">10</span><span class="op">,</span> <span class="nm">20</span>) <span class="op">+</span> <span class="nm">5</span>)  <span class="cm"># 35</span></pre>
+    <div class="highlight-box" style="font-size:13px; margin-top:12px;">
+      ⚠️ After <strong>return</strong>, the function stops immediately. Any code after return is never reached!
+    </div>
+  </div>
+  <div class="page-num">8 / 18</div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+  SLIDE 9 — RETURN PATTERNS
+════════════════════════════════════════ -->
+<div class="slide content" style="padding:42px 60px;">
+  <h2 style="margin-bottom:16px;">Return Patterns 🔄</h2>
+  <div class="grid-2" style="gap:24px;">
+    <div>
+      <h3 style="font-size:16px; color:#1e40af; margin-bottom:10px;">Early Return (Conditional)</h3>
+      <pre style="font-size:13px;"><span class="kw">def</span> <span class="fn">check_age</span><span class="op">(</span><span class="var">age</span><span class="op">)</span><span class="op">:</span>
+    <span class="kw">if</span> <span class="var">age</span> <span class="op">&lt;</span> <span class="nm">18</span><span class="op">:</span>
+        <span class="kw">return</span> <span class="st">"Minor"</span>
+    <span class="kw">return</span> <span class="st">"Adult"</span>
+
+<span class="fn">print</span>(<span class="fn">check_age</span>(<span class="nm">15</span>))   <span class="cm"># Minor</span>
+<span class="fn">print</span>(<span class="fn">check_age</span>(<span class="nm">25</span>))   <span class="cm"># Adult</span></pre>
+      <div style="margin-top:10px; font-size:13px; color:#64748b;">No <code>else</code> needed — return exits the function!</div>
+    </div>
+    <div>
+      <h3 style="font-size:16px; color:#1e40af; margin-bottom:10px;">Return Expression Directly</h3>
+      <pre style="font-size:13px;"><span class="kw">def</span> <span class="fn">square</span><span class="op">(</span><span class="var">n</span><span class="op">)</span><span class="op">:</span>
+    <span class="kw">return</span> <span class="var">n</span> <span class="op">*</span> <span class="var">n</span>    <span class="cm"># No variable needed!</span>
+
+<span class="kw">def</span> <span class="fn">c_to_f</span><span class="op">(</span><span class="var">c</span><span class="op">)</span><span class="op">:</span>
+    <span class="kw">return</span> (<span class="var">c</span> <span class="op">*</span> <span class="nm">9</span><span class="op">/</span><span class="nm">5</span>) <span class="op">+</span> <span class="nm">32</span>
+
+<span class="fn">print</span>(<span class="fn">square</span>(<span class="nm">4</span>))      <span class="cm"># 16</span>
+<span class="fn">print</span>(<span class="fn">c_to_f</span>(<span class="nm">100</span>))   <span class="cm"># 212.0</span></pre>
+    </div>
+  </div>
+  <div class="highlight-box" style="margin-top:18px; font-size:14px;">
+    💡 A function without <strong>return</strong> automatically returns <code>None</code>.
+  </div>
+  <div class="page-num">9 / 18</div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+  SLIDE 10 — DEFAULT PARAMETERS
+════════════════════════════════════════ -->
+<div class="slide section-intro">
+  <div class="panel amber">
+    <div class="section-emoji">🎯</div>
+    <div class="section-label">Default Parameters</div>
+    <div style="font-size:13px; margin-top:8px; opacity:0.85; text-align:center;">Make arguments optional</div>
+  </div>
+  <div class="body">
+    <h2>Default Values — Optional Arguments</h2>
+    <p style="margin-bottom:14px;">Give parameters a <strong>default value</strong> in the definition. Callers can skip that argument — the default will be used instead!</p>
+    <pre><span class="kw">def</span> <span class="fn">greet</span><span class="op">(</span><span class="var">name</span><span class="op">=</span><span class="st">"friend"</span><span class="op">)</span><span class="op">:</span>
+    <span class="fn">print</span>(<span class="st">f"Hello, </span><span style="color:#f472b6;">{</span><span style="color:#38bdf8;">name</span><span style="color:#f472b6;">}</span><span class="st">!"</span>)
+
+<span class="fn">greet</span>(<span class="st">"Alice"</span>)   <span class="cm"># "Hello, Alice!"</span>
+<span class="fn">greet</span>()          <span class="cm"># "Hello, friend!"</span></pre>
+    <div class="highlight-box" style="font-size:13px; margin-top:12px;">
+      ⚠️ Required parameters must come BEFORE optional ones!
+    </div>
+  </div>
+  <div class="page-num">10 / 18</div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+  SLIDE 11 — DEFAULTS IN ACTION
+════════════════════════════════════════ -->
+<div class="slide dark">
+  <h2 style="color:#fbbf24; margin-bottom:14px;">Defaults Make Functions Flexible 🛠️</h2>
+  <div class="grid-2" style="gap:22px;">
+    <div>
+      <div style="font-size:11px; font-weight:700; color:#64748b; letter-spacing:2px; margin-bottom:10px;">MIXING REQUIRED AND OPTIONAL</div>
+      <pre><span class="kw">def</span> <span class="fn">make_smoothie</span><span class="op">(</span><span class="var">fruit</span><span class="op">,</span> <span class="var">size</span><span class="op">=</span><span class="st">"medium"</span><span class="op">,</span> <span class="var">ice</span><span class="op">=</span><span class="key">True</span><span class="op">)</span><span class="op">:</span>
+    <span class="var">ice_txt</span> <span class="op">=</span> <span class="st">"with ice"</span> <span class="key">if</span> <span class="var">ice</span> <span class="key">else</span> <span class="st">"no ice"</span>
+    <span class="fn">print</span>(<span class="st">f"</span><span style="color:#f472b6;">{</span><span style="color:#38bdf8;">size</span><span style="color:#f472b6;">}</span><span class="st"> </span><span style="color:#f472b6;">{</span><span style="color:#38bdf8;">fruit</span><span style="color:#f472b6;">}</span><span class="st"> smoothie (</span><span style="color:#f472b6;">{</span><span style="color:#38bdf8;">ice_txt</span><span style="color:#f472b6;">}</span><span class="st">)"</span>)
+
+<span class="fn">make_smoothie</span>(<span class="st">"mango"</span>)                    <span class="cm"># medium, with ice</span>
+<span class="fn">make_smoothie</span>(<span class="st">"banana"</span><span class="op">,</span> <span class="st">"large"</span>)          <span class="cm"># large, with ice</span>
+<span class="fn">make_smoothie</span>(<span class="st">"berry"</span><span class="op">,</span> <span class="st">"small"</span><span class="op">,</span> <span class="key">False</span>)   <span class="cm"># small, no ice</span></pre>
+    </div>
+    <div>
+      <div style="font-size:11px; font-weight:700; color:#64748b; letter-spacing:2px; margin-bottom:10px;">⚠️ GOTCHA: MUTABLE DEFAULTS</div>
+      <div style="background:#1e293b; border-radius:10px; padding:14px;">
+        <p style="font-size:13px; color:#f87171; margin-bottom:10px;">NEVER do this!</p>
+        <pre style="background:transparent; padding:0; font-size:12px; margin-bottom:12px;"><span class="kw">def</span> <span class="fn">bad</span><span class="op">(</span><span class="var">item</span><span class="op">,</span> <span class="var">lst</span><span class="op">=</span><span class="op">[</span><span class="op">]</span><span class="op">)</span><span class="op">:</span>   <span class="cm"># DANGER! Shared list!</span>
+    <span class="var">lst</span><span class="op">.</span><span class="fn">append</span>(<span class="var">item</span>)
+    <span class="kw">return</span> <span class="var">lst</span></pre>
+        <p style="font-size:13px; color:#34d399; margin-bottom:10px;">Do this instead:</p>
+        <pre style="background:transparent; padding:0; font-size:12px;"><span class="kw">def</span> <span class="fn">good</span><span class="op">(</span><span class="var">item</span><span class="op">,</span> <span class="var">lst</span><span class="op">=</span><span class="key">None</span><span class="op">)</span><span class="op">:</span>
+    <span class="key">if</span> <span class="var">lst</span> <span class="key">is</span> <span class="key">None</span><span class="op">:</span>
+        <span class="var">lst</span> <span class="op">=</span> <span class="op">[</span><span class="op">]</span>
+    <span class="var">lst</span><span class="op">.</span><span class="fn">append</span>(<span class="var">item</span>)
+    <span class="kw">return</span> <span class="var">lst</span></pre>
+      </div>
+    </div>
+  </div>
+  <div class="page-num">11 / 18</div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+  SLIDE 12 — KEYWORD ARGUMENTS
+════════════════════════════════════════ -->
+<div class="slide section-intro">
+  <div class="panel teal">
+    <div class="section-emoji">🏷️</div>
+    <div class="section-label">Keyword Arguments</div>
+    <div style="font-size:13px; margin-top:8px; opacity:0.85; text-align:center;">Name your values</div>
+  </div>
+  <div class="body">
+    <h2>Pass Arguments by Name</h2>
+    <p style="margin-bottom:14px;">Use <strong>keyword arguments</strong> to specify which parameter gets which value. Order doesn't matter!</p>
+    <pre><span class="kw">def</span> <span class="fn">describe_pet</span><span class="op">(</span><span class="var">name</span><span class="op">,</span> <span class="var">animal</span><span class="op">,</span> <span class="var">age</span><span class="op">)</span><span class="op">:</span>
+    <span class="fn">print</span>(<span class="st">f"</span><span style="color:#f472b6;">{</span><span style="color:#38bdf8;">name</span><span style="color:#f472b6;">}</span><span class="st"> is a </span><span style="color:#f472b6;">{</span><span style="color:#38bdf8;">age</span><span style="color:#f472b6;">}</span><span class="st">-year-old </span><span style="color:#f472b6;">{</span><span style="color:#38bdf8;">animal</span><span style="color:#f472b6;">}</span><span class="st">."</span>)
+
+<span class="cm"># Keyword — order doesn't matter!</span>
+<span class="fn">describe_pet</span>(<span class="var">animal</span><span class="op">=</span><span class="st">"dog"</span><span class="op">,</span> <span class="var">age</span><span class="op">=</span><span class="nm">5</span><span class="op">,</span> <span class="var">name</span><span class="op">=</span><span class="st">"Rex"</span>)</pre>
+    <div class="highlight-box" style="font-size:13px; margin-top:12px;">
+      💡 Keywords make code clearer, especially with many parameters or boolean flags!
+    </div>
+  </div>
+  <div class="page-num">12 / 18</div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+  SLIDE 13 — SCOPE
+════════════════════════════════════════ -->
+<div class="slide section-intro">
+  <div class="panel violet">
+    <div class="section-emoji">🌍</div>
+    <div class="section-label">Scope</div>
+    <div style="font-size:13px; margin-top:8px; opacity:0.85; text-align:center;">Where variables live</div>
+  </div>
+  <div class="body">
+    <h2>Local vs Global Variables</h2>
+    <p style="margin-bottom:14px;">Variables created <strong>inside</strong> a function are <em>local</em>. Variables created <strong>outside</strong> are <em>global</em>.</p>
+    <div class="grid-2" style="gap:16px;">
+      <div class="card violet-border" style="padding:14px 18px;">
+        <div style="font-weight:700; color:#6d28d9; margin-bottom:6px;">📍 Local</div>
+        <pre style="font-size:12px; background:#f5f3ff; border:none; padding:10px;"><span style="color:#6d28d9;">def</span> <span style="color:#0891b2;">demo</span>():
+    <span style="color:#be185d;">x</span> = <span style="color:#047857;">5</span>  <span style="color:#6b7280;"># local</span>
+<span style="color:#0891b2;">demo</span>()
+<span style="color:#374151;">print</span>(<span style="color:#be185d;">x</span>)  <span style="color:#dc2626;"># ERROR!</span></pre>
+      </div>
+      <div class="card green-border" style="padding:14px 18px;">
+        <div style="font-weight:700; color:#059669; margin-bottom:6px;">🌐 Global</div>
+        <pre style="font-size:12px; background:#f0fdf4; border:none; padding:10px;"><span style="color:#be185d;">y</span> = <span style="color:#047857;">10</span>  <span style="color:#6b7280;"># global</span>
+<span style="color:#6d28d9;">def</span> <span style="color:#0891b2;">show</span>():
+    <span style="color:#374151;">print</span>(<span style="color:#be185d;">y</span>)  <span style="color:#6b7280;"># works!</span></pre>
+      </div>
+    </div>
+  </div>
+  <div class="page-num">13 / 18</div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+  SLIDE 14 — SUMMARY
+════════════════════════════════════════ -->
+<div class="slide content" style="padding:44px 60px;">
+  <h2>Day 5 Summary 📚</h2>
+  <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:14px; margin-bottom:16px;">
+    <div class="card indigo-border" style="padding:14px 18px;">
+      <div style="font-size:20px; margin-bottom:6px;">🧩</div>
+      <div style="font-weight:700; color:#4f46e5; font-size:14px;">def & Call</div>
+    </div>
+    <div class="card green-border" style="padding:14px 18px;">
+      <div style="font-size:20px; margin-bottom:6px;">📬</div>
+      <div style="font-weight:700; color:#059669; font-size:14px;">Parameters</div>
+    </div>
+    <div class="card blue-border" style="padding:14px 18px;">
+      <div style="font-size:20px; margin-bottom:6px;">📤</div>
+      <div style="font-weight:700; color:#0284c7; font-size:14px;">Return</div>
+    </div>
+    <div class="card amber-border" style="padding:14px 18px;">
+      <div style="font-size:20px; margin-bottom:6px;">🎯</div>
+      <div style="font-weight:700; color:#d97706; font-size:14px;">Defaults</div>
+    </div>
+    <div class="card teal-border" style="padding:14px 18px;">
+      <div style="font-size:20px; margin-bottom:6px;">🏷️</div>
+      <div style="font-weight:700; color:#0d9488; font-size:14px;">Keywords</div>
+    </div>
+    <div class="card violet-border" style="padding:14px 18px;">
+      <div style="font-size:20px; margin-bottom:6px;">🌍</div>
+      <div style="font-weight:700; color:#6d28d9; font-size:14px;">Scope</div>
+    </div>
+  </div>
+  <div class="highlight-box" style="font-size:14px;">
+    🎉 Congratulations! You now understand functions — the most important concept in programming!
+  </div>
+  <div class="page-num">14 / 18</div>
+</div>
+
+</body>
+</html>
