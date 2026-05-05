@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Day 7: Revision — Loops &amp; Functions 🐍</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800;900&family=Fira+Code:wght@400;600&display=swap');
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    @page { size: A4 landscape; margin: 0; }
+
+    body { font-family: 'Poppins', 'Segoe UI', sans-serif; background: #e8e8e8; }
+
+    .slide {
+      width: 297mm;
+      height: 210mm;
+      overflow: hidden;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      page-break-after: always;
+      break-after: page;
+    }
+    @media screen { .slide { margin: 20px auto; box-shadow: 0 8px 40px rgba(0,0,0,0.18); } }
+
+    .blob { position: absolute; border-radius: 50%; opacity: 0.15; pointer-events: none; }
+
+    /* ── Themes ─── */
+    .hero {
+      background: linear-gradient(135deg, #0f766e 0%, #0369a1 55%, #4f46e5 100%);
+      color: white; justify-content: center; align-items: center; text-align: center; padding: 60px;
+    }
+    .hero .blob1 { width: 280px; height: 280px; background: white; top: -80px; right: -60px; }
+    .hero .blob2 { width: 200px; height: 200px; background: #a5f3fc; bottom: -60px; left: -40px; }
+
+    .section-intro { background: white; flex-direction: row; }
+    .section-intro .panel {
+      width: 36%; display: flex; flex-direction: column;
+      justify-content: center; align-items: center; padding: 50px 28px; color: white;
+    }
+    .section-intro .body { width: 64%; padding: 44px 52px; display: flex; flex-direction: column; justify-content: center; }
+
+    .content { background: white; padding: 48px 62px; }
+    .dark { background: #0f172a; color: #e2e8f0; padding: 46px 62px; }
+
+    /* ── Gradients ─── */
+    .purple { background: linear-gradient(135deg, #4f46e5, #7c3aed); }
+    .green  { background: linear-gradient(135deg, #059669, #10b981); }
+    .blue   { background: linear-gradient(135deg, #0284c7, #0ea5e9); }
+    .amber  { background: linear-gradient(135deg, #d97706, #f59e0b); }
+    .teal   { background: linear-gradient(135deg, #0d9488, #14b8a6); }
+    .violet { background: linear-gradient(135deg, #6d28d9, #8b5cf6); }
+    .rose   { background: linear-gradient(135deg, #be185d, #e11d48); }
+    .indigo { background: linear-gradient(135deg, #3730a3, #4f46e5); }
+    .orange { background: linear-gradient(135deg, #c2410c, #ea580c); }
+
+    /* ── Typography ─── */
+    .slide-tag { font-size: 11px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; opacity: 0.7; margin-bottom: 10px; }
+    .slide-title { font-size: 52px; font-weight: 900; line-height: 1.1; }
+    .slide-subtitle { font-size: 22px; font-weight: 400; opacity: 0.85; margin-top: 14px; }
+    .section-emoji { font-size: 88px; line-height: 1; margin-bottom: 14px; }
+    .section-label { font-size: 19px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; }
+
+    h2 { font-size: 31px; font-weight: 800; color: #1e1b4b; margin-bottom: 20px; }
+    h3 { font-size: 20px; font-weight: 700; color: #1e1b4b; margin-bottom: 10px; }
+    .dark h2 { color: #e2e8f0; }
+    .dark h3 { color: #94a3b8; }
+
+    p { font-size: 16px; line-height: 1.65; color: #374151; }
+    .dark p { color: #cbd5e1; }
+
+    ul { list-style: none; margin-top: 6px; }
+    ul li { font-size: 16px; color: #374151; padding: 5px 0; display: flex; align-items: flex-start; gap: 10px; line-height: 1.5; }
+    .dark ul li { color: #cbd5e1; }
+    ul li .icon { flex-shrink: 0; font-size: 17px; margin-top: 1px; }
+
+    /* ── Code ─── */
+    pre {
+      background: #0f172a; border-radius: 12px; padding: 18px 22px;
+      font-family: 'Fira Code', 'Consolas', monospace; font-size: 14px;
+      line-height: 1.75; color: #e2e8f0; overflow: hidden;
+    }
+    .dark pre { background: #1e293b; }
+    pre .kw  { color: #c084fc; }
+    pre .fn  { color: #34d399; }
+    pre .st  { color: #fbbf24; }
+    pre .cm  { color: #64748b; }
+    pre .nm  { color: #38bdf8; }
+    pre .op  { color: #f472b6; }
+    pre .var { color: #e2e8f0; }
+    pre .hl  { background: rgba(251,191,36,0.15); display: block; margin: 0 -22px; padding: 0 22px; }
+
+    /* ── Layouts ─── */
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+    .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+
+    /* ── Cards ─── */
+    .card { background: #f8fafc; border-radius: 14px; padding: 18px 22px; border-left: 5px solid #4f46e5; }
+    .card.green-border  { border-left-color: #059669; }
+    .card.blue-border   { border-left-color: #0284c7; }
+    .card.amber-border  { border-left-color: #d97706; }
+    .card.teal-border   { border-left-color: #0d9488; }
+    .card.violet-border { border-left-color: #6d28d9; }
+    .card.rose-border   { border-left-color: #be185d; }
+    .card.indigo-border { border-left-color: #4f46e5; }
+    .card.orange-border { border-left-color: #ea580c; }
+
+    /* ── Pills ─── */
+    .pill { display: inline-block; padding: 4px 14px; border-radius: 999px; font-size: 12px; font-weight: 700; }
+    .pill-green  { background: #d1fae5; color: #065f46; }
+    .pill-blue   { background: #dbeafe; color: #1e40af; }
+    .pill-amber  { background: #fef3c7; color: #92400e; }
+    .pill-teal   { background: #ccfbf1; color: #134e4a; }
+    .pill-violet { background: #ede9fe; color: #4c1d95; }
+    .pill-rose   { background: #ffe4e6; color: #9f1239; }
+    .pill-orange { background: #ffedd5; color: #9a3412; }
+
+    /* ── Highlight box ─── */
+    .highlight-box {
+      background: #fef9c3; border: 2px solid #fde047; border-radius: 10px;
+      padding: 12px 18px; font-size: 15px; color: #713f12; margin-top: 16px; font-weight: 600;
+    }
+    .danger-box {
+      background: #fef2f2; border: 2px solid #fca5a5; border-radius: 10px;
+      padding: 12px 18px; font-size: 15px; color: #991b1b; margin-top: 16px; font-weight: 600;
+    }
+
+    /* ── Step trace ─── */
+    .trace { font-family: 'Fira Code', monospace; font-size: 13px; background: #f1f5f9; border-radius: 10px; padding: 14px 18px; line-height: 2; }
+    .trace .step { display: flex; gap: 14px; align-items: center; }
+    .trace .arrow { color: #0284c7; font-weight: 700; }
+    .trace .yes  { color: #059669; font-weight: 700; }
+    .trace .no   { color: #dc2626; font-weight: 700; }
+
+    /* ── Page number ─── */
+    .page-num { position: absolute; bottom: 16px; right: 26px; font-size: 11px; font-weight: 600; opacity: 0.32; letter-spacing: 1px; }
+  </style>
+</head>
+<body>
+
+
+<!-- ════════════════════════════════════════
+  SLIDE 1 — TITLE
+════════════════════════════════════════ -->
+<div class="slide hero">
+  <div class="blob blob1"></div>
+  <div class="blob blob2"></div>
+  <div class="slide-tag">Python Crash Course · Day 7</div>
+  <div class="slide-title">Revision Day</div>
+  <div class="slide-subtitle">For Loops · While Loops · Nested Loops · Functions</div>
+  <div style="margin-top:30px; font-size:56px; line-height:1;">🔁</div>
+  <div style="margin-top:26px; font-size:12px; opacity:0.6; font-weight:600; letter-spacing:2px; text-transform:uppercase;">
+    Slow down. Understand deeply. Build the foundation.
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+  SLIDE 2 — AGENDA
+════════════════════════════════════════ -->
+<div class="slide content" style="padding:40px 58px;">
+  <h2 style="margin-bottom:14px;">Today's Roadmap 🗺️</h2>
+  <div style="display:grid; grid-template-columns:1fr 1fr 1fr 1fr; gap:12px; margin-bottom:16px;">
+    <div class="card teal-border">
+      <div style="font-size:30px; margin-bottom:6px;">🔄</div>
+      <div style="font-weight:800; font-size:15px; color:#1e1b4b;">For Loops</div>
+      <div style="font-size:12px; color:#6b7280; margin-top:4px;">Loop through any collection, one item at a time</div>
+    </div>
+    <div class="card blue-border">
+      <div style="font-size:30px; margin-bottom:6px;">🔁</div>
+      <div style="font-weight:800; font-size:15px; color:#1e1b4b;">While Loops</div>
+      <div style="font-size:12px; color:#6b7280; margin-top:4px;">Keep going until a condition turns False</div>
+    </div>
+    <div class="card orange-border">
+      <div style="font-size:30px; margin-bottom:6px;">🔲</div>
+      <div style="font-weight:800; font-size:15px; color:#1e1b4b;">Nested Loops</div>
+      <div style="font-size:12px; color:#6b7280; margin-top:4px;">A loop inside a loop — for combinations</div>
+    </div>
+    <div class="card violet-border">
+      <div style="font-size:30px; margin-bottom:6px;">🧩</div>
+      <div style="font-weight:800; font-size:15px; color:#1e1b4b;">Functions</div>
+      <div style="font-size:12px; color:#6b7280; margin-top:4px;">Write once, use anywhere</div>
+    </div>
+  </div>
+  <div class="highlight-box" style="font-size:14px;">
+    📌 Today is a <strong>revision day</strong>. We are not learning new things — we are making sure the foundations are rock solid before Day 8 (OOP & Classes).
+  </div>
+  <div class="page-num">2 / 18</div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+  SLIDE 3 — FOR LOOP SECTION INTRO
+════════════════════════════════════════ -->
+<div class="slide section-intro">
+  <div class="panel teal">
+    <div class="section-emoji">🔄</div>
+    <div class="section-label">For Loops</div>
+    <div style="font-size:13px; margin-top:8px; opacity:0.85; text-align:center;">Go through a collection one item at a time</div>
+  </div>
+  <div class="body">
+    <h2>The Big Idea</h2>
+    <p style="margin-bottom:16px;">A <strong>for loop</strong> says: <em>"Go through this collection, and for each item, do something."</em> You write the action once — Python repeats it for every item.</p>
+    <pre><span class="cm"># Read out loud: "FOR each name IN names, print it"</span>
+<span class="var">names</span> <span class="op">=</span> [<span class="st">"Alice"</span><span class="op">,</span> <span class="st">"Bob"</span><span class="op">,</span> <span class="st">"Charlie"</span>]
+
+<span class="kw">for</span> <span class="var">name</span> <span class="kw">in</span> <span class="var">names</span><span class="op">:</span>
+    <span class="fn">print</span>(<span class="var">name</span>)
+
+<span class="cm"># Alice</span>
+<span class="cm"># Bob</span>
+<span class="cm"># Charlie</span></pre>
+    <div style="display:flex; gap:10px; margin-top:14px;">
+      <div class="pill pill-teal">for … in …</div>
+      <div class="pill pill-green">works on lists, strings, range()</div>
+      <div class="pill pill-blue">indented block repeats</div>
+    </div>
+  </div>
+  <div class="page-num">3 / 18</div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+  SLIDE 4 — FOR LOOP ANATOMY + TRACE
+════════════════════════════════════════ -->
+<div class="slide content" style="padding:40px 60px;">
+  <h2 style="margin-bottom:14px;">For Loop — What Actually Happens 🔄</h2>
+  <div class="grid-2" style="gap:24px;">
+    <div>
+      <div style="font-size:11px; font-weight:700; color:#0d9488; letter-spacing:2px; margin-bottom:10px;">THE CODE</div>
+      <pre style="font-size:13.5px;"><span class="var">fruits</span> <span class="op">=</span> [<span class="st">"apple"</span><span class="op">,</span> <span class="st">"mango"</span><span class="op">,</span> <span class="st">"grape"</span>]
+
+<span class="kw">for</span> <span class="var">fruit</span> <span class="kw">in</span> <span class="var">fruits</span><span class="op">:</span>
+    <span class="fn">print</span>(<span class="st">f"I like </span><span class="op">{</span><span class="var">fruit</span><span class="op">}</span><span class="st">"</span>)</pre>
+      <div style="margin-top:14px; background:#f0fdfa; border-left:4px solid #0d9488; padding:12px 16px; border-radius:0 8px 8px 0; font-size:13px; color:#134e4a;">
+        <strong>fruit</strong> is the <em>loop variable</em>. Python sets it to the next item automatically each round. You can name it anything!
+      </div>
+    </div>
+    <div>
+      <div style="font-size:11px; font-weight:700; color:#0d9488; letter-spacing:2px; margin-bottom:10px;">STEP-BY-STEP TRACE</div>
+      <div class="trace">
+        <div class="step"><span class="arrow">Round 1</span> fruit = <span style="color:#fbbf24;">"apple"</span> → prints <em>I like apple</em></div>
+        <div class="step"><span class="arrow">Round 2</span> fruit = <span style="color:#fbbf24;">"mango"</span> → prints <em>I like mango</em></div>
+        <div class="step"><span class="arrow">Round 3</span> fruit = <span style="color:#fbbf24;">"grape"</span> → prints <em>I like grape</em></div>
+        <div class="step"><span class="no">List empty → loop ends</span></div>
+      </div>
+      <div style="margin-top:14px;">
+        <div style="font-size:12px; font-weight:700; color:#374151; margin-bottom:8px;">INDENTATION RULE:</div>
+        <div style="display:flex; gap:8px; flex-direction:column;">
+          <div style="background:#ecfdf5; border-radius:8px; padding:8px 14px; font-size:12px; color:#065f46; font-family:'Fira Code',monospace;">✅ <strong>Indented</strong> → inside loop, repeats each round</div>
+          <div style="background:#fef2f2; border-radius:8px; padding:8px 14px; font-size:12px; color:#991b1b; font-family:'Fira Code',monospace;">❌ <strong>Not indented</strong> → outside loop, runs once after</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="page-num">4 / 18</div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+  SLIDE 5 — FOR LOOP WITH range() AND STRINGS
+════════════════════════════════════════ -->
+<div class="slide dark">
+  <h2 style="color:#2dd4bf; margin-bottom:14px;">For Loop — range() and Strings 🔄</h2>
+  <div class="grid-2" style="gap:22px;">
+    <div>
+      <div style="font-size:11px; font-weight:700; color:#64748b; letter-spacing:2px; margin-bottom:10px;">COUNTING WITH range()</div>
+      <pre style="font-size:13px;"><span class="cm"># range(5) → 0, 1, 2, 3, 4</span>
+<span class="kw">for</span> <span class="var">i</span> <span class="kw">in</span> <span class="fn">range</span>(<span class="nm">5</span>)<span class="op">:</span>
+    <span class="fn">print</span>(<span class="var">i</span>)
+
+<span class="cm"># range(1, 6) → 1, 2, 3, 4, 5</span>
+<span class="kw">for</span> <span class="var">i</span> <span class="kw">in</span> <span class="fn">range</span>(<span class="nm">1</span><span class="op">,</span> <span class="nm">6</span>)<span class="op">:</span>
+    <span class="fn">print</span>(<span class="var">i</span>)
+
+<span class="cm"># range(1, 10, 2) → 1, 3, 5, 7, 9</span>
+<span class="kw">for</span> <span class="var">i</span> <span class="kw">in</span> <span class="fn">range</span>(<span class="nm">1</span><span class="op">,</span> <span class="nm">10</span><span class="op">,</span> <span class="nm">2</span>)<span class="op">:</span>
+    <span class="fn">print</span>(<span class="var">i</span>)</pre>
+    </div>
+    <div>
+      <div style="font-size:11px; font-weight:700; color:#64748b; letter-spacing:2px; margin-bottom:10px;">LOOPING OVER A STRING</div>
+      <pre style="font-size:13px;"><span class="cm"># A string is just a list of letters!</span>
+<span class="var">word</span> <span class="op">=</span> <span class="st">"Python"</span>
+
+<span class="kw">for</span> <span class="var">letter</span> <span class="kw">in</span> <span class="var">word</span><span class="op">:</span>
+    <span class="fn">print</span>(<span class="var">letter</span>)
+
+<span class="cm"># P</span>
+<span class="cm"># y</span>
+<span class="cm"># t</span>
+<span class="cm"># h</span>
+<span class="cm"># o</span>
+<span class="cm"># n</span></pre>
+      <div style="margin-top:12px; background:#1e293b; border-radius:10px; padding:10px 14px; font-size:12px; color:#2dd4bf; font-weight:600; border-left:3px solid #0d9488;">
+        range(start, stop, step) — <em>stop</em> is <strong>not included</strong>. range(1,6) gives 1–5, not 1–6.
+      </div>
+    </div>
+  </div>
+  <div class="page-num">5 / 18</div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+  SLIDE 6 — FOR LOOP USEFUL PATTERNS
+════════════════════════════════════════ -->
+<div class="slide content" style="padding:38px 58px;">
+  <h2 style="margin-bottom:14px;">For Loop — 3 Patterns You Must Know 🔄</h2>
+  <div class="grid-3" style="gap:18px;">
+    <div>
+      <div style="background:#f0fdfa; border-radius:10px; padding:4px 12px; font-size:11px; font-weight:700; color:#0f766e; letter-spacing:2px; display:inline-block; margin-bottom:10px;">ACCUMULATOR</div>
+      <pre style="font-size:12.5px;"><span class="cm"># Start with 0, add each item</span>
+<span class="var">scores</span> <span class="op">=</span> [<span class="nm">80</span><span class="op">,</span> <span class="nm">90</span><span class="op">,</span> <span class="nm">70</span>]
+<span class="var">total</span> <span class="op">=</span> <span class="nm">0</span>
+
+<span class="kw">for</span> <span class="var">s</span> <span class="kw">in</span> <span class="var">scores</span><span class="op">:</span>
+    <span class="var">total</span> <span class="op">=</span> <span class="var">total</span> <span class="op">+</span> <span class="var">s</span>
+
+<span class="fn">print</span>(<span class="var">total</span>)   <span class="cm"># 240</span></pre>
+      <div style="margin-top:8px; font-size:12px; color:#374151; background:#f8fafc; border-radius:8px; padding:8px 12px;">Start the "bucket" at 0. Add each item every round.</div>
+    </div>
+    <div>
+      <div style="background:#eff6ff; border-radius:10px; padding:4px 12px; font-size:11px; font-weight:700; color:#1d4ed8; letter-spacing:2px; display:inline-block; margin-bottom:10px;">FILTER (if inside loop)</div>
+      <pre style="font-size:12.5px;"><span class="cm"># Only act on some items</span>
+<span class="var">nums</span> <span class="op">=</span> [<span class="nm">1</span><span class="op">,</span><span class="nm">2</span><span class="op">,</span><span class="nm">3</span><span class="op">,</span><span class="nm">4</span><span class="op">,</span><span class="nm">5</span><span class="op">,</span><span class="nm">6</span>]
+
+<span class="kw">for</span> <span class="var">n</span> <span class="kw">in</span> <span class="var">nums</span><span class="op">:</span>
+    <span class="kw">if</span> <span class="var">n</span> <span class="op">%</span> <span class="nm">2</span> <span class="op">==</span> <span class="nm">0</span><span class="op">:</span>  <span class="cm"># even?</span>
+        <span class="fn">print</span>(<span class="var">n</span>)
+
+<span class="cm"># 2  4  6</span></pre>
+      <div style="margin-top:8px; font-size:12px; color:#374151; background:#f8fafc; border-radius:8px; padding:8px 12px;">Use <code>if</code> inside the loop to skip items you don't need.</div>
+    </div>
+    <div>
+      <div style="background:#fdf4ff; border-radius:10px; padding:4px 12px; font-size:11px; font-weight:700; color:#7e22ce; letter-spacing:2px; display:inline-block; margin-bottom:10px;">BUILD A LIST</div>
+      <pre style="font-size:12.5px;"><span class="cm"># Collect results into a new list</span>
+<span class="var">names</span> <span class="op">=</span> [<span class="st">"alice"</span><span class="op">,</span> <span class="st">"bob"</span>]
+<span class="var">upper</span> <span class="op">=</span> []
+
+<span class="kw">for</span> <span class="var">n</span> <span class="kw">in</span> <span class="var">names</span><span class="op">:</span>
+    <span class="var">upper</span><span class="op">.</span><span class="fn">append</span>(<span class="var">n</span><span class="op">.</span><span class="fn">upper</span>())
+
+<span class="fn">print</span>(<span class="var">upper</span>)
+<span class="cm"># ['ALICE', 'BOB']</span></pre>
+      <div style="margin-top:8px; font-size:12px; color:#374151; background:#f8fafc; border-radius:8px; padding:8px 12px;">Start with an empty list <code>[]</code>. Append items each round.</div>
+    </div>
+  </div>
+  <div class="highlight-box" style="margin-top:16px; font-size:14px;">
+    💡 These 3 patterns cover 90% of what you'll do with loops. Master them and everything else is easy.
+  </div>
+  <div class="page-num">6 / 18</div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+  SLIDE 7 — WHILE LOOP SECTION INTRO
+════════════════════════════════════════ -->
+<div class="slide section-intro">
+  <div class="panel blue">
+    <div class="section-emoji">🔁</div>
+    <div class="section-label">While Loops</div>
+    <div style="font-size:13px; margin-top:8px; opacity:0.85; text-align:center;">Keep going until a condition turns False</div>
+  </div>
+  <div class="body">
+    <h2>When You Don't Know How Many Times</h2>
+    <p style="margin-bottom:14px;">Use <strong>while</strong> when you don't know upfront how many repetitions you need — you just know the <em>condition</em> to keep going.</p>
+    <pre><span class="var">count</span> <span class="op">=</span> <span class="nm">5</span>
+
+<span class="kw">while</span> <span class="var">count</span> <span class="op">&gt;</span> <span class="nm">0</span><span class="op">:</span>     <span class="cm"># keep going AS LONG AS count > 0</span>
+    <span class="fn">print</span>(<span class="var">count</span>)
+    <span class="var">count</span> <span class="op">-=</span> <span class="nm">1</span>         <span class="cm"># ← ALWAYS change something!</span>
+
+<span class="fn">print</span>(<span class="st">"Go!"</span>)</pre>
+    <div style="display:flex; gap:10px; margin-top:14px;">
+      <div class="pill pill-blue">while condition:</div>
+      <div class="pill pill-amber">always change something inside!</div>
+      <div class="pill pill-rose">stops when condition = False</div>
+    </div>
+  </div>
+  <div class="page-num">7 / 18</div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+  SLIDE 8 — WHILE LOOP TRACE + INFINITE LOOP WARNING
+════════════════════════════════════════ -->
+<div class="slide content" style="padding:38px 60px;">
+  <h2 style="margin-bottom:14px;">While Loop — Step by Step 🔁</h2>
+  <div class="grid-2" style="gap:24px;">
+    <div>
+      <div style="font-size:11px; font-weight:700; color:#0284c7; letter-spacing:2px; margin-bottom:10px;">HOW IT WORKS</div>
+      <div style="background:#eff6ff; border-radius:12px; padding:16px 20px; font-size:13px; line-height:2.1; font-family:'Fira Code',monospace; color:#1e3a5f;">
+        <div>① Check the condition</div>
+        <div>② <span style="color:#059669; font-weight:700;">True</span> → run the block → go back to ①</div>
+        <div>③ <span style="color:#dc2626; font-weight:700;">False</span> → exit the loop</div>
+      </div>
+      <div style="margin-top:14px;">
+        <div class="trace" style="font-size:12px; line-height:1.9;">
+          <div>count=5 → 5&gt;0? <span class="yes">YES</span> → print 5 → count=4</div>
+          <div>count=4 → 4&gt;0? <span class="yes">YES</span> → print 4 → count=3</div>
+          <div>count=3 → 3&gt;0? <span class="yes">YES</span> → print 3 → count=2</div>
+          <div>count=2 → 2&gt;0? <span class="yes">YES</span> → print 2 → count=1</div>
+          <div>count=1 → 1&gt;0? <span class="yes">YES</span> → print 1 → count=0</div>
+          <div>count=0 → 0&gt;0? <span class="no">NO</span> → EXIT → print "Go!"</div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div style="font-size:11px; font-weight:700; color:#dc2626; letter-spacing:2px; margin-bottom:10px;">THE INFINITE LOOP — BIGGEST MISTAKE</div>
+      <pre style="font-size:12.5px; border: 2px solid #fca5a5;"><span class="cm"># ❌ BAD — runs forever!</span>
+<span class="var">count</span> <span class="op">=</span> <span class="nm">5</span>
+<span class="kw">while</span> <span class="var">count</span> <span class="op">&gt;</span> <span class="nm">0</span><span class="op">:</span>
+    <span class="fn">print</span>(<span class="var">count</span>)
+    <span class="cm"># forgot to change count!</span>
+    <span class="cm"># count is always 5 → always True → forever!</span></pre>
+      <pre style="font-size:12.5px; border: 2px solid #6ee7b7; margin-top:10px;"><span class="cm"># ✅ GOOD — changes count every round</span>
+<span class="var">count</span> <span class="op">=</span> <span class="nm">5</span>
+<span class="kw">while</span> <span class="var">count</span> <span class="op">&gt;</span> <span class="nm">0</span><span class="op">:</span>
+    <span class="fn">print</span>(<span class="var">count</span>)
+    <span class="var">count</span> <span class="op">-=</span> <span class="nm">1</span>   <span class="cm"># ← this makes it stop!</span></pre>
+      <div class="danger-box" style="margin-top:10px; font-size:13px;">
+        ⚠️ Every while loop MUST change something that eventually makes the condition False. Press <strong>Ctrl+C</strong> to stop an infinite loop.
+      </div>
+    </div>
+  </div>
+  <div class="page-num">8 / 18</div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+  SLIDE 9 — WHILE LOOP: for vs while + break/continue
+════════════════════════════════════════ -->
+<div class="slide dark">
+  <h2 style="color:#60a5fa; margin-bottom:14px;">For vs While + break &amp; continue 🔁</h2>
+  <div class="grid-2" style="gap:22px;">
+    <div>
+      <div style="font-size:11px; font-weight:700; color:#64748b; letter-spacing:2px; margin-bottom:10px;">FOR vs WHILE — WHEN TO USE WHICH</div>
+      <div style="display:flex; flex-direction:column; gap:8px;">
+        <div style="background:#1e293b; border-radius:10px; padding:12px 16px; border-left:3px solid #0d9488;">
+          <div style="font-size:13px; font-weight:700; color:#2dd4bf;">for loop</div>
+          <div style="font-size:12px; color:#94a3b8; margin-top:3px;">Use when you know the collection or count upfront</div>
+          <div style="font-size:12px; color:#64748b; font-family:'Fira Code',monospace; margin-top:4px;">for name in names: ...</div>
+        </div>
+        <div style="background:#1e293b; border-radius:10px; padding:12px 16px; border-left:3px solid #0284c7;">
+          <div style="font-size:13px; font-weight:700; color:#60a5fa;">while loop</div>
+          <div style="font-size:12px; color:#94a3b8; margin-top:3px;">Use when you keep going until something changes</div>
+          <div style="font-size:12px; color:#64748b; font-family:'Fira Code',monospace; margin-top:4px;">while user != "quit": ...</div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div style="font-size:11px; font-weight:700; color:#64748b; letter-spacing:2px; margin-bottom:10px;">break AND continue</div>
+      <pre style="font-size:12.5px;"><span class="cm"># break — EXIT the loop immediately</span>
+<span class="kw">for</span> <span class="var">n</span> <span class="kw">in</span> [<span class="nm">1</span><span class="op">,</span><span class="nm">2</span><span class="op">,</span><span class="nm">3</span><span class="op">,</span><span class="nm">4</span><span class="op">,</span><span class="nm">5</span>]<span class="op">:</span>
+    <span class="kw">if</span> <span class="var">n</span> <span class="op">==</span> <span class="nm">3</span><span class="op">:</span>
+        <span class="kw">break</span>         <span class="cm"># stops the whole loop</span>
+    <span class="fn">print</span>(<span class="var">n</span>)           <span class="cm"># prints 1, 2  (stops before 3)</span>
+
+<span class="cm"># continue — SKIP this round, go to next</span>
+<span class="kw">for</span> <span class="var">n</span> <span class="kw">in</span> [<span class="nm">1</span><span class="op">,</span><span class="nm">2</span><span class="op">,</span><span class="nm">3</span><span class="op">,</span><span class="nm">4</span><span class="op">,</span><span class="nm">5</span>]<span class="op">:</span>
+    <span class="kw">if</span> <span class="var">n</span> <span class="op">==</span> <span class="nm">3</span><span class="op">:</span>
+        <span class="kw">continue</span>      <span class="cm"># skip 3, keep going</span>
+    <span class="fn">print</span>(<span class="var">n</span>)           <span class="cm"># prints 1, 2, 4, 5</span></pre>
+    </div>
+  </div>
+  <div class="page-num">9 / 18</div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+  SLIDE 10 — NESTED LOOPS SECTION INTRO
+════════════════════════════════════════ -->
+<div class="slide section-intro">
+  <div class="panel orange">
+    <div class="section-emoji">🔲</div>
+    <div class="section-label">Nested Loops</div>
+    <div style="font-size:13px; margin-top:8px; opacity:0.85; text-align:center;">A loop living inside another loop</div>
+  </div>
+  <div class="body">
+    <h2>Every Combination, Automatically</h2>
+    <p style="margin-bottom:14px;">A <strong>nested loop</strong> is just a loop inside another loop. For <em>every 1 step</em> of the outer loop, the inner loop runs <em>all its steps</em>.</p>
+    <pre><span class="var">colours</span> <span class="op">=</span> [<span class="st">"Red"</span><span class="op">,</span> <span class="st">"Blue"</span>]
+<span class="var">sizes</span>   <span class="op">=</span> [<span class="st">"S"</span><span class="op">,</span> <span class="st">"M"</span><span class="op">,</span> <span class="st">"L"</span>]
+
+<span class="kw">for</span> <span class="var">colour</span> <span class="kw">in</span> <span class="var">colours</span><span class="op">:</span>       <span class="cm"># outer — runs 2 times</span>
+    <span class="kw">for</span> <span class="var">size</span> <span class="kw">in</span> <span class="var">sizes</span><span class="op">:</span>         <span class="cm"># inner — runs 3 times PER colour</span>
+        <span class="fn">print</span>(<span class="var">colour</span><span class="op">,</span> <span class="var">size</span>)   <span class="cm"># 2 × 3 = 6 total prints</span></pre>
+    <div style="display:flex; gap:10px; margin-top:14px;">
+      <div class="pill pill-orange">outer × inner = total</div>
+      <div class="pill pill-amber">inner always completes fully</div>
+      <div class="pill pill-teal">use extra indentation</div>
+    </div>
+  </div>
+  <div class="page-num">10 / 18</div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+  SLIDE 11 — NESTED LOOPS: VISUAL TRACE
+════════════════════════════════════════ -->
+<div class="slide content" style="padding:38px 58px;">
+  <h2 style="margin-bottom:14px;">Nested Loops — Watch It Run 🔲</h2>
+  <div class="grid-2" style="gap:24px;">
+    <div>
+      <div style="font-size:11px; font-weight:700; color:#c2410c; letter-spacing:2px; margin-bottom:10px;">THE CODE</div>
+      <pre style="font-size:13.5px;"><span class="kw">for</span> <span class="var">i</span> <span class="kw">in</span> <span class="fn">range</span>(<span class="nm">1</span><span class="op">,</span> <span class="nm">4</span>)<span class="op">:</span>   <span class="cm"># i: 1, 2, 3</span>
+    <span class="kw">for</span> <span class="var">j</span> <span class="kw">in</span> <span class="fn">range</span>(<span class="nm">1</span><span class="op">,</span> <span class="nm">4</span>)<span class="op">:</span> <span class="cm"># j: 1, 2, 3</span>
+        <span class="fn">print</span>(<span class="st">f"i=</span><span class="op">{</span><span class="var">i</span><span class="op">}</span><span class="st"> j=</span><span class="op">{</span><span class="var">j</span><span class="op">}</span><span class="st">"</span>)</pre>
+      <div style="margin-top:14px; font-size:13px; color:#374151; background:#fff7ed; border-radius:8px; padding:12px 16px; border-left:4px solid #ea580c;">
+        <strong>How many lines?</strong><br>
+        outer runs 3 times (i=1,2,3)<br>
+        inner runs 3 times per outer<br>
+        <strong>Total: 3 × 3 = 9 lines</strong>
+      </div>
+    </div>
+    <div>
+      <div style="font-size:11px; font-weight:700; color:#c2410c; letter-spacing:2px; margin-bottom:10px;">FULL TRACE</div>
+      <div class="trace" style="font-size:12px; line-height:1.8;">
+        <div style="color:#ea580c; font-weight:700;">── i = 1 ──</div>
+        <div>&nbsp;&nbsp;j=1 → i=1, j=1</div>
+        <div>&nbsp;&nbsp;j=2 → i=1, j=2</div>
+        <div>&nbsp;&nbsp;j=3 → i=1, j=3</div>
+        <div style="color:#ea580c; font-weight:700; margin-top:4px;">── i = 2 ──</div>
+        <div>&nbsp;&nbsp;j=1 → i=2, j=1</div>
+        <div>&nbsp;&nbsp;j=2 → i=2, j=2</div>
+        <div>&nbsp;&nbsp;j=3 → i=2, j=3</div>
+        <div style="color:#ea580c; font-weight:700; margin-top:4px;">── i = 3 ──</div>
+        <div>&nbsp;&nbsp;j=1 → i=3, j=1 &nbsp; … j=2 … j=3</div>
+      </div>
+    </div>
+  </div>
+  <div class="page-num">11 / 18</div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+  SLIDE 12 — NESTED LOOPS: REAL EXAMPLES
+════════════════════════════════════════ -->
+<div class="slide dark">
+  <h2 style="color:#fb923c; margin-bottom:14px;">Nested Loops — Real Examples 🔲</h2>
+  <div class="grid-2" style="gap:22px;">
+    <div>
+      <div style="font-size:11px; font-weight:700; color:#64748b; letter-spacing:2px; margin-bottom:10px;">MULTIPLICATION TABLE</div>
+      <pre style="font-size:12.5px;"><span class="kw">for</span> <span class="var">row</span> <span class="kw">in</span> <span class="fn">range</span>(<span class="nm">1</span><span class="op">,</span> <span class="nm">4</span>)<span class="op">:</span>
+    <span class="kw">for</span> <span class="var">col</span> <span class="kw">in</span> <span class="fn">range</span>(<span class="nm">1</span><span class="op">,</span> <span class="nm">4</span>)<span class="op">:</span>
+        <span class="fn">print</span>(<span class="var">row</span> <span class="op">*</span> <span class="var">col</span><span class="op">,</span> <span class="var">end</span><span class="op">=</span><span class="st">"  "</span>)
+    <span class="fn">print</span>()   <span class="cm"># new line after each row</span>
+
+<span class="cm"># 1  2  3</span>
+<span class="cm"># 2  4  6</span>
+<span class="cm"># 3  6  9</span></pre>
+    </div>
+    <div>
+      <div style="font-size:11px; font-weight:700; color:#64748b; letter-spacing:2px; margin-bottom:10px;">STAIRCASE PATTERN</div>
+      <pre style="font-size:12.5px;"><span class="kw">for</span> <span class="var">row</span> <span class="kw">in</span> <span class="fn">range</span>(<span class="nm">1</span><span class="op">,</span> <span class="nm">6</span>)<span class="op">:</span>
+    <span class="kw">for</span> <span class="var">col</span> <span class="kw">in</span> <span class="fn">range</span>(<span class="var">row</span>)<span class="op">:</span>  <span class="cm"># inner uses outer!</span>
+        <span class="fn">print</span>(<span class="st">"#"</span><span class="op">,</span> <span class="var">end</span><span class="op">=</span><span class="st">""</span>)
+    <span class="fn">print</span>()
+
+<span class="cm"># #</span>
+<span class="cm"># ##</span>
+<span class="cm"># ###</span>
+<span class="cm"># ####</span>
+<span class="cm"># #####</span></pre>
+      <div style="margin-top:10px; background:#1e293b; border-radius:10px; padding:10px 14px; font-size:12px; color:#fb923c; font-weight:600; border-left:3px solid #ea580c;">
+        The inner loop can use the outer loop's variable — that's how the staircase grows!
+      </div>
+    </div>
+  </div>
+  <div class="page-num">12 / 18</div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+  SLIDE 13 — FUNCTIONS SECTION INTRO
+════════════════════════════════════════ -->
+<div class="slide section-intro">
+  <div class="panel violet">
+    <div class="section-emoji">🧩</div>
+    <div class="section-label">Functions</div>
+    <div style="font-size:13px; margin-top:8px; opacity:0.85; text-align:center;">Write once, use anywhere</div>
+  </div>
+  <div class="body">
+    <h2>What Is a Function?</h2>
+    <p style="margin-bottom:14px;">A function is a <strong>named block of code</strong> that you can run whenever you need it. Think of it as a recipe: write it once, cook it any time.</p>
+    <pre><span class="cm"># DEFINE the function (write the recipe)</span>
+<span class="kw">def</span> <span class="fn">greet</span><span class="op">(</span><span class="var">name</span><span class="op">)</span><span class="op">:</span>
+    <span class="fn">print</span>(<span class="st">f"Hello, </span><span class="op">{</span><span class="var">name</span><span class="op">}</span><span class="st">!"</span>)
+
+<span class="cm"># CALL the function (cook the dish)</span>
+<span class="fn">greet</span>(<span class="st">"Alice"</span>)   <span class="cm"># Hello, Alice!</span>
+<span class="fn">greet</span>(<span class="st">"Bob"</span>)     <span class="cm"># Hello, Bob!</span>
+<span class="fn">greet</span>(<span class="st">"Charlie"</span>) <span class="cm"># Hello, Charlie!</span></pre>
+    <div style="display:flex; gap:10px; margin-top:14px;">
+      <div class="pill pill-violet">def name(params):</div>
+      <div class="pill pill-blue">indented body</div>
+      <div class="pill pill-teal">call it with name(args)</div>
+    </div>
+  </div>
+  <div class="page-num">13 / 18</div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+  SLIDE 14 — FUNCTIONS: ANATOMY
+════════════════════════════════════════ -->
+<div class="slide content" style="padding:38px 60px;">
+  <h2 style="margin-bottom:14px;">Functions — The Four Parts 🧩</h2>
+  <div class="grid-2" style="gap:24px;">
+    <div>
+      <div style="background:#f5f3ff; border-radius:12px; padding:18px 20px;">
+        <div style="font-family:'Fira Code',monospace; font-size:15px; line-height:2.3; color:#1e1b4b;">
+          <div><span style="color:#c084fc; font-weight:700;">def</span> <span style="color:#34d399; font-weight:700;">add_numbers</span><span style="color:#f472b6;">(</span><span style="color:#38bdf8;">a</span><span style="color:#f472b6;">,</span> <span style="color:#38bdf8;">b</span><span style="color:#f472b6;">)</span><span style="color:#f472b6;">:</span></div>
+          <div style="padding-left:24px;"><span style="color:#e2e8f0;">result</span> <span style="color:#f472b6;">=</span> <span style="color:#38bdf8;">a</span> <span style="color:#f472b6;">+</span> <span style="color:#38bdf8;">b</span></div>
+          <div style="padding-left:24px;"><span style="color:#c084fc; font-weight:700;">return</span> <span style="color:#e2e8f0;">result</span></div>
+        </div>
+      </div>
+      <div style="margin-top:12px; display:flex; flex-direction:column; gap:7px;">
+        <div style="display:flex; gap:10px; align-items:center; font-size:13px;">
+          <div style="background:#ede9fe; color:#4c1d95; border-radius:6px; padding:3px 10px; font-weight:700; font-family:'Fira Code',monospace; flex-shrink:0;">def</div>
+          <div style="color:#374151;">Keyword that tells Python: "I'm creating a function"</div>
+        </div>
+        <div style="display:flex; gap:10px; align-items:center; font-size:13px;">
+          <div style="background:#d1fae5; color:#065f46; border-radius:6px; padding:3px 10px; font-weight:700; font-family:'Fira Code',monospace; flex-shrink:0;">add_numbers</div>
+          <div style="color:#374151;">The name — use it to call the function later</div>
+        </div>
+        <div style="display:flex; gap:10px; align-items:center; font-size:13px;">
+          <div style="background:#dbeafe; color:#1e40af; border-radius:6px; padding:3px 10px; font-weight:700; font-family:'Fira Code',monospace; flex-shrink:0;">a, b</div>
+          <div style="color:#374151;">Parameters — the inputs the function expects</div>
+        </div>
+        <div style="display:flex; gap:10px; align-items:center; font-size:13px;">
+          <div style="background:#fef9c3; color:#713f12; border-radius:6px; padding:3px 10px; font-weight:700; font-family:'Fira Code',monospace; flex-shrink:0;">return</div>
+          <div style="color:#374151;">Sends the result back to whoever called the function</div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div style="font-size:11px; font-weight:700; color:#6d28d9; letter-spacing:2px; margin-bottom:10px;">USING THE FUNCTION</div>
+      <pre style="font-size:13px;"><span class="cm"># Call it and SAVE the result</span>
+<span class="var">answer</span> <span class="op">=</span> <span class="fn">add_numbers</span>(<span class="nm">3</span><span class="op">,</span> <span class="nm">4</span>)
+<span class="fn">print</span>(<span class="var">answer</span>)      <span class="cm"># 7</span>
+
+<span class="cm"># Use the result directly</span>
+<span class="fn">print</span>(<span class="fn">add_numbers</span>(<span class="nm">10</span><span class="op">,</span> <span class="nm">20</span>))  <span class="cm"># 30</span>
+
+<span class="cm"># Use it in an expression</span>
+<span class="var">total</span> <span class="op">=</span> <span class="fn">add_numbers</span>(<span class="nm">5</span><span class="op">,</span> <span class="nm">5</span>) <span class="op">*</span> <span class="nm">2</span>
+<span class="fn">print</span>(<span class="var">total</span>)       <span class="cm"># 20</span></pre>
+      <div class="highlight-box" style="margin-top:12px; font-size:13px;">
+        💡 <strong>def</strong> only defines the function — it doesn't run it. You must <strong>call</strong> it to run it.
+      </div>
+    </div>
+  </div>
+  <div class="page-num">14 / 18</div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+  SLIDE 15 — FUNCTIONS: print vs return + default params
+════════════════════════════════════════ -->
+<div class="slide dark">
+  <h2 style="color:#a78bfa; margin-bottom:14px;">print vs return + Default Parameters 🧩</h2>
+  <div class="grid-2" style="gap:22px;">
+    <div>
+      <div style="font-size:11px; font-weight:700; color:#64748b; letter-spacing:2px; margin-bottom:10px;">print vs return — THE KEY DIFFERENCE</div>
+      <pre style="font-size:12.5px;"><span class="kw">def</span> <span class="fn">square_print</span><span class="op">(</span><span class="var">n</span><span class="op">)</span><span class="op">:</span>
+    <span class="fn">print</span>(<span class="var">n</span> <span class="op">*</span> <span class="var">n</span>)      <span class="cm"># just SHOWS it</span>
+
+<span class="kw">def</span> <span class="fn">square_return</span><span class="op">(</span><span class="var">n</span><span class="op">)</span><span class="op">:</span>
+    <span class="kw">return</span> <span class="var">n</span> <span class="op">*</span> <span class="var">n</span>      <span class="cm"># SENDS it back</span>
+
+<span class="var">x</span> <span class="op">=</span> <span class="fn">square_print</span>(<span class="nm">5</span>)   <span class="cm"># x = None !</span>
+<span class="var">y</span> <span class="op">=</span> <span class="fn">square_return</span>(<span class="nm">5</span>)  <span class="cm"># y = 25 ✓</span>
+<span class="fn">print</span>(<span class="var">y</span> <span class="op">*</span> <span class="nm">2</span>)            <span class="cm"># 50 — can use it!</span></pre>
+      <div style="margin-top:10px; background:#1e293b; border-radius:10px; padding:10px 14px; font-size:12px; color:#a78bfa; font-weight:600; border-left:3px solid #7c3aed;">
+        Use <code>return</code> when you need to <em>do something</em> with the result. Use <code>print</code> when you just want to see it.
+      </div>
+    </div>
+    <div>
+      <div style="font-size:11px; font-weight:700; color:#64748b; letter-spacing:2px; margin-bottom:10px;">DEFAULT PARAMETERS</div>
+      <pre style="font-size:12.5px;"><span class="kw">def</span> <span class="fn">greet</span><span class="op">(</span><span class="var">name</span><span class="op">,</span> <span class="var">msg</span><span class="op">=</span><span class="st">"Hello"</span><span class="op">)</span><span class="op">:</span>
+    <span class="fn">print</span>(<span class="st">f"</span><span class="op">{</span><span class="var">msg</span><span class="op">}</span><span class="st">, </span><span class="op">{</span><span class="var">name</span><span class="op">}</span><span class="st">!"</span>)
+
+<span class="fn">greet</span>(<span class="st">"Alice"</span>)              <span class="cm"># Hello, Alice!</span>
+<span class="fn">greet</span>(<span class="st">"Bob"</span><span class="op">,</span> <span class="st">"Good morning"</span>) <span class="cm"># Good morning, Bob!</span>
+<span class="fn">greet</span>(<span class="st">"Charlie"</span><span class="op">,</span> <span class="st">"Hey"</span>)      <span class="cm"># Hey, Charlie!</span></pre>
+      <div style="margin-top:12px; display:flex; flex-direction:column; gap:6px;">
+        <div style="background:#1e293b; border-radius:8px; padding:8px 14px; font-size:12px; color:#e2e8f0; border-left:3px solid #fbbf24;">
+          Default params go at the END of the parameter list
+        </div>
+        <div style="background:#1e293b; border-radius:8px; padding:8px 14px; font-size:12px; color:#e2e8f0; border-left:3px solid #34d399;">
+          If the caller passes a value, it OVERRIDES the default
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="page-num">15 / 18</div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+  SLIDE 16 — FUNCTIONS + LOOPS TOGETHER
+════════════════════════════════════════ -->
+<div class="slide content" style="padding:38px 60px;">
+  <h2 style="margin-bottom:14px;">Functions + Loops — The Power Combo 🧩🔄</h2>
+  <p style="margin-bottom:16px; font-size:15px;">Define a function once, then call it inside a loop. This is how real programs are structured.</p>
+  <div class="grid-2" style="gap:22px;">
+    <div>
+      <pre style="font-size:13px;"><span class="cm"># Step 1: define the helper function</span>
+<span class="kw">def</span> <span class="fn">get_grade</span><span class="op">(</span><span class="var">score</span><span class="op">)</span><span class="op">:</span>
+    <span class="kw">if</span> <span class="var">score</span> <span class="op">&gt;=</span> <span class="nm">90</span><span class="op">:</span>
+        <span class="kw">return</span> <span class="st">"A"</span>
+    <span class="kw">elif</span> <span class="var">score</span> <span class="op">&gt;=</span> <span class="nm">75</span><span class="op">:</span>
+        <span class="kw">return</span> <span class="st">"B"</span>
+    <span class="kw">elif</span> <span class="var">score</span> <span class="op">&gt;=</span> <span class="nm">60</span><span class="op">:</span>
+        <span class="kw">return</span> <span class="st">"C"</span>
+    <span class="kw">else</span><span class="op">:</span>
+        <span class="kw">return</span> <span class="st">"F"</span></pre>
+    </div>
+    <div>
+      <pre style="font-size:13px;"><span class="cm"># Step 2: call it inside a loop</span>
+<span class="var">scores</span> <span class="op">=</span> [<span class="nm">88</span><span class="op">,</span> <span class="nm">95</span><span class="op">,</span> <span class="nm">62</span><span class="op">,</span> <span class="nm">45</span><span class="op">,</span> <span class="nm">73</span>]
+
+<span class="kw">for</span> <span class="var">score</span> <span class="kw">in</span> <span class="var">scores</span><span class="op">:</span>
+    <span class="var">grade</span> <span class="op">=</span> <span class="fn">get_grade</span>(<span class="var">score</span>)   <span class="cm"># ← function call!</span>
+    <span class="fn">print</span>(<span class="st">f"</span><span class="op">{</span><span class="var">score</span><span class="op">}</span><span class="st"> → </span><span class="op">{</span><span class="var">grade</span><span class="op">}</span><span class="st">"</span>)
+
+<span class="cm"># 88 → B</span>
+<span class="cm"># 95 → A</span>
+<span class="cm"># 62 → C</span>
+<span class="cm"># 45 → F</span>
+<span class="cm"># 73 → B</span></pre>
+    </div>
+  </div>
+  <div class="highlight-box" style="margin-top:14px; font-size:14px;">
+    💡 The function handles the logic for <em>one</em> score. The loop applies it to <em>all</em> scores. This is the foundation of clean, real-world code.
+  </div>
+  <div class="page-num">16 / 18</div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+  SLIDE 17 — COMMON MISTAKES CHEATSHEET
+════════════════════════════════════════ -->
+<div class="slide content" style="padding:36px 56px;">
+  <h2 style="margin-bottom:16px;">Common Mistakes — Don't Fall For These! ⚠️</h2>
+  <div class="grid-2" style="gap:16px;">
+    <div style="display:flex; flex-direction:column; gap:12px;">
+      <div class="card rose-border" style="padding:12px 16px;">
+        <div style="font-size:13px; font-weight:700; color:#be185d; margin-bottom:6px;">❌ Wrong indentation</div>
+        <div style="font-family:'Fira Code',monospace; font-size:12px; background:#fef2f2; padding:8px; border-radius:6px; color:#991b1b;">
+          for n in nums:<br>print(n) &nbsp;← NOT indented → error!
+        </div>
+        <div style="font-size:11px; color:#6b7280; margin-top:5px;">Body must be indented with 4 spaces or a tab</div>
+      </div>
+      <div class="card amber-border" style="padding:12px 16px;">
+        <div style="font-size:13px; font-weight:700; color:#d97706; margin-bottom:6px;">❌ Forgetting the colon</div>
+        <div style="font-family:'Fira Code',monospace; font-size:12px; background:#fffbeb; padding:8px; border-radius:6px; color:#92400e;">
+          for n in nums &nbsp;&nbsp;← no colon → SyntaxError!<br>
+          while x &gt; 0 &nbsp;&nbsp;&nbsp;← no colon → SyntaxError!<br>
+          def greet(name) ← no colon → SyntaxError!
+        </div>
+      </div>
+    </div>
+    <div style="display:flex; flex-direction:column; gap:12px;">
+      <div class="card orange-border" style="padding:12px 16px;">
+        <div style="font-size:13px; font-weight:700; color:#ea580c; margin-bottom:6px;">❌ Infinite while loop</div>
+        <div style="font-family:'Fira Code',monospace; font-size:12px; background:#fff7ed; padding:8px; border-radius:6px; color:#9a3412;">
+          count = 5<br>
+          while count &gt; 0:<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;print(count)<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#dc2626;"># forgot: count -= 1</span>
+        </div>
+        <div style="font-size:11px; color:#6b7280; margin-top:5px;">Always change the variable the condition checks!</div>
+      </div>
+      <div class="card violet-border" style="padding:12px 16px;">
+        <div style="font-size:13px; font-weight:700; color:#6d28d9; margin-bottom:6px;">❌ Calling a function before defining it</div>
+        <div style="font-family:'Fira Code',monospace; font-size:12px; background:#faf5ff; padding:8px; border-radius:6px; color:#4c1d95;">
+          greet("Alice") &nbsp;← called before def!<br><br>
+          def greet(name):<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;print(name)
+        </div>
+        <div style="font-size:11px; color:#6b7280; margin-top:5px;">Always define the function first, then call it</div>
+      </div>
+    </div>
+  </div>
+  <div class="page-num">17 / 18</div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+  SLIDE 18 — SUMMARY
+════════════════════════════════════════ -->
+<div class="slide content" style="padding:38px 58px;">
+  <h2 style="margin-bottom:16px;">Day 7 Summary — Your Revision Checklist 📚</h2>
+  <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:14px;">
+    <div class="card teal-border" style="padding:14px 18px;">
+      <div style="font-size:22px; margin-bottom:6px;">🔄</div>
+      <div style="font-weight:700; color:#0f766e; font-size:14px;">For Loop</div>
+      <ul style="margin-top:6px;">
+        <li style="font-size:12px; padding:2px 0;"><span class="icon">•</span>for item in collection: ...</li>
+        <li style="font-size:12px; padding:2px 0;"><span class="icon">•</span>Loop variable holds current item</li>
+        <li style="font-size:12px; padding:2px 0;"><span class="icon">•</span>Indented block repeats each round</li>
+        <li style="font-size:12px; padding:2px 0;"><span class="icon">•</span>range(), strings, lists all work</li>
+      </ul>
+    </div>
+    <div class="card blue-border" style="padding:14px 18px;">
+      <div style="font-size:22px; margin-bottom:6px;">🔁</div>
+      <div style="font-weight:700; color:#0369a1; font-size:14px;">While Loop</div>
+      <ul style="margin-top:6px;">
+        <li style="font-size:12px; padding:2px 0;"><span class="icon">•</span>while condition: ...</li>
+        <li style="font-size:12px; padding:2px 0;"><span class="icon">•</span>Runs as long as condition is True</li>
+        <li style="font-size:12px; padding:2px 0;"><span class="icon">•</span>Always change something inside!</li>
+        <li style="font-size:12px; padding:2px 0;"><span class="icon">•</span>break to exit, continue to skip</li>
+      </ul>
+    </div>
+    <div class="card orange-border" style="padding:14px 18px;">
+      <div style="font-size:22px; margin-bottom:6px;">🔲</div>
+      <div style="font-weight:700; color:#c2410c; font-size:14px;">Nested Loops</div>
+      <ul style="margin-top:6px;">
+        <li style="font-size:12px; padding:2px 0;"><span class="icon">•</span>Loop inside a loop</li>
+        <li style="font-size:12px; padding:2px 0;"><span class="icon">•</span>Inner completes fully for each outer step</li>
+        <li style="font-size:12px; padding:2px 0;"><span class="icon">•</span>Total = outer count × inner count</li>
+        <li style="font-size:12px; padding:2px 0;"><span class="icon">•</span>break only exits the inner loop</li>
+      </ul>
+    </div>
+    <div class="card violet-border" style="padding:14px 18px;">
+      <div style="font-size:22px; margin-bottom:6px;">🧩</div>
+      <div style="font-weight:700; color:#6d28d9; font-size:14px;">Functions</div>
+      <ul style="margin-top:6px;">
+        <li style="font-size:12px; padding:2px 0;"><span class="icon">•</span>def name(params): → define</li>
+        <li style="font-size:12px; padding:2px 0;"><span class="icon">•</span>name(args) → call/run it</li>
+        <li style="font-size:12px; padding:2px 0;"><span class="icon">•</span>return sends a value back</li>
+        <li style="font-size:12px; padding:2px 0;"><span class="icon">•</span>Default params, keyword args</li>
+      </ul>
+    </div>
+  </div>
+  <div class="highlight-box" style="font-size:14px;">
+    🎉 Foundations locked in! Next up — <strong>Day 8: Object-Oriented Programming &amp; Classes</strong>. The fun begins!
+  </div>
+  <div class="page-num">18 / 18</div>
+</div>
+
+
+</body>
+</html>
