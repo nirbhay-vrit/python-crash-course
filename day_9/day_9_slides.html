@@ -1,0 +1,1088 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Day 9: The 4 Pillars Complete 🐍</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800;900&family=Fira+Code:wght@400;600&display=swap');
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    @page { size: A4 landscape; margin: 0; }
+
+    body { font-family: 'Poppins', 'Segoe UI', sans-serif; background: #e8e8e8; }
+
+    .slide {
+      width: 297mm;
+      height: 210mm;
+      overflow: hidden;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      page-break-after: always;
+      break-after: page;
+    }
+    @media screen { .slide { margin: 20px auto; box-shadow: 0 8px 40px rgba(0,0,0,0.18); } }
+
+    .blob { position: absolute; border-radius: 50%; opacity: 0.15; pointer-events: none; }
+
+    /* ── Themes ─── */
+    .hero {
+      background: linear-gradient(135deg, #0d9488 0%, #4f46e5 50%, #7c3aed 100%);
+      color: white; justify-content: center; align-items: center; text-align: center; padding: 60px;
+    }
+    .hero .blob1 { width: 300px; height: 300px; background: white; top: -90px; right: -70px; }
+    .hero .blob2 { width: 220px; height: 220px; background: #c4b5fd; bottom: -70px; left: -50px; }
+
+    .section-intro { background: white; flex-direction: row; }
+    .section-intro .panel {
+      width: 36%; display: flex; flex-direction: column;
+      justify-content: center; align-items: center; padding: 50px 28px; color: white;
+    }
+    .section-intro .body { width: 64%; padding: 44px 52px; display: flex; flex-direction: column; justify-content: center; }
+
+    .content { background: white; padding: 48px 62px; }
+    .dark { background: #0f172a; color: #e2e8f0; padding: 46px 62px; }
+
+    /* ── Gradients ─── */
+    .purple  { background: linear-gradient(135deg, #4f46e5, #7c3aed); }
+    .green   { background: linear-gradient(135deg, #059669, #10b981); }
+    .blue    { background: linear-gradient(135deg, #0284c7, #0ea5e9); }
+    .amber   { background: linear-gradient(135deg, #d97706, #f59e0b); }
+    .teal    { background: linear-gradient(135deg, #0d9488, #14b8a6); }
+    .violet  { background: linear-gradient(135deg, #6d28d9, #8b5cf6); }
+    .rose    { background: linear-gradient(135deg, #be185d, #e11d48); }
+    .indigo  { background: linear-gradient(135deg, #3730a3, #4f46e5); }
+    .orange  { background: linear-gradient(135deg, #c2410c, #ea580c); }
+    .fuchsia { background: linear-gradient(135deg, #86198f, #c026d3); }
+    .cyan    { background: linear-gradient(135deg, #0e7490, #06b6d4); }
+
+    /* ── Typography ─── */
+    .slide-tag { font-size: 11px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; opacity: 0.7; margin-bottom: 10px; }
+    .slide-title { font-size: 52px; font-weight: 900; line-height: 1.1; }
+    .slide-subtitle { font-size: 22px; font-weight: 400; opacity: 0.85; margin-top: 14px; }
+    .section-emoji { font-size: 88px; line-height: 1; margin-bottom: 14px; }
+    .section-label { font-size: 19px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; }
+
+    h2 { font-size: 31px; font-weight: 800; color: #1e1b4b; margin-bottom: 20px; }
+    h3 { font-size: 20px; font-weight: 700; color: #1e1b4b; margin-bottom: 10px; }
+    .dark h2 { color: #e2e8f0; }
+    .dark h3 { color: #94a3b8; }
+
+    p { font-size: 16px; line-height: 1.65; color: #374151; }
+    .dark p { color: #cbd5e1; }
+
+    ul { list-style: none; margin-top: 6px; }
+    ul li { font-size: 16px; color: #374151; padding: 5px 0; display: flex; align-items: flex-start; gap: 10px; line-height: 1.5; }
+    .dark ul li { color: #cbd5e1; }
+    ul li .icon { flex-shrink: 0; font-size: 17px; margin-top: 1px; }
+
+    /* ── Code ─── */
+    pre {
+      background: #0f172a; border-radius: 12px; padding: 18px 22px;
+      font-family: 'Fira Code', 'Consolas', monospace; font-size: 14px;
+      line-height: 1.75; color: #e2e8f0; overflow: hidden;
+    }
+    .dark pre { background: #1e293b; }
+    pre .kw   { color: #c084fc; }
+    pre .fn   { color: #34d399; }
+    pre .st   { color: #fbbf24; }
+    pre .cm   { color: #64748b; }
+    pre .nm   { color: #38bdf8; }
+    pre .op   { color: #f472b6; }
+    pre .var  { color: #e2e8f0; }
+    pre .hl   { background: rgba(251,191,36,0.15); display: block; margin: 0 -22px; padding: 0 22px; }
+    pre .self { color: #fb923c; }
+    pre .dec  { color: #67e8f9; }
+
+    /* ── Layouts ─── */
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+    .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+
+    /* ── Cards ─── */
+    .card { background: #f8fafc; border-radius: 14px; padding: 18px 22px; border-left: 5px solid #4f46e5; }
+    .card.green-border   { border-left-color: #059669; }
+    .card.blue-border    { border-left-color: #0284c7; }
+    .card.amber-border   { border-left-color: #d97706; }
+    .card.teal-border    { border-left-color: #0d9488; }
+    .card.violet-border  { border-left-color: #6d28d9; }
+    .card.rose-border    { border-left-color: #be185d; }
+    .card.indigo-border  { border-left-color: #4f46e5; }
+    .card.orange-border  { border-left-color: #ea580c; }
+    .card.purple-border  { border-left-color: #7c3aed; }
+    .card.fuchsia-border { border-left-color: #c026d3; }
+    .card.cyan-border    { border-left-color: #06b6d4; }
+
+    /* ── Pills ─── */
+    .pill { display: inline-block; padding: 4px 14px; border-radius: 999px; font-size: 12px; font-weight: 700; }
+    .pill-green   { background: #d1fae5; color: #065f46; }
+    .pill-blue    { background: #dbeafe; color: #1e40af; }
+    .pill-amber   { background: #fef3c7; color: #92400e; }
+    .pill-teal    { background: #ccfbf1; color: #134e4a; }
+    .pill-violet  { background: #ede9fe; color: #4c1d95; }
+    .pill-rose    { background: #ffe4e6; color: #9f1239; }
+    .pill-orange  { background: #ffedd5; color: #9a3412; }
+    .pill-purple  { background: #f3e8ff; color: #6b21a8; }
+    .pill-indigo  { background: #e0e7ff; color: #3730a3; }
+    .pill-cyan    { background: #cffafe; color: #155e75; }
+
+    /* ── Highlight boxes ─── */
+    .highlight-box {
+      background: #fef9c3; border: 2px solid #fde047; border-radius: 10px;
+      padding: 12px 18px; font-size: 15px; color: #713f12; margin-top: 16px; font-weight: 600;
+    }
+    .danger-box {
+      background: #fef2f2; border: 2px solid #fca5a5; border-radius: 10px;
+      padding: 12px 18px; font-size: 15px; color: #991b1b; margin-top: 16px; font-weight: 600;
+    }
+    .info-box {
+      background: #eff6ff; border: 2px solid #93c5fd; border-radius: 10px;
+      padding: 12px 18px; font-size: 15px; color: #1e40af; margin-top: 16px; font-weight: 600;
+    }
+    .success-box {
+      background: #f0fdf4; border: 2px solid #86efac; border-radius: 10px;
+      padding: 12px 18px; font-size: 15px; color: #14532d; margin-top: 16px; font-weight: 600;
+    }
+
+    /* ── Step trace ─── */
+    .trace { font-family: 'Fira Code', monospace; font-size: 13px; background: #f1f5f9; border-radius: 10px; padding: 14px 18px; line-height: 2; }
+    .trace .step  { display: flex; gap: 14px; align-items: center; }
+    .trace .arrow { color: #0284c7; font-weight: 700; }
+    .trace .yes   { color: #059669; font-weight: 700; }
+    .trace .no    { color: #dc2626; font-weight: 700; }
+
+    /* ── Page number ─── */
+    .page-num { position: absolute; bottom: 16px; right: 26px; font-size: 11px; font-weight: 600; opacity: 0.32; letter-spacing: 1px; }
+  </style>
+</head>
+<body>
+
+
+<!-- ════════════════════════════════════════
+  SLIDE 1 — TITLE
+════════════════════════════════════════ -->
+<div class="slide hero">
+  <div class="blob blob1"></div>
+  <div class="blob blob2"></div>
+  <div class="slide-tag">Python Crash Course · Day 9 — Final Day</div>
+  <div class="slide-title">The 4 Pillars<br>Complete</div>
+  <div class="slide-subtitle">Inheritance · Polymorphism · Abstraction · Special Methods</div>
+  <div style="margin-top:30px; font-size:60px; line-height:1;">🏛️</div>
+  <div style="margin-top:26px; font-size:12px; opacity:0.6; font-weight:600; letter-spacing:2px; text-transform:uppercase;">
+    Build on what you know. Master the full OOP picture.
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+  SLIDE 2 — AGENDA
+════════════════════════════════════════ -->
+<div class="slide content" style="padding:36px 56px;">
+  <h2 style="margin-bottom:12px;">Today's Roadmap 🗺️ — The Final Day</h2>
+  <div style="display:grid; grid-template-columns:1fr 1fr 1fr 1fr; gap:12px; margin-bottom:14px;">
+    <div class="card teal-border">
+      <div style="font-size:28px; margin-bottom:6px;">🧬</div>
+      <div style="font-weight:800; font-size:14px; color:#1e1b4b;">Inheritance</div>
+      <div style="font-size:11px; color:#6b7280; margin-top:4px;">Reuse &amp; extend. Parent → Child. super(). Method overriding.</div>
+    </div>
+    <div class="card orange-border">
+      <div style="font-size:28px; margin-bottom:6px;">🎭</div>
+      <div style="font-weight:800; font-size:14px; color:#1e1b4b;">Polymorphism</div>
+      <div style="font-size:11px; color:#6b7280; margin-top:4px;">Same interface, many forms. Duck typing. speak() works for any animal.</div>
+    </div>
+    <div class="card blue-border">
+      <div style="font-size:28px; margin-bottom:6px;">🫙</div>
+      <div style="font-weight:800; font-size:14px; color:#1e1b4b;">Abstraction</div>
+      <div style="font-size:11px; color:#6b7280; margin-top:4px;">Define what, hide how. Abstract classes enforce contracts.</div>
+    </div>
+    <div class="card violet-border">
+      <div style="font-size:28px; margin-bottom:6px;">✨</div>
+      <div style="font-weight:800; font-size:14px; color:#1e1b4b;">Special Methods</div>
+      <div style="font-size:11px; color:#6b7280; margin-top:4px;">__str__ · __len__ · __eq__ · __add__ — make objects feel native.</div>
+    </div>
+  </div>
+  <div style="background:#f0fdf4; border-radius:12px; padding:14px 20px; display:grid; grid-template-columns:1fr 1fr 1fr 1fr; gap:12px;">
+    <div style="text-align:center; border-right:1px solid #bbf7d0; padding-right:12px;">
+      <div style="font-size:11px; font-weight:700; color:#059669; letter-spacing:1.5px;">DAY 8 ✓</div>
+      <div style="font-size:12px; color:#374151; margin-top:4px;">🔒 Encapsulation<br>Classes · __init__ · Methods</div>
+    </div>
+    <div style="text-align:center; border-right:1px solid #bbf7d0; padding-right:12px;">
+      <div style="font-size:11px; font-weight:700; color:#0d9488; letter-spacing:1.5px;">TODAY ←</div>
+      <div style="font-size:12px; color:#374151; margin-top:4px;">🧬 Inheritance</div>
+    </div>
+    <div style="text-align:center; border-right:1px solid #bbf7d0; padding-right:12px;">
+      <div style="font-size:11px; font-weight:700; color:#c2410c; letter-spacing:1.5px;">TODAY ←</div>
+      <div style="font-size:12px; color:#374151; margin-top:4px;">🎭 Polymorphism</div>
+    </div>
+    <div style="text-align:center;">
+      <div style="font-size:11px; font-weight:700; color:#1d4ed8; letter-spacing:1.5px;">TODAY ←</div>
+      <div style="font-size:12px; color:#374151; margin-top:4px;">🫙 Abstraction</div>
+    </div>
+  </div>
+  <div class="highlight-box" style="font-size:13px; margin-top:12px;">
+    📌 Today we complete the 4 Pillars of OOP. Every concept builds on Day 8 — bring those classes, objects, and methods with you!
+  </div>
+  <div class="page-num">2 / 20</div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+  SLIDE 3 — SECTION INTRO: INHERITANCE
+════════════════════════════════════════ -->
+<div class="slide section-intro">
+  <div class="panel teal">
+    <div class="section-emoji">🧬</div>
+    <div class="section-label">Inheritance</div>
+    <div style="font-size:13px; margin-top:8px; opacity:0.85; text-align:center;">Write once. Reuse everywhere. Extend when needed.</div>
+  </div>
+  <div class="body">
+    <h2>The Big Idea</h2>
+    <p style="margin-bottom:14px;">Inheritance lets one class <strong>get all the attributes and methods</strong> of another class for free — no copy-paste required.</p>
+    <pre><span class="kw">class</span> <span class="fn">Animal</span><span class="op">:</span>                    <span class="cm"># PARENT / base class</span>
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="self">self</span><span class="op">,</span> <span class="var">name</span>)<span class="op">:</span>
+        <span class="self">self</span><span class="op">.</span><span class="var">name</span> <span class="op">=</span> <span class="var">name</span>
+    <span class="kw">def</span> <span class="fn">eat</span>(<span class="self">self</span>)<span class="op">:</span>
+        <span class="fn">print</span>(<span class="st">f"</span><span class="op">{</span><span class="self">self</span><span class="op">.</span><span class="var">name</span><span class="op">}</span><span class="st"> is eating."</span>)
+
+<span class="kw">class</span> <span class="fn">Dog</span>(<span class="fn">Animal</span>)<span class="op">:</span>               <span class="cm"># CHILD — inherits Animal</span>
+    <span class="kw">def</span> <span class="fn">bark</span>(<span class="self">self</span>)<span class="op">:</span>
+        <span class="fn">print</span>(<span class="st">f"</span><span class="op">{</span><span class="self">self</span><span class="op">.</span><span class="var">name</span><span class="op">}</span><span class="st"> says: Woof!"</span>)
+
+<span class="var">rex</span> <span class="op">=</span> <span class="fn">Dog</span>(<span class="st">"Rex"</span>)
+<span class="var">rex</span><span class="op">.</span><span class="fn">eat</span>()    <span class="cm"># inherited → Rex is eating.</span>
+<span class="var">rex</span><span class="op">.</span><span class="fn">bark</span>()   <span class="cm"># Dog's own → Rex says: Woof!</span></pre>
+    <div style="display:flex; gap:10px; margin-top:12px; flex-wrap:wrap;">
+      <div class="pill pill-teal">class Child(Parent):</div>
+      <div class="pill pill-green">child gets ALL parent methods FREE</div>
+      <div class="pill pill-cyan">IS-A relationship: Dog IS-A Animal</div>
+    </div>
+  </div>
+  <div class="page-num">3 / 20</div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+  SLIDE 4 — WHY INHERITANCE? DRY PRINCIPLE
+════════════════════════════════════════ -->
+<div class="slide content" style="padding:38px 58px;">
+  <h2 style="margin-bottom:14px;">Why Inheritance? — Don't Repeat Yourself 🧬</h2>
+  <div class="grid-2" style="gap:22px;">
+    <div>
+      <div style="font-size:11px; font-weight:700; color:#dc2626; letter-spacing:2px; margin-bottom:10px;">WITHOUT INHERITANCE — DUPLICATION</div>
+      <pre style="font-size:12px;"><span class="kw">class</span> <span class="fn">Dog</span><span class="op">:</span>
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="self">self</span><span class="op">,</span> <span class="var">name</span>)<span class="op">:</span> <span class="self">self</span><span class="op">.</span><span class="var">name</span> <span class="op">=</span> <span class="var">name</span>
+    <span class="kw">def</span> <span class="fn">eat</span>(<span class="self">self</span>)<span class="op">:</span>              <span class="cm"># DUPLICATED ❌</span>
+        <span class="fn">print</span>(<span class="st">f"</span><span class="op">{</span><span class="self">self</span><span class="op">.</span><span class="var">name</span><span class="op">}</span><span class="st"> eats."</span>)
+    <span class="kw">def</span> <span class="fn">bark</span>(<span class="self">self</span>)<span class="op">:</span>
+        <span class="fn">print</span>(<span class="st">"Woof!"</span>)
+
+<span class="kw">class</span> <span class="fn">Cat</span><span class="op">:</span>
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="self">self</span><span class="op">,</span> <span class="var">name</span>)<span class="op">:</span> <span class="self">self</span><span class="op">.</span><span class="var">name</span> <span class="op">=</span> <span class="var">name</span>
+    <span class="kw">def</span> <span class="fn">eat</span>(<span class="self">self</span>)<span class="op">:</span>              <span class="cm"># DUPLICATED ❌</span>
+        <span class="fn">print</span>(<span class="st">f"</span><span class="op">{</span><span class="self">self</span><span class="op">.</span><span class="var">name</span><span class="op">}</span><span class="st"> eats."</span>)
+    <span class="kw">def</span> <span class="fn">meow</span>(<span class="self">self</span>)<span class="op">:</span>
+        <span class="fn">print</span>(<span class="st">"Meow!"</span>)</pre>
+      <div class="danger-box" style="font-size:13px; margin-top:10px;">
+        ⚠️ eat() is copy-pasted. Add 10 more animals → 10 copies of eat(). Fix a bug in eat() → update 10 files. This is the DRY violation.
+      </div>
+    </div>
+    <div>
+      <div style="font-size:11px; font-weight:700; color:#059669; letter-spacing:2px; margin-bottom:10px;">WITH INHERITANCE — SINGLE SOURCE OF TRUTH</div>
+      <pre style="font-size:12px;"><span class="kw">class</span> <span class="fn">Animal</span><span class="op">:</span>               <span class="cm"># shared code lives HERE</span>
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="self">self</span><span class="op">,</span> <span class="var">name</span>)<span class="op">:</span>
+        <span class="self">self</span><span class="op">.</span><span class="var">name</span> <span class="op">=</span> <span class="var">name</span>
+    <span class="kw">def</span> <span class="fn">eat</span>(<span class="self">self</span>)<span class="op">:</span>            <span class="cm"># written ONCE ✅</span>
+        <span class="fn">print</span>(<span class="st">f"</span><span class="op">{</span><span class="self">self</span><span class="op">.</span><span class="var">name</span><span class="op">}</span><span class="st"> eats."</span>)
+
+<span class="kw">class</span> <span class="fn">Dog</span>(<span class="fn">Animal</span>)<span class="op">:</span>
+    <span class="kw">def</span> <span class="fn">bark</span>(<span class="self">self</span>)<span class="op">:</span> <span class="fn">print</span>(<span class="st">"Woof!"</span>)
+
+<span class="kw">class</span> <span class="fn">Cat</span>(<span class="fn">Animal</span>)<span class="op">:</span>
+    <span class="kw">def</span> <span class="fn">meow</span>(<span class="self">self</span>)<span class="op">:</span> <span class="fn">print</span>(<span class="st">"Meow!"</span>)
+
+<span class="cm"># Dog and Cat BOTH have eat() — from Animal — zero copies!</span></pre>
+      <div class="highlight-box" style="font-size:13px; margin-top:10px;">
+        ✅ eat() lives in ONE place. Add 10 animals — they all get eat() free. Fix the bug once → fixed everywhere.
+      </div>
+    </div>
+  </div>
+  <div style="display:flex; gap:10px; margin-top:12px; flex-wrap:wrap;">
+    <div class="pill pill-teal">Animal = parent / base / super class</div>
+    <div class="pill pill-green">Dog, Cat = child / derived / sub class</div>
+    <div class="pill pill-cyan">DRY = Don't Repeat Yourself</div>
+  </div>
+  <div class="page-num">4 / 20</div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+  SLIDE 5 — super() AND METHOD OVERRIDING
+════════════════════════════════════════ -->
+<div class="slide dark">
+  <h2 style="color:#2dd4bf; margin-bottom:14px;">super() &amp; Method Overriding 🧬</h2>
+  <div class="grid-2" style="gap:22px;">
+    <div>
+      <div style="font-size:11px; font-weight:700; color:#64748b; letter-spacing:2px; margin-bottom:10px;">super() — EXTEND THE PARENT'S __init__</div>
+      <pre style="font-size:12.5px;"><span class="kw">class</span> <span class="fn">Animal</span><span class="op">:</span>
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="self">self</span><span class="op">,</span> <span class="var">name</span><span class="op">,</span> <span class="var">age</span>)<span class="op">:</span>
+        <span class="self">self</span><span class="op">.</span><span class="var">name</span> <span class="op">=</span> <span class="var">name</span>
+        <span class="self">self</span><span class="op">.</span><span class="var">age</span>  <span class="op">=</span> <span class="var">age</span>
+
+<span class="kw">class</span> <span class="fn">Dog</span>(<span class="fn">Animal</span>)<span class="op">:</span>
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="self">self</span><span class="op">,</span> <span class="var">name</span><span class="op">,</span> <span class="var">age</span><span class="op">,</span> <span class="var">breed</span>)<span class="op">:</span>
+        <span class="fn">super</span>()<span class="op">.</span><span class="fn">__init__</span>(<span class="var">name</span><span class="op">,</span> <span class="var">age</span>)  <span class="cm"># ← run parent first</span>
+        <span class="self">self</span><span class="op">.</span><span class="var">breed</span> <span class="op">=</span> <span class="var">breed</span>         <span class="cm"># ← add Dog's own attr</span>
+
+<span class="var">rex</span> <span class="op">=</span> <span class="fn">Dog</span>(<span class="st">"Rex"</span><span class="op">,</span> <span class="nm">3</span><span class="op">,</span> <span class="st">"Labrador"</span>)
+<span class="fn">print</span>(<span class="var">rex</span><span class="op">.</span><span class="var">name</span>)   <span class="cm"># Rex   ← from Animal</span>
+<span class="fn">print</span>(<span class="var">rex</span><span class="op">.</span><span class="var">breed</span>)  <span class="cm"># Labrador ← from Dog</span></pre>
+      <div style="background:#1e293b; border-radius:10px; padding:10px 16px; font-size:13px; color:#94a3b8; margin-top:10px; border-left:3px solid #2dd4bf;">
+        Rule: always call <code style="color:#2dd4bf;">super().__init__()</code> first, then add your own attributes below it.
+      </div>
+    </div>
+    <div>
+      <div style="font-size:11px; font-weight:700; color:#64748b; letter-spacing:2px; margin-bottom:10px;">METHOD OVERRIDING — REPLACE THE PARENT'S VERSION</div>
+      <pre style="font-size:12.5px;"><span class="kw">class</span> <span class="fn">Animal</span><span class="op">:</span>
+    <span class="kw">def</span> <span class="fn">speak</span>(<span class="self">self</span>)<span class="op">:</span>
+        <span class="fn">print</span>(<span class="st">"... (some sound)"</span>)
+
+<span class="kw">class</span> <span class="fn">Dog</span>(<span class="fn">Animal</span>)<span class="op">:</span>
+    <span class="kw">def</span> <span class="fn">speak</span>(<span class="self">self</span>)<span class="op">:</span>     <span class="cm"># OVERRIDES parent!</span>
+        <span class="fn">print</span>(<span class="st">"Woof!"</span>)
+
+<span class="kw">class</span> <span class="fn">Cat</span>(<span class="fn">Animal</span>)<span class="op">:</span>
+    <span class="kw">def</span> <span class="fn">speak</span>(<span class="self">self</span>)<span class="op">:</span>     <span class="cm"># OVERRIDES parent!</span>
+        <span class="fn">print</span>(<span class="st">"Meow!"</span>)
+
+<span class="kw">class</span> <span class="fn">Fish</span>(<span class="fn">Animal</span>)<span class="op">:</span>
+    <span class="kw">pass</span>                <span class="cm"># no override → uses parent's</span>
+
+<span class="fn">Dog</span>()<span class="op">.</span><span class="fn">speak</span>()   <span class="cm"># Woof!</span>
+<span class="fn">Cat</span>()<span class="op">.</span><span class="fn">speak</span>()   <span class="cm"># Meow!</span>
+<span class="fn">Fish</span>()<span class="op">.</span><span class="fn">speak</span>()  <span class="cm"># ... (some sound)</span></pre>
+    </div>
+  </div>
+  <div style="margin-top:14px; background:#1e293b; border-radius:10px; padding:10px 18px; font-size:13px; color:#2dd4bf; font-weight:600; border-left:3px solid #0d9488;">
+    💡 isinstance(rex, Animal) → True &nbsp;&nbsp;|&nbsp;&nbsp; isinstance(rex, Dog) → True &nbsp;&nbsp;|&nbsp;&nbsp; isinstance(rex, Cat) → False
+  </div>
+  <div class="page-num">5 / 20</div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+  SLIDE 6 — INHERITANCE: isinstance & issubclass
+════════════════════════════════════════ -->
+<div class="slide content" style="padding:38px 60px;">
+  <h2 style="margin-bottom:14px;">isinstance() &amp; issubclass() — Checking the Hierarchy 🧬</h2>
+  <div class="grid-2" style="gap:24px;">
+    <div>
+      <div style="font-size:11px; font-weight:700; color:#0d9488; letter-spacing:2px; margin-bottom:10px;">THE CLASS HIERARCHY</div>
+      <div style="background:#f0fdfa; border-radius:12px; padding:16px 20px; font-family:'Fira Code',monospace; font-size:14px; line-height:2.4; color:#134e4a;">
+        <div style="color:#0d9488; font-weight:700;">Vehicle</div>
+        <div style="padding-left:24px; color:#374151;">└── Car</div>
+        <div style="padding-left:48px; color:#374151;">└── ElectricCar</div>
+      </div>
+      <pre style="font-size:12.5px; margin-top:12px;"><span class="kw">class</span> <span class="fn">Vehicle</span><span class="op">:</span> <span class="kw">pass</span>
+<span class="kw">class</span> <span class="fn">Car</span>(<span class="fn">Vehicle</span>)<span class="op">:</span> <span class="kw">pass</span>
+<span class="kw">class</span> <span class="fn">ElectricCar</span>(<span class="fn">Car</span>)<span class="op">:</span> <span class="kw">pass</span>
+
+<span class="var">my_car</span> <span class="op">=</span> <span class="fn">ElectricCar</span>()</pre>
+    </div>
+    <div>
+      <div style="font-size:11px; font-weight:700; color:#0d9488; letter-spacing:2px; margin-bottom:10px;">CHECKING MEMBERSHIP</div>
+      <div class="trace">
+        <div><span class="arrow">isinstance</span>(my_car, ElectricCar)  → <span class="yes">True</span>  &nbsp; direct class</div>
+        <div><span class="arrow">isinstance</span>(my_car, Car)          → <span class="yes">True</span>  &nbsp; parent</div>
+        <div><span class="arrow">isinstance</span>(my_car, Vehicle)      → <span class="yes">True</span>  &nbsp; grandparent</div>
+        <div><span class="arrow">isinstance</span>(my_car, str)          → <span class="no">False</span> &nbsp; unrelated</div>
+        <div>&nbsp;</div>
+        <div><span class="arrow">issubclass</span>(ElectricCar, Car)    → <span class="yes">True</span></div>
+        <div><span class="arrow">issubclass</span>(Car, ElectricCar)    → <span class="no">False</span> &nbsp; reversed!</div>
+      </div>
+      <div class="info-box" style="margin-top:12px; font-size:13px;">
+        💡 <strong>isinstance()</strong> checks if an object is an instance of a class OR any of its ancestors. Safer than <code>type(obj) == Car</code> which only matches exactly.
+      </div>
+    </div>
+  </div>
+  <div class="page-num">6 / 20</div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+  SLIDE 7 — SECTION INTRO: POLYMORPHISM
+════════════════════════════════════════ -->
+<div class="slide section-intro">
+  <div class="panel orange">
+    <div class="section-emoji">🎭</div>
+    <div class="section-label">Polymorphism</div>
+    <div style="font-size:13px; margin-top:8px; opacity:0.85; text-align:center;">One interface — many forms of behaviour</div>
+  </div>
+  <div class="body">
+    <h2>The Big Idea</h2>
+    <p style="margin-bottom:14px;"><strong>Poly = many &nbsp; Morph = forms.</strong><br>
+    Different classes share the same method <em>name</em>, but each provides its own <em>behaviour</em>. The caller doesn't need to know which type it's talking to.</p>
+    <pre><span class="var">animals</span> <span class="op">=</span> [<span class="fn">Dog</span>(<span class="st">"Rex"</span>)<span class="op">,</span> <span class="fn">Cat</span>(<span class="st">"Luna"</span>)<span class="op">,</span> <span class="fn">Parrot</span>(<span class="st">"Tweety"</span>)]
+
+<span class="kw">for</span> <span class="var">animal</span> <span class="kw">in</span> <span class="var">animals</span><span class="op">:</span>
+    <span class="fn">print</span>(<span class="var">animal</span><span class="op">.</span><span class="fn">speak</span>())   <span class="cm"># same call — different result!</span>
+
+<span class="cm"># Rex says: Woof!</span>
+<span class="cm"># Luna says: Meow!</span>
+<span class="cm"># Tweety says: Tweet!</span></pre>
+    <div style="display:flex; gap:10px; margin-top:14px; flex-wrap:wrap;">
+      <div class="pill pill-orange">same method name → different behaviour</div>
+      <div class="pill pill-amber">caller doesn't care about the type</div>
+      <div class="pill pill-rose">works with ANY object that has .speak()</div>
+    </div>
+  </div>
+  <div class="page-num">7 / 20</div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+  SLIDE 8 — POLYMORPHISM WITH INHERITANCE
+════════════════════════════════════════ -->
+<div class="slide content" style="padding:36px 58px;">
+  <h2 style="margin-bottom:14px;">Polymorphism in Action — Shapes 🎭</h2>
+  <div class="grid-2" style="gap:22px;">
+    <div>
+      <div style="font-size:11px; font-weight:700; color:#c2410c; letter-spacing:2px; margin-bottom:10px;">PARENT DEFINES THE INTERFACE</div>
+      <pre style="font-size:12px;"><span class="kw">class</span> <span class="fn">Shape</span><span class="op">:</span>
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="self">self</span><span class="op">,</span> <span class="var">colour</span>)<span class="op">:</span>
+        <span class="self">self</span><span class="op">.</span><span class="var">colour</span> <span class="op">=</span> <span class="var">colour</span>
+    <span class="kw">def</span> <span class="fn">area</span>(<span class="self">self</span>)<span class="op">:</span>                <span class="cm"># meant to be overridden</span>
+        <span class="kw">return</span> <span class="nm">0</span>
+    <span class="kw">def</span> <span class="fn">describe</span>(<span class="self">self</span>)<span class="op">:</span>           <span class="cm"># uses self.area() — polymorphic!</span>
+        <span class="fn">print</span>(<span class="st">f"</span><span class="op">{</span><span class="self">self</span><span class="op">.</span><span class="var">colour</span><span class="op">}</span><span class="st"> area = {</span><span class="self">self</span><span class="op">.</span><span class="fn">area</span>()<span class="st">:.2f}"</span>)
+
+<span class="kw">class</span> <span class="fn">Circle</span>(<span class="fn">Shape</span>)<span class="op">:</span>
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="self">self</span><span class="op">,</span> <span class="var">colour</span><span class="op">,</span> <span class="var">r</span>)<span class="op">:</span>
+        <span class="fn">super</span>()<span class="op">.</span><span class="fn">__init__</span>(<span class="var">colour</span>)<span class="op">;</span> <span class="self">self</span><span class="op">.</span><span class="var">r</span> <span class="op">=</span> <span class="var">r</span>
+    <span class="kw">def</span> <span class="fn">area</span>(<span class="self">self</span>)<span class="op">:</span>                <span class="cm"># OVERRIDES Shape.area()</span>
+        <span class="kw">return</span> <span class="nm">3.14159</span> <span class="op">*</span> <span class="self">self</span><span class="op">.</span><span class="var">r</span> <span class="op">**</span> <span class="nm">2</span>
+
+<span class="kw">class</span> <span class="fn">Rectangle</span>(<span class="fn">Shape</span>)<span class="op">:</span>
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="self">self</span><span class="op">,</span> <span class="var">colour</span><span class="op">,</span> <span class="var">w</span><span class="op">,</span> <span class="var">h</span>)<span class="op">:</span>
+        <span class="fn">super</span>()<span class="op">.</span><span class="fn">__init__</span>(<span class="var">colour</span>)<span class="op">;</span> <span class="self">self</span><span class="op">.</span><span class="var">w</span><span class="op">=</span><span class="var">w</span><span class="op">;</span> <span class="self">self</span><span class="op">.</span><span class="var">h</span><span class="op">=</span><span class="var">h</span>
+    <span class="kw">def</span> <span class="fn">area</span>(<span class="self">self</span>)<span class="op">:</span> <span class="kw">return</span> <span class="self">self</span><span class="op">.</span><span class="var">w</span> <span class="op">*</span> <span class="self">self</span><span class="op">.</span><span class="var">h</span></pre>
+    </div>
+    <div>
+      <div style="font-size:11px; font-weight:700; color:#c2410c; letter-spacing:2px; margin-bottom:10px;">ONE LOOP — EVERY SHAPE CALCULATED CORRECTLY</div>
+      <pre style="font-size:12px;"><span class="var">shapes</span> <span class="op">=</span> [
+    <span class="fn">Circle</span>(<span class="st">"red"</span><span class="op">,</span> <span class="nm">5</span>)<span class="op">,</span>
+    <span class="fn">Rectangle</span>(<span class="st">"blue"</span><span class="op">,</span> <span class="nm">4</span><span class="op">,</span> <span class="nm">6</span>)<span class="op">,</span>
+]
+
+<span class="kw">for</span> <span class="var">s</span> <span class="kw">in</span> <span class="var">shapes</span><span class="op">:</span>
+    <span class="var">s</span><span class="op">.</span><span class="fn">describe</span>()  <span class="cm"># calls s.area() — which version?</span>
+                  <span class="cm"># whichever belongs to THAT object!</span>
+
+<span class="cm"># red area = 78.54   ← Circle.area()</span>
+<span class="cm"># blue area = 24.00  ← Rectangle.area()</span></pre>
+      <div class="highlight-box" style="font-size:13px; margin-top:10px;">
+        💡 <code>describe()</code> is defined <strong>once in Shape</strong>. It calls <code>self.area()</code> — Python automatically picks the <strong>most specific version</strong> for each object.
+      </div>
+      <div style="display:flex; gap:8px; margin-top:10px; flex-wrap:wrap;">
+        <div class="pill pill-orange">override area() in each shape</div>
+        <div class="pill pill-amber">describe() never changes</div>
+      </div>
+    </div>
+  </div>
+  <div class="page-num">8 / 20</div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+  SLIDE 9 — DUCK TYPING
+════════════════════════════════════════ -->
+<div class="slide dark">
+  <h2 style="color:#fb923c; margin-bottom:14px;">Duck Typing — Python's Natural Polymorphism 🦆</h2>
+  <p style="color:#94a3b8; font-size:14px; margin-bottom:16px;">
+    <em>"If it walks like a duck and quacks like a duck — it's a duck."</em><br>
+    Python doesn't care about the class name. If an object has the right method, Python calls it. No inheritance required.
+  </p>
+  <div class="grid-2" style="gap:22px;">
+    <div>
+      <div style="font-size:11px; font-weight:700; color:#64748b; letter-spacing:2px; margin-bottom:10px;">NO SHARED PARENT — STILL WORKS</div>
+      <pre style="font-size:12.5px;"><span class="kw">class</span> <span class="fn">Printer</span><span class="op">:</span>
+    <span class="kw">def</span> <span class="fn">render</span>(<span class="self">self</span>)<span class="op">:</span>
+        <span class="fn">print</span>(<span class="st">"Printing document..."</span>)
+
+<span class="kw">class</span> <span class="fn">Screen</span><span class="op">:</span>
+    <span class="kw">def</span> <span class="fn">render</span>(<span class="self">self</span>)<span class="op">:</span>
+        <span class="fn">print</span>(<span class="st">"Displaying on screen..."</span>)
+
+<span class="kw">class</span> <span class="fn">PDFExporter</span><span class="op">:</span>
+    <span class="kw">def</span> <span class="fn">render</span>(<span class="self">self</span>)<span class="op">:</span>
+        <span class="fn">print</span>(<span class="st">"Exporting to PDF..."</span>)
+
+<span class="kw">def</span> <span class="fn">show_output</span>(<span class="var">device</span>)<span class="op">:</span>
+    <span class="var">device</span><span class="op">.</span><span class="fn">render</span>()   <span class="cm"># works for ANY object with render()</span>
+
+<span class="var">outputs</span> <span class="op">=</span> [<span class="fn">Printer</span>()<span class="op">,</span> <span class="fn">Screen</span>()<span class="op">,</span> <span class="fn">PDFExporter</span>()]
+<span class="kw">for</span> <span class="var">d</span> <span class="kw">in</span> <span class="var">outputs</span><span class="op">:</span>
+    <span class="fn">show_output</span>(<span class="var">d</span>)   <span class="cm"># same call — different output!</span></pre>
+    </div>
+    <div>
+      <div style="font-size:11px; font-weight:700; color:#64748b; letter-spacing:2px; margin-bottom:10px;">KEY IDEAS</div>
+      <div style="display:flex; flex-direction:column; gap:10px;">
+        <div style="background:#1e293b; border-radius:10px; padding:12px 16px; border-left:3px solid #fb923c; font-size:13px; color:#e2e8f0;">
+          <strong style="color:#fb923c;">Duck typing</strong> = Python checks if the method exists at <em>call time</em>, not at class-definition time.
+        </div>
+        <div style="background:#1e293b; border-radius:10px; padding:12px 16px; border-left:3px solid #fbbf24; font-size:13px; color:#e2e8f0;">
+          <strong style="color:#fbbf24;">No inheritance needed.</strong> As long as the object has <code>.render()</code>, the function works. Period.
+        </div>
+        <div style="background:#1e293b; border-radius:10px; padding:12px 16px; border-left:3px solid #34d399; font-size:13px; color:#e2e8f0;">
+          <strong style="color:#34d399;">vs Inheritance-based polymorphism:</strong> that requires a shared parent. Duck typing is more flexible — any object qualifies.
+        </div>
+        <div style="background:#1e293b; border-radius:10px; padding:12px 16px; border-left:3px solid #60a5fa; font-size:13px; color:#e2e8f0;">
+          Python built-ins use duck typing too: <code>len()</code> works on any object with <code>__len__</code>. <code>for</code> works on any object with <code>__iter__</code>.
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="page-num">9 / 20</div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+  SLIDE 10 — SECTION INTRO: ABSTRACTION
+════════════════════════════════════════ -->
+<div class="slide section-intro">
+  <div class="panel blue">
+    <div class="section-emoji">🫙</div>
+    <div class="section-label">Abstraction</div>
+    <div style="font-size:13px; margin-top:8px; opacity:0.85; text-align:center;">Define what. Hide how.</div>
+  </div>
+  <div class="body">
+    <h2>The Big Idea</h2>
+    <p style="margin-bottom:14px;"><strong>Abstraction = showing only what matters, hiding the complexity underneath.</strong><br>
+    You press the gas pedal — you don't see the engine internals. You call <code>.pay()</code> — you don't know if it's a card or PayPal.</p>
+    <div style="display:flex; flex-direction:column; gap:10px; margin-bottom:14px;">
+      <div style="background:#eff6ff; border-left:4px solid #0284c7; padding:10px 16px; border-radius:0 8px 8px 0; font-size:14px; color:#1e3a5f;">
+        <strong>Abstract class</strong> — defines the CONTRACT (what you must implement). Cannot be instantiated.
+      </div>
+      <div style="background:#eff6ff; border-left:4px solid #0ea5e9; padding:10px 16px; border-radius:0 8px 8px 0; font-size:14px; color:#1e3a5f;">
+        <strong>Abstract method</strong> — must be implemented by every subclass. Marked with <code>@abstractmethod</code>.
+      </div>
+      <div style="background:#eff6ff; border-left:4px solid #38bdf8; padding:10px 16px; border-radius:0 8px 8px 0; font-size:14px; color:#1e3a5f;">
+        <strong>Concrete class</strong> — inherits the abstract class and fills in all abstract methods.
+      </div>
+    </div>
+    <div style="display:flex; gap:10px; flex-wrap:wrap;">
+      <div class="pill pill-blue">from abc import ABC, abstractmethod</div>
+      <div class="pill pill-cyan">class MyClass(ABC):</div>
+      <div class="pill pill-teal">@abstractmethod</div>
+    </div>
+  </div>
+  <div class="page-num">10 / 20</div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+  SLIDE 11 — ABSTRACT BASE CLASS
+════════════════════════════════════════ -->
+<div class="slide content" style="padding:36px 58px;">
+  <h2 style="margin-bottom:14px;">Abstract Base Class — Enforcing a Contract 🫙</h2>
+  <div class="grid-2" style="gap:22px;">
+    <div>
+      <div style="font-size:11px; font-weight:700; color:#0284c7; letter-spacing:2px; margin-bottom:10px;">DEFINE THE ABSTRACT CLASS</div>
+      <pre style="font-size:12px;"><span class="kw">from</span> <span class="var">abc</span> <span class="kw">import</span> <span class="fn">ABC</span><span class="op">,</span> <span class="fn">abstractmethod</span>
+
+<span class="kw">class</span> <span class="fn">PaymentMethod</span>(<span class="fn">ABC</span>)<span class="op">:</span>       <span class="cm"># ← abstract class</span>
+    <span class="dec">@abstractmethod</span>               <span class="cm"># ← subclass MUST implement</span>
+    <span class="kw">def</span> <span class="fn">pay</span>(<span class="self">self</span><span class="op">,</span> <span class="var">amount</span>)<span class="op">:</span>
+        <span class="kw">pass</span>
+
+    <span class="dec">@abstractmethod</span>
+    <span class="kw">def</span> <span class="fn">refund</span>(<span class="self">self</span><span class="op">,</span> <span class="var">amount</span>)<span class="op">:</span>
+        <span class="kw">pass</span>
+
+<span class="cm"># PaymentMethod() → TypeError: can't instantiate abstract class!</span>
+
+<span class="kw">class</span> <span class="fn">CreditCard</span>(<span class="fn">PaymentMethod</span>)<span class="op">:</span>
+    <span class="kw">def</span> <span class="fn">pay</span>(<span class="self">self</span><span class="op">,</span> <span class="var">amount</span>)<span class="op">:</span>
+        <span class="fn">print</span>(<span class="st">f"Card charged ${amount}"</span>)
+    <span class="kw">def</span> <span class="fn">refund</span>(<span class="self">self</span><span class="op">,</span> <span class="var">amount</span>)<span class="op">:</span>
+        <span class="fn">print</span>(<span class="st">f"Card refund ${amount}"</span>)
+
+<span class="kw">class</span> <span class="fn">PayPal</span>(<span class="fn">PaymentMethod</span>)<span class="op">:</span>
+    <span class="kw">def</span> <span class="fn">pay</span>(<span class="self">self</span><span class="op">,</span> <span class="var">amount</span>)<span class="op">:</span>
+        <span class="fn">print</span>(<span class="st">f"PayPal sent ${amount}"</span>)
+    <span class="kw">def</span> <span class="fn">refund</span>(<span class="self">self</span><span class="op">,</span> <span class="var">amount</span>)<span class="op">:</span>
+        <span class="fn">print</span>(<span class="st">f"PayPal refund ${amount}"</span>)</pre>
+    </div>
+    <div>
+      <div style="font-size:11px; font-weight:700; color:#0284c7; letter-spacing:2px; margin-bottom:10px;">THE CALLER DOESN'T CARE HOW IT WORKS</div>
+      <pre style="font-size:12px;"><span class="kw">def</span> <span class="fn">checkout</span>(<span class="var">payment</span><span class="op">:</span> <span class="fn">PaymentMethod</span><span class="op">,</span> <span class="var">total</span>)<span class="op">:</span>
+    <span class="var">payment</span><span class="op">.</span><span class="fn">pay</span>(<span class="var">total</span>)    <span class="cm"># no idea HOW it pays</span>
+                          <span class="cm"># trusts the contract!</span>
+
+<span class="fn">checkout</span>(<span class="fn">CreditCard</span>()<span class="op">,</span> <span class="nm">99.99</span>)
+<span class="cm"># Card charged $99.99</span>
+
+<span class="fn">checkout</span>(<span class="fn">PayPal</span>()<span class="op">,</span> <span class="nm">49.99</span>)
+<span class="cm"># PayPal sent $49.99</span></pre>
+      <div class="highlight-box" style="margin-top:12px; font-size:13px;">
+        💡 Missing an abstract method? Python raises a <strong>TypeError</strong> the moment you try to instantiate the class — catching the error at startup, not in production.
+      </div>
+      <div style="margin-top:12px; display:flex; flex-direction:column; gap:6px;">
+        <div style="background:#f8fafc; border-radius:8px; padding:8px 14px; font-size:12px; border-left:3px solid #0284c7; color:#374151;">✅ Contract = guaranteed interface</div>
+        <div style="background:#f8fafc; border-radius:8px; padding:8px 14px; font-size:12px; border-left:3px solid #0284c7; color:#374151;">✅ Caller doesn't care which payment method</div>
+        <div style="background:#f8fafc; border-radius:8px; padding:8px 14px; font-size:12px; border-left:3px solid #0284c7; color:#374151;">✅ Add a new method without changing checkout()</div>
+      </div>
+    </div>
+  </div>
+  <div class="page-num">11 / 20</div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+  SLIDE 12 — THE 4 PILLARS SIDE BY SIDE
+════════════════════════════════════════ -->
+<div class="slide dark">
+  <h2 style="color:#c084fc; margin-bottom:16px;">The 4 Pillars — Complete Picture 🏛️</h2>
+  <div style="display:grid; grid-template-columns:1fr 1fr 1fr 1fr; gap:14px;">
+    <div style="background:#1e293b; border-radius:14px; padding:16px 14px; border-top:4px solid #7c3aed;">
+      <div style="font-size:32px; margin-bottom:8px;">🔒</div>
+      <div style="font-size:13px; font-weight:800; color:#c084fc; margin-bottom:6px;">Encapsulation</div>
+      <div style="font-size:11px; color:#64748b; line-height:1.6; margin-bottom:8px;">Bundle data + methods together. Private attributes. Control access.</div>
+      <div style="font-family:'Fira Code',monospace; font-size:10.5px; color:#94a3b8; background:#0f172a; border-radius:6px; padding:6px 10px; line-height:1.8;">
+        self.__balance<br>
+        def get_balance(self):
+      </div>
+      <div style="margin-top:8px; background:#2d1f5e; border-radius:6px; padding:4px 10px; font-size:10px; color:#a78bfa; font-weight:700; text-align:center;">Day 8 ✓</div>
+    </div>
+    <div style="background:#1e293b; border-radius:14px; padding:16px 14px; border-top:4px solid #0d9488;">
+      <div style="font-size:32px; margin-bottom:8px;">🧬</div>
+      <div style="font-size:13px; font-weight:800; color:#2dd4bf; margin-bottom:6px;">Inheritance</div>
+      <div style="font-size:11px; color:#64748b; line-height:1.6; margin-bottom:8px;">Reuse parent code. Child extends parent. super(). IS-A relationship.</div>
+      <div style="font-family:'Fira Code',monospace; font-size:10.5px; color:#94a3b8; background:#0f172a; border-radius:6px; padding:6px 10px; line-height:1.8;">
+        class Dog(Animal):<br>
+        super().__init__(...)
+      </div>
+      <div style="margin-top:8px; background:#134e4a; border-radius:6px; padding:4px 10px; font-size:10px; color:#2dd4bf; font-weight:700; text-align:center;">Day 9 ← Today</div>
+    </div>
+    <div style="background:#1e293b; border-radius:14px; padding:16px 14px; border-top:4px solid #ea580c;">
+      <div style="font-size:32px; margin-bottom:8px;">🎭</div>
+      <div style="font-size:13px; font-weight:800; color:#fb923c; margin-bottom:6px;">Polymorphism</div>
+      <div style="font-size:11px; color:#64748b; line-height:1.6; margin-bottom:8px;">Same method name, different behaviour. Duck typing. One loop for all.</div>
+      <div style="font-family:'Fira Code',monospace; font-size:10.5px; color:#94a3b8; background:#0f172a; border-radius:6px; padding:6px 10px; line-height:1.8;">
+        for a in animals:<br>
+        &nbsp;&nbsp;a.speak()  # different!
+      </div>
+      <div style="margin-top:8px; background:#431407; border-radius:6px; padding:4px 10px; font-size:10px; color:#fb923c; font-weight:700; text-align:center;">Day 9 ← Today</div>
+    </div>
+    <div style="background:#1e293b; border-radius:14px; padding:16px 14px; border-top:4px solid #0284c7;">
+      <div style="font-size:32px; margin-bottom:8px;">🫙</div>
+      <div style="font-size:13px; font-weight:800; color:#60a5fa; margin-bottom:6px;">Abstraction</div>
+      <div style="font-size:11px; color:#64748b; line-height:1.6; margin-bottom:8px;">Define the contract. Hide complexity. @abstractmethod enforces it.</div>
+      <div style="font-family:'Fira Code',monospace; font-size:10.5px; color:#94a3b8; background:#0f172a; border-radius:6px; padding:6px 10px; line-height:1.8;">
+        class Pay(ABC):<br>
+        &nbsp;&nbsp;@abstractmethod
+      </div>
+      <div style="margin-top:8px; background:#172554; border-radius:6px; padding:4px 10px; font-size:10px; color:#60a5fa; font-weight:700; text-align:center;">Day 9 ← Today</div>
+    </div>
+  </div>
+  <div style="margin-top:14px; background:#1e293b; border-radius:10px; padding:10px 18px; font-size:12px; color:#94a3b8; border-left:3px solid #7c3aed;">
+    💡 The pillars work together. A well-designed class typically uses <strong>all four</strong>: bundled data (Encapsulation), built on a parent (Inheritance), with a shared interface (Polymorphism), defined by a contract (Abstraction).
+  </div>
+  <div class="page-num">12 / 20</div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+  SLIDE 13 — SECTION INTRO: SPECIAL METHODS
+════════════════════════════════════════ -->
+<div class="slide section-intro">
+  <div class="panel violet">
+    <div class="section-emoji">✨</div>
+    <div class="section-label">Special Methods</div>
+    <div style="font-size:13px; margin-top:8px; opacity:0.85; text-align:center;">Make your objects feel built-in</div>
+  </div>
+  <div class="body">
+    <h2>Dunder Methods</h2>
+    <p style="margin-bottom:14px;"><strong>Dunder = Double UNDERscore.</strong> When you call <code>print(obj)</code>, Python actually calls <code>obj.__str__()</code>. Define these methods in your class to make objects behave like built-in types.</p>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:14px;">
+      <div style="background:#faf5ff; border-radius:10px; padding:10px 14px; font-size:13px; border-left:3px solid #7c3aed;">
+        <code>print(obj)</code> → <code>obj.__str__()</code>
+      </div>
+      <div style="background:#faf5ff; border-radius:10px; padding:10px 14px; font-size:13px; border-left:3px solid #8b5cf6;">
+        <code>len(obj)</code> → <code>obj.__len__()</code>
+      </div>
+      <div style="background:#faf5ff; border-radius:10px; padding:10px 14px; font-size:13px; border-left:3px solid #a78bfa;">
+        <code>a == b</code> → <code>a.__eq__(b)</code>
+      </div>
+      <div style="background:#faf5ff; border-radius:10px; padding:10px 14px; font-size:13px; border-left:3px solid #c4b5fd;">
+        <code>a + b</code> → <code>a.__add__(b)</code>
+      </div>
+    </div>
+    <div style="display:flex; gap:10px; flex-wrap:wrap;">
+      <div class="pill pill-violet">__str__ → human-readable</div>
+      <div class="pill pill-purple">__repr__ → developer debug</div>
+      <div class="pill pill-indigo">__len__, __eq__, __add__</div>
+    </div>
+  </div>
+  <div class="page-num">13 / 20</div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+  SLIDE 14 — __str__, __repr__, __len__, __eq__
+════════════════════════════════════════ -->
+<div class="slide content" style="padding:36px 56px;">
+  <h2 style="margin-bottom:12px;">Special Methods in Practice ✨</h2>
+  <div class="grid-2" style="gap:20px;">
+    <div>
+      <div style="font-size:11px; font-weight:700; color:#6d28d9; letter-spacing:2px; margin-bottom:8px;">__str__ AND __repr__</div>
+      <pre style="font-size:12px;"><span class="kw">class</span> <span class="fn">Book</span><span class="op">:</span>
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="self">self</span><span class="op">,</span> <span class="var">title</span><span class="op">,</span> <span class="var">pages</span>)<span class="op">:</span>
+        <span class="self">self</span><span class="op">.</span><span class="var">title</span> <span class="op">=</span> <span class="var">title</span>
+        <span class="self">self</span><span class="op">.</span><span class="var">pages</span> <span class="op">=</span> <span class="var">pages</span>
+
+    <span class="kw">def</span> <span class="fn">__str__</span>(<span class="self">self</span>)<span class="op">:</span>    <span class="cm"># for print()</span>
+        <span class="kw">return</span> <span class="st">f'"{</span><span class="self">self</span><span class="op">.</span><span class="st">title}" ({self.pages} pages)'</span>
+
+    <span class="kw">def</span> <span class="fn">__repr__</span>(<span class="self">self</span>)<span class="op">:</span>   <span class="cm"># for repr() / debugger</span>
+        <span class="kw">return</span> <span class="st">f'Book({</span><span class="self">self</span><span class="op">.</span><span class="st">title!r}, {self.pages})'</span>
+
+<span class="var">b</span> <span class="op">=</span> <span class="fn">Book</span>(<span class="st">"1984"</span><span class="op">,</span> <span class="nm">328</span>)
+<span class="fn">print</span>(<span class="var">b</span>)        <span class="cm"># "1984" (328 pages)</span>
+<span class="fn">print</span>(<span class="fn">repr</span>(<span class="var">b</span>))  <span class="cm"># Book('1984', 328)</span></pre>
+    </div>
+    <div>
+      <div style="font-size:11px; font-weight:700; color:#6d28d9; letter-spacing:2px; margin-bottom:8px;">__len__, __eq__, __add__</div>
+      <pre style="font-size:12px;"><span class="kw">class</span> <span class="fn">Library</span><span class="op">:</span>
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="self">self</span>)<span class="op">:</span>
+        <span class="self">self</span><span class="op">.</span><span class="var">books</span> <span class="op">=</span> []
+    <span class="kw">def</span> <span class="fn">add</span>(<span class="self">self</span><span class="op">,</span> <span class="var">title</span>)<span class="op">:</span>
+        <span class="self">self</span><span class="op">.</span><span class="var">books</span><span class="op">.</span><span class="fn">append</span>(<span class="var">title</span>)
+    <span class="kw">def</span> <span class="fn">__len__</span>(<span class="self">self</span>)<span class="op">:</span>            <span class="cm"># enables len()</span>
+        <span class="kw">return</span> <span class="fn">len</span>(<span class="self">self</span><span class="op">.</span><span class="var">books</span>)
+    <span class="kw">def</span> <span class="fn">__contains__</span>(<span class="self">self</span><span class="op">,</span> <span class="var">t</span>)<span class="op">:</span>  <span class="cm"># enables `in`</span>
+        <span class="kw">return</span> <span class="var">t</span> <span class="kw">in</span> <span class="self">self</span><span class="op">.</span><span class="var">books</span>
+
+<span class="var">lib</span> <span class="op">=</span> <span class="fn">Library</span>()
+<span class="var">lib</span><span class="op">.</span><span class="fn">add</span>(<span class="st">"1984"</span>)<span class="op">;</span> <span class="var">lib</span><span class="op">.</span><span class="fn">add</span>(<span class="st">"Dune"</span>)
+
+<span class="fn">print</span>(<span class="fn">len</span>(<span class="var">lib</span>))          <span class="cm"># 2</span>
+<span class="fn">print</span>(<span class="st">"Dune"</span> <span class="kw">in</span> <span class="var">lib</span>)    <span class="cm"># True</span></pre>
+    </div>
+  </div>
+  <div style="margin-top:14px; background:#f8fafc; border-radius:10px; padding:12px 18px; display:grid; grid-template-columns:repeat(5,1fr); gap:8px; text-align:center;">
+    <div style="font-size:11px; border-top:2px solid #7c3aed; padding-top:6px;"><code>__str__</code><br><span style="color:#6b7280; font-size:10px;">print()</span></div>
+    <div style="font-size:11px; border-top:2px solid #8b5cf6; padding-top:6px;"><code>__repr__</code><br><span style="color:#6b7280; font-size:10px;">repr()</span></div>
+    <div style="font-size:11px; border-top:2px solid #059669; padding-top:6px;"><code>__len__</code><br><span style="color:#6b7280; font-size:10px;">len()</span></div>
+    <div style="font-size:11px; border-top:2px solid #0284c7; padding-top:6px;"><code>__eq__</code><br><span style="color:#6b7280; font-size:10px;">==</span></div>
+    <div style="font-size:11px; border-top:2px solid #ea580c; padding-top:6px;"><code>__add__</code><br><span style="color:#6b7280; font-size:10px;">+</span></div>
+  </div>
+  <div class="page-num">14 / 20</div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+  SLIDE 15 — FULL EXAMPLE: ALL 4 PILLARS
+════════════════════════════════════════ -->
+<div class="slide content" style="padding:34px 54px;">
+  <h2 style="margin-bottom:12px;">All 4 Pillars Together — Animal Kingdom 🏛️</h2>
+  <div class="grid-2" style="gap:20px;">
+    <div>
+      <pre style="font-size:11.5px;"><span class="kw">from</span> <span class="var">abc</span> <span class="kw">import</span> <span class="fn">ABC</span><span class="op">,</span> <span class="fn">abstractmethod</span>
+
+<span class="kw">class</span> <span class="fn">Animal</span>(<span class="fn">ABC</span>)<span class="op">:</span>               <span class="cm"># ABSTRACTION</span>
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="self">self</span><span class="op">,</span> <span class="var">name</span>)<span class="op">:</span>
+        <span class="self">self</span><span class="op">.</span><span class="var">name</span>    <span class="op">=</span> <span class="var">name</span>        <span class="cm"># ENCAPSULATION</span>
+        <span class="self">self</span><span class="op">.</span><span class="var">__health</span> <span class="op">=</span> <span class="nm">100</span>       <span class="cm"># private!</span>
+
+    <span class="dec">@abstractmethod</span>
+    <span class="kw">def</span> <span class="fn">speak</span>(<span class="self">self</span>)<span class="op">:</span>              <span class="cm"># contract — must implement</span>
+        <span class="kw">pass</span>
+
+    <span class="kw">def</span> <span class="fn">eat</span>(<span class="self">self</span>)<span class="op">:</span>
+        <span class="fn">print</span>(<span class="st">f"</span><span class="op">{</span><span class="self">self</span><span class="op">.</span><span class="var">name</span><span class="op">}</span><span class="st"> eats."</span>)
+
+    <span class="kw">def</span> <span class="fn">__str__</span>(<span class="self">self</span>)<span class="op">:</span>            <span class="cm"># SPECIAL METHOD</span>
+        <span class="kw">return</span> <span class="st">f"{type(</span><span class="self">self</span><span class="st">).__name__}({</span><span class="self">self</span><span class="op">.</span><span class="st">name})"</span>
+
+
+<span class="kw">class</span> <span class="fn">Dog</span>(<span class="fn">Animal</span>)<span class="op">:</span>               <span class="cm"># INHERITANCE</span>
+    <span class="kw">def</span> <span class="fn">speak</span>(<span class="self">self</span>)<span class="op">:</span>              <span class="cm"># POLYMORPHISM</span>
+        <span class="kw">return</span> <span class="st">f"</span><span class="op">{</span><span class="self">self</span><span class="op">.</span><span class="var">name</span><span class="op">}</span><span class="st">: Woof!"</span>
+
+<span class="kw">class</span> <span class="fn">Cat</span>(<span class="fn">Animal</span>)<span class="op">:</span>               <span class="cm"># INHERITANCE</span>
+    <span class="kw">def</span> <span class="fn">speak</span>(<span class="self">self</span>)<span class="op">:</span>              <span class="cm"># POLYMORPHISM</span>
+        <span class="kw">return</span> <span class="st">f"</span><span class="op">{</span><span class="self">self</span><span class="op">.</span><span class="var">name</span><span class="op">}</span><span class="st">: Meow!"</span></pre>
+    </div>
+    <div>
+      <pre style="font-size:11.5px;"><span class="cm"># Polymorphism — one loop for all animals:</span>
+<span class="var">animals</span> <span class="op">=</span> [<span class="fn">Dog</span>(<span class="st">"Rex"</span>)<span class="op">,</span> <span class="fn">Cat</span>(<span class="st">"Luna"</span>)]
+
+<span class="kw">for</span> <span class="var">a</span> <span class="kw">in</span> <span class="var">animals</span><span class="op">:</span>
+    <span class="fn">print</span>(<span class="var">a</span>)           <span class="cm"># __str__: Dog(Rex)</span>
+    <span class="fn">print</span>(<span class="var">a</span><span class="op">.</span><span class="fn">speak</span>())    <span class="cm"># POLYMORPHISM</span>
+    <span class="var">a</span><span class="op">.</span><span class="fn">eat</span>()             <span class="cm"># INHERITED from Animal</span></pre>
+      <div style="margin-top:14px; display:flex; flex-direction:column; gap:8px;">
+        <div style="background:#f5f3ff; border-radius:8px; padding:9px 14px; font-size:12px; border-left:3px solid #7c3aed; color:#374151;">
+          <strong style="color:#7c3aed;">Encapsulation</strong> — <code>self.__health</code> is private
+        </div>
+        <div style="background:#f0fdfa; border-radius:8px; padding:9px 14px; font-size:12px; border-left:3px solid #0d9488; color:#374151;">
+          <strong style="color:#0d9488;">Inheritance</strong> — Dog &amp; Cat get <code>eat()</code> from Animal
+        </div>
+        <div style="background:#fff7ed; border-radius:8px; padding:9px 14px; font-size:12px; border-left:3px solid #ea580c; color:#374151;">
+          <strong style="color:#ea580c;">Polymorphism</strong> — same <code>speak()</code> call → different result
+        </div>
+        <div style="background:#eff6ff; border-radius:8px; padding:9px 14px; font-size:12px; border-left:3px solid #0284c7; color:#374151;">
+          <strong style="color:#0284c7;">Abstraction</strong> — Animal(ABC) + @abstractmethod
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="page-num">15 / 20</div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+  SLIDE 16 — ENCAPSULATION vs ABSTRACTION
+════════════════════════════════════════ -->
+<div class="slide dark">
+  <h2 style="color:#60a5fa; margin-bottom:14px;">Encapsulation vs Abstraction — Don't Confuse Them 🔍</h2>
+  <div class="grid-2" style="gap:20px;">
+    <div>
+      <div style="font-size:11px; font-weight:700; color:#64748b; letter-spacing:2px; margin-bottom:10px;">ENCAPSULATION</div>
+      <div style="display:flex; flex-direction:column; gap:8px;">
+        <div style="background:#1e293b; border-radius:10px; padding:12px 16px; border-left:3px solid #c084fc; font-size:13px; color:#e2e8f0;">
+          <strong style="color:#c084fc;">HOW</strong> you package and protect data.<br>
+          Bundles data + methods. Hides internal state with private attributes.
+        </div>
+        <div style="background:#1e293b; border-radius:10px; padding:12px 16px; border-left:3px solid #c084fc; font-size:13px; color:#94a3b8;">
+          Analogy: the engine bay of a car is <strong>sealed</strong>. You can't directly touch the pistons — only interact via the interface (gas pedal).
+        </div>
+        <pre style="font-size:12px;">self.__balance = <span class="nm">0</span>    <span class="cm"># private = encapsulation</span>
+<span class="kw">def</span> <span class="fn">get_balance</span>(<span class="self">self</span>)<span class="op">:</span>
+    <span class="kw">return</span> <span class="self">self</span><span class="op">.</span><span class="var">__balance</span></pre>
+      </div>
+    </div>
+    <div>
+      <div style="font-size:11px; font-weight:700; color:#64748b; letter-spacing:2px; margin-bottom:10px;">ABSTRACTION</div>
+      <div style="display:flex; flex-direction:column; gap:8px;">
+        <div style="background:#1e293b; border-radius:10px; padding:12px 16px; border-left:3px solid #60a5fa; font-size:13px; color:#e2e8f0;">
+          <strong style="color:#60a5fa;">WHAT</strong> the object can do (the contract). Hides the implementation — caller uses simple interface.
+        </div>
+        <div style="background:#1e293b; border-radius:10px; padding:12px 16px; border-left:3px solid #60a5fa; font-size:13px; color:#94a3b8;">
+          Analogy: the dashboard shows speed and fuel level. You don't see RPMs, fuel injection timings, torque curves. Just the <strong>relevant interface</strong>.
+        </div>
+        <pre style="font-size:12px;"><span class="dec">@abstractmethod</span>       <span class="cm"># ← abstraction</span>
+<span class="kw">def</span> <span class="fn">pay</span>(<span class="self">self</span><span class="op">,</span> <span class="var">amount</span>)<span class="op">:</span>
+    <span class="kw">pass</span>              <span class="cm"># subclass fills this in</span></pre>
+      </div>
+    </div>
+  </div>
+  <div style="margin-top:14px; background:#1e293b; border-radius:10px; padding:10px 18px; font-size:13px; color:#94a3b8; border-left:3px solid #60a5fa;">
+    💡 They often appear together: Encapsulation bundles and protects data within a class. Abstraction defines the interface that outside callers use. Together they make classes that are safe internally AND easy to use externally.
+  </div>
+  <div class="page-num">16 / 20</div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+  SLIDE 17 — COMMON MISTAKES
+════════════════════════════════════════ -->
+<div class="slide content" style="padding:34px 54px;">
+  <h2 style="margin-bottom:12px;">Common Mistakes — Don't Fall For These! ⚠️</h2>
+  <div class="grid-2" style="gap:12px;">
+    <div style="display:flex; flex-direction:column; gap:10px;">
+      <div class="card rose-border" style="padding:10px 14px;">
+        <div style="font-size:12px; font-weight:700; color:#be185d; margin-bottom:5px;">❌ Forgetting super() in child __init__</div>
+        <div style="font-family:'Fira Code',monospace; font-size:11px; background:#fef2f2; padding:7px; border-radius:6px; color:#991b1b;">
+          class Dog(Animal):<br>
+          &nbsp;&nbsp;def __init__(self, name, breed):<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;self.breed = breed  ← name never set!<br>
+          # Fix: call super().__init__(name) first
+        </div>
+      </div>
+      <div class="card orange-border" style="padding:10px 14px;">
+        <div style="font-size:12px; font-weight:700; color:#ea580c; margin-bottom:5px;">❌ Instantiating an abstract class</div>
+        <div style="font-family:'Fira Code',monospace; font-size:11px; background:#fff7ed; padding:7px; border-radius:6px; color:#9a3412;">
+          p = PaymentMethod()  ← TypeError! ❌<br>
+          p = CreditCard()     ← correct ✅
+        </div>
+        <div style="font-size:10px; color:#6b7280; margin-top:4px;">Abstract classes are templates — you create the concrete subclasses.</div>
+      </div>
+      <div class="card amber-border" style="padding:10px 14px;">
+        <div style="font-size:12px; font-weight:700; color:#d97706; margin-bottom:5px;">❌ Skipping an abstract method</div>
+        <div style="font-family:'Fira Code',monospace; font-size:11px; background:#fffbeb; padding:7px; border-radius:6px; color:#92400e;">
+          class BadPay(PaymentMethod):<br>
+          &nbsp;&nbsp;def pay(self, amount): ...  ← ok<br>
+          &nbsp;&nbsp;# forgot refund() → TypeError on creation!
+        </div>
+      </div>
+    </div>
+    <div style="display:flex; flex-direction:column; gap:10px;">
+      <div class="card teal-border" style="padding:10px 14px;">
+        <div style="font-size:12px; font-weight:700; color:#0d9488; margin-bottom:5px;">❌ Confusing method override with super()</div>
+        <div style="font-family:'Fira Code',monospace; font-size:11px; background:#f0fdfa; padding:7px; border-radius:6px; color:#134e4a;">
+          def speak(self):     ← overrides completely<br>
+          &nbsp;&nbsp;super().speak()  ← use this to also run<br>
+          &nbsp;&nbsp;print("Woof!")   &nbsp;&nbsp; the parent's version
+        </div>
+      </div>
+      <div class="card violet-border" style="padding:10px 14px;">
+        <div style="font-size:12px; font-weight:700; color:#6d28d9; margin-bottom:5px;">❌ Missing __str__ → useless print output</div>
+        <div style="font-family:'Fira Code',monospace; font-size:11px; background:#faf5ff; padding:7px; border-radius:6px; color:#4c1d95;">
+          print(obj)  → &lt;__main__.Dog at 0x7f...&gt;<br>
+          # Add __str__ to get readable output
+        </div>
+      </div>
+      <div class="card blue-border" style="padding:10px 14px;">
+        <div style="font-size:12px; font-weight:700; color:#0284c7; margin-bottom:5px;">❌ type() instead of isinstance() for subclasses</div>
+        <div style="font-family:'Fira Code',monospace; font-size:11px; background:#eff6ff; padding:7px; border-radius:6px; color:#1e40af;">
+          type(rex) == Animal  → False ❌ (rex IS a Dog)<br>
+          isinstance(rex, Animal) → True ✅
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="page-num">17 / 20</div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+  SLIDE 18 — QUICK REFERENCE CARD
+════════════════════════════════════════ -->
+<div class="slide dark">
+  <h2 style="color:#34d399; margin-bottom:14px;">Quick Reference — Day 9 Cheat Sheet 📋</h2>
+  <div class="grid-2" style="gap:18px;">
+    <div>
+      <div style="font-size:11px; font-weight:700; color:#64748b; letter-spacing:2px; margin-bottom:8px;">INHERITANCE &amp; POLYMORPHISM</div>
+      <pre style="font-size:12px;"><span class="kw">class</span> <span class="fn">Child</span>(<span class="fn">Parent</span>)<span class="op">:</span>              <span class="cm"># inherit</span>
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="self">self</span><span class="op">,</span> <span class="var">a</span><span class="op">,</span> <span class="var">b</span>)<span class="op">:</span>
+        <span class="fn">super</span>()<span class="op">.</span><span class="fn">__init__</span>(<span class="var">a</span>)         <span class="cm"># run parent</span>
+        <span class="self">self</span><span class="op">.</span><span class="var">b</span> <span class="op">=</span> <span class="var">b</span>                  <span class="cm"># add own attr</span>
+
+    <span class="kw">def</span> <span class="fn">speak</span>(<span class="self">self</span>)<span class="op">:</span>               <span class="cm"># override (polymorphism)</span>
+        <span class="kw">return</span> <span class="st">"custom"</span>
+
+<span class="fn">isinstance</span>(<span class="var">obj</span><span class="op">,</span> <span class="fn">Parent</span>)            <span class="cm"># True even for Child</span>
+<span class="fn">issubclass</span>(<span class="fn">Child</span><span class="op">,</span> <span class="fn">Parent</span>)         <span class="cm"># True</span></pre>
+    </div>
+    <div>
+      <div style="font-size:11px; font-weight:700; color:#64748b; letter-spacing:2px; margin-bottom:8px;">ABSTRACTION &amp; SPECIAL METHODS</div>
+      <pre style="font-size:12px;"><span class="kw">from</span> <span class="var">abc</span> <span class="kw">import</span> <span class="fn">ABC</span><span class="op">,</span> <span class="fn">abstractmethod</span>
+
+<span class="kw">class</span> <span class="fn">Base</span>(<span class="fn">ABC</span>)<span class="op">:</span>
+    <span class="dec">@abstractmethod</span>
+    <span class="kw">def</span> <span class="fn">do_it</span>(<span class="self">self</span>)<span class="op">:</span> <span class="kw">pass</span>        <span class="cm"># contract</span>
+
+    <span class="kw">def</span> <span class="fn">__str__</span>(<span class="self">self</span>)<span class="op">:</span>            <span class="cm"># print()</span>
+        <span class="kw">return</span> <span class="st">"readable string"</span>
+    <span class="kw">def</span> <span class="fn">__len__</span>(<span class="self">self</span>)<span class="op">:</span>            <span class="cm"># len()</span>
+        <span class="kw">return</span> <span class="nm">0</span>
+    <span class="kw">def</span> <span class="fn">__eq__</span>(<span class="self">self</span><span class="op">,</span> <span class="var">other</span>)<span class="op">:</span>    <span class="cm"># ==</span>
+        <span class="kw">return</span> <span class="self">self</span><span class="op">.</span><span class="var">x</span> <span class="op">==</span> <span class="var">other</span><span class="op">.</span><span class="var">x</span></pre>
+    </div>
+  </div>
+  <div style="margin-top:14px; display:grid; grid-template-columns:1fr 1fr 1fr 1fr; gap:10px;">
+    <div style="background:#1e293b; border-radius:8px; padding:10px 12px; text-align:center;">
+      <div style="font-size:11px; font-weight:700; color:#c084fc; margin-bottom:4px;">🔒 ENCAP</div>
+      <div style="font-size:10px; color:#64748b;">private attrs<br>controlled access</div>
+    </div>
+    <div style="background:#1e293b; border-radius:8px; padding:10px 12px; text-align:center;">
+      <div style="font-size:11px; font-weight:700; color:#2dd4bf; margin-bottom:4px;">🧬 INHERIT</div>
+      <div style="font-size:10px; color:#64748b;">class Child(Parent)<br>super().__init__</div>
+    </div>
+    <div style="background:#1e293b; border-radius:8px; padding:10px 12px; text-align:center;">
+      <div style="font-size:11px; font-weight:700; color:#fb923c; margin-bottom:4px;">🎭 POLY</div>
+      <div style="font-size:10px; color:#64748b;">override methods<br>duck typing</div>
+    </div>
+    <div style="background:#1e293b; border-radius:8px; padding:10px 12px; text-align:center;">
+      <div style="font-size:11px; font-weight:700; color:#60a5fa; margin-bottom:4px;">🫙 ABSTRAC</div>
+      <div style="font-size:10px; color:#64748b;">ABC + @abstractmethod<br>enforce contract</div>
+    </div>
+  </div>
+  <div class="page-num">18 / 20</div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+  SLIDE 19 — DAY 9 SUMMARY CHECKLIST
+════════════════════════════════════════ -->
+<div class="slide content" style="padding:34px 54px;">
+  <h2 style="margin-bottom:12px;">Day 9 Summary — Your OOP Checklist ✅</h2>
+  <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:12px;">
+    <div class="card teal-border" style="padding:12px 16px;">
+      <div style="font-size:20px; margin-bottom:5px;">🧬</div>
+      <div style="font-weight:700; color:#0d9488; font-size:13px;">Inheritance</div>
+      <ul style="margin-top:5px;">
+        <li style="font-size:11px; padding:2px 0;"><span class="icon">•</span>class Child(Parent): gets all parent methods</li>
+        <li style="font-size:11px; padding:2px 0;"><span class="icon">•</span>super().__init__() calls parent constructor first</li>
+        <li style="font-size:11px; padding:2px 0;"><span class="icon">•</span>Override methods by redefining same name</li>
+        <li style="font-size:11px; padding:2px 0;"><span class="icon">•</span>isinstance() checks class + parents</li>
+      </ul>
+    </div>
+    <div class="card orange-border" style="padding:12px 16px;">
+      <div style="font-size:20px; margin-bottom:5px;">🎭</div>
+      <div style="font-weight:700; color:#ea580c; font-size:13px;">Polymorphism</div>
+      <ul style="margin-top:5px;">
+        <li style="font-size:11px; padding:2px 0;"><span class="icon">•</span>Same method name → different behaviour per class</li>
+        <li style="font-size:11px; padding:2px 0;"><span class="icon">•</span>Caller doesn't need to know the object type</li>
+        <li style="font-size:11px; padding:2px 0;"><span class="icon">•</span>Duck typing — any object with right method works</li>
+        <li style="font-size:11px; padding:2px 0;"><span class="icon">•</span>One loop → many different behaviours</li>
+      </ul>
+    </div>
+    <div class="card blue-border" style="padding:12px 16px;">
+      <div style="font-size:20px; margin-bottom:5px;">🫙</div>
+      <div style="font-weight:700; color:#0284c7; font-size:13px;">Abstraction</div>
+      <ul style="margin-top:5px;">
+        <li style="font-size:11px; padding:2px 0;"><span class="icon">•</span>from abc import ABC, abstractmethod</li>
+        <li style="font-size:11px; padding:2px 0;"><span class="icon">•</span>class MyBase(ABC): — cannot instantiate</li>
+        <li style="font-size:11px; padding:2px 0;"><span class="icon">•</span>@abstractmethod — subclass MUST implement</li>
+        <li style="font-size:11px; padding:2px 0;"><span class="icon">•</span>Caller sees simple interface, not implementation</li>
+      </ul>
+    </div>
+    <div class="card violet-border" style="padding:12px 16px;">
+      <div style="font-size:20px; margin-bottom:5px;">✨</div>
+      <div style="font-weight:700; color:#6d28d9; font-size:13px;">Special Methods</div>
+      <ul style="margin-top:5px;">
+        <li style="font-size:11px; padding:2px 0;"><span class="icon">•</span>__str__ → print() / str()</li>
+        <li style="font-size:11px; padding:2px 0;"><span class="icon">•</span>__repr__ → repr() / debugger</li>
+        <li style="font-size:11px; padding:2px 0;"><span class="icon">•</span>__len__ → len() &nbsp;&nbsp; __eq__ → ==</li>
+        <li style="font-size:11px; padding:2px 0;"><span class="icon">•</span>__add__ → + &nbsp;&nbsp; __lt__ → &lt; (sorted())</li>
+      </ul>
+    </div>
+  </div>
+  <div class="highlight-box" style="font-size:13px;">
+    🎉 The 4 Pillars are COMPLETE! You now understand how real-world software is structured. Keep practising — every project you build uses these concepts.
+  </div>
+  <div class="page-num">19 / 20</div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+  SLIDE 20 — FINAL SLIDE: COURSE WRAP-UP
+════════════════════════════════════════ -->
+<div class="slide hero" style="background: linear-gradient(135deg, #059669 0%, #0d9488 40%, #0284c7 100%);">
+  <div class="blob blob1"></div>
+  <div class="blob blob2"></div>
+  <div class="slide-tag">Python Crash Course · Complete 🎓</div>
+  <div class="slide-title">You Did It! 🏆</div>
+  <div class="slide-subtitle">9 Days · 4 OOP Pillars · Full Python Foundation</div>
+  <div style="margin-top:22px; display:grid; grid-template-columns:repeat(3,1fr); gap:12px; max-width:560px; font-size:12px; font-weight:600; text-align:center;">
+    <div style="background:rgba(255,255,255,0.15); border-radius:10px; padding:10px 8px;">📦 Variables &amp; Types</div>
+    <div style="background:rgba(255,255,255,0.15); border-radius:10px; padding:10px 8px;">🔀 Control Flow</div>
+    <div style="background:rgba(255,255,255,0.15); border-radius:10px; padding:10px 8px;">🔁 Loops</div>
+    <div style="background:rgba(255,255,255,0.15); border-radius:10px; padding:10px 8px;">🧩 Functions</div>
+    <div style="background:rgba(255,255,255,0.15); border-radius:10px; padding:10px 8px;">🔒 Encapsulation</div>
+    <div style="background:rgba(255,255,255,0.15); border-radius:10px; padding:10px 8px;">🧬 Inheritance</div>
+    <div style="background:rgba(255,255,255,0.15); border-radius:10px; padding:10px 8px;">🎭 Polymorphism</div>
+    <div style="background:rgba(255,255,255,0.15); border-radius:10px; padding:10px 8px;">🫙 Abstraction</div>
+    <div style="background:rgba(255,255,255,0.15); border-radius:10px; padding:10px 8px;">✨ Special Methods</div>
+  </div>
+  <div style="margin-top:24px; font-size:13px; opacity:0.75; font-weight:600; letter-spacing:1px;">
+    Keep building. Keep breaking. Keep learning. 🐍
+  </div>
+  <div class="page-num" style="color:white; opacity:0.4;">20 / 20</div>
+</div>
+
+
+</body>
+</html>
