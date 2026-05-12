@@ -1,0 +1,918 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Day 1: Foundations — How Code Works 🐣</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800;900&family=Fira+Code:wght@400;600&display=swap');
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    @page { size: A4 landscape; margin: 0; }
+
+    body { font-family: 'Poppins', 'Segoe UI', sans-serif; background: #e8e8e8; }
+
+    .slide {
+      width: 297mm;
+      height: 210mm;
+      overflow: hidden;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      page-break-after: always;
+      break-after: page;
+    }
+    @media screen { .slide { margin: 20px auto; box-shadow: 0 8px 40px rgba(0,0,0,0.18); } }
+
+    .blob { position: absolute; border-radius: 50%; opacity: 0.15; pointer-events: none; }
+
+    /* ── Themes ─── */
+    .hero {
+      background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 60%, #a855f7 100%);
+      color: white; justify-content: center; align-items: center; text-align: center; padding: 60px;
+    }
+    .hero .blob1 { width: 280px; height: 280px; background: white; top: -80px; right: -60px; }
+    .hero .blob2 { width: 200px; height: 200px; background: #c4b5fd; bottom: -60px; left: -40px; }
+
+    .section-intro { background: white; flex-direction: row; }
+    .section-intro .panel {
+      width: 36%; display: flex; flex-direction: column;
+      justify-content: center; align-items: center; padding: 50px 28px; color: white;
+    }
+    .section-intro .body { width: 64%; padding: 44px 52px; display: flex; flex-direction: column; justify-content: center; }
+
+    .content { background: white; padding: 48px 62px; }
+    .dark { background: #0f172a; color: #e2e8f0; padding: 46px 62px; }
+
+    /* ── Gradients ─── */
+    .purple { background: linear-gradient(135deg, #4f46e5, #7c3aed); }
+    .green  { background: linear-gradient(135deg, #059669, #10b981); }
+    .blue   { background: linear-gradient(135deg, #0284c7, #0ea5e9); }
+    .amber  { background: linear-gradient(135deg, #d97706, #f59e0b); }
+    .teal   { background: linear-gradient(135deg, #0d9488, #14b8a6); }
+    .violet { background: linear-gradient(135deg, #6d28d9, #8b5cf6); }
+    .rose   { background: linear-gradient(135deg, #be185d, #e11d48); }
+    .slate  { background: linear-gradient(135deg, #334155, #64748b); }
+
+    /* ── Typography ─── */
+    .slide-tag { font-size: 11px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; opacity: 0.7; margin-bottom: 10px; }
+    .slide-title { font-size: 52px; font-weight: 900; line-height: 1.1; }
+    .slide-subtitle { font-size: 22px; font-weight: 400; opacity: 0.85; margin-top: 14px; }
+    .section-emoji { font-size: 88px; line-height: 1; margin-bottom: 14px; }
+    .section-label { font-size: 19px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; }
+
+    h2 { font-size: 31px; font-weight: 800; color: #1e1b4b; margin-bottom: 20px; }
+    h3 { font-size: 20px; font-weight: 700; color: #1e1b4b; margin-bottom: 10px; }
+    .dark h2 { color: #e2e8f0; }
+    .dark h3 { color: #94a3b8; }
+
+    p { font-size: 16px; line-height: 1.65; color: #374151; }
+    .dark p { color: #cbd5e1; }
+
+    ul { list-style: none; margin-top: 6px; }
+    ul li { font-size: 16px; color: #374151; padding: 5px 0; display: flex; align-items: flex-start; gap: 10px; line-height: 1.5; }
+    .dark ul li { color: #cbd5e1; }
+    ul li .icon { flex-shrink: 0; font-size: 17px; margin-top: 1px; }
+
+    /* ── Code ─── */
+    pre {
+      background: #0f172a; border-radius: 12px; padding: 18px 22px;
+      font-family: 'Fira Code', 'Consolas', monospace; font-size: 14px;
+      line-height: 1.75; color: #e2e8f0; overflow: hidden;
+    }
+    .dark pre { background: #1e293b; }
+    pre .kw  { color: #c084fc; }
+    pre .fn  { color: #34d399; }
+    pre .st  { color: #fbbf24; }
+    pre .cm  { color: #4b5563; }
+    pre .nm  { color: #38bdf8; }
+    pre .op  { color: #f472b6; }
+    pre .var { color: #e2e8f0; }
+    pre .key { color: #fb923c; }
+
+    /* ── Layouts ─── */
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+    .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+    .grid-4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 14px; }
+
+    /* ── Cards ─── */
+    .card { background: #f8fafc; border-radius: 14px; padding: 18px 22px; border-left: 5px solid #4f46e5; }
+    .card.green-border  { border-left-color: #059669; }
+    .card.blue-border   { border-left-color: #0284c7; }
+    .card.amber-border  { border-left-color: #d97706; }
+    .card.teal-border   { border-left-color: #0d9488; }
+    .card.violet-border { border-left-color: #6d28d9; }
+    .card.rose-border   { border-left-color: #be185d; }
+    .card.slate-border  { border-left-color: #475569; }
+
+    /* ── Pills ─── */
+    .pill { display: inline-block; padding: 4px 14px; border-radius: 999px; font-size: 12px; font-weight: 700; }
+    .pill-purple { background: #ede9fe; color: #5b21b6; }
+    .pill-green  { background: #d1fae5; color: #065f46; }
+    .pill-blue   { background: #dbeafe; color: #1e40af; }
+    .pill-amber  { background: #fef3c7; color: #92400e; }
+    .pill-teal   { background: #ccfbf1; color: #134e4a; }
+    .pill-violet { background: #ede9fe; color: #4c1d95; }
+    .pill-rose   { background: #ffe4e6; color: #9f1239; }
+
+    /* ── Highlight box ─── */
+    .highlight-box {
+      background: #fef9c3; border: 2px solid #fde047; border-radius: 10px;
+      padding: 12px 18px; font-size: 15px; color: #713f12; margin-top: 16px; font-weight: 600;
+    }
+
+    /* ── Compare columns ─── */
+    .compare-row { display: flex; gap: 18px; margin-top: 14px; }
+    .compare-col { flex: 1; background: #f8fafc; border-radius: 12px; padding: 16px 20px; }
+    .compare-col.good { border-top: 4px solid #10b981; }
+    .compare-col.bad  { border-top: 4px solid #ef4444; }
+    .compare-col h4 { font-size: 14px; font-weight: 700; margin-bottom: 10px; }
+    .compare-col.good h4 { color: #065f46; }
+    .compare-col.bad  h4 { color: #991b1b; }
+    .compare-col ul li { font-size: 13.5px; padding: 3px 0; }
+
+    /* ── Concept cards (Day 1 specific) ─── */
+    .concept-card { background: #f8fafc; border-radius: 14px; padding: 18px; text-align: center; }
+    .concept-card .emoji { font-size: 36px; display: block; margin-bottom: 8px; }
+    .concept-card .c-name  { font-size: 17px; font-weight: 800; color: #1e1b4b; }
+    .concept-card .c-label { font-size: 12px; color: #6b7280; margin: 3px 0 8px; }
+    .concept-card .c-desc  { font-size: 13px; color: #374151; line-height: 1.5; }
+
+    /* ── Analogy box ─── */
+    .analogy {
+      background: #ecfeff; border: 2px solid #67e8f9; border-radius: 12px;
+      padding: 14px 18px; font-size: 14px; color: #155e75; margin-top: 14px;
+      font-weight: 500; line-height: 1.6;
+    }
+    .analogy strong { color: #0e7490; }
+
+    /* ── Flow diagram ─── */
+    .flow {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 12px; margin: 18px 0;
+    }
+    .flow-step {
+      flex: 1; background: #f8fafc; border-radius: 12px; padding: 14px 12px;
+      text-align: center; border-top: 4px solid #4f46e5;
+    }
+    .flow-step .em { font-size: 30px; display: block; margin-bottom: 6px; }
+    .flow-step .nm { font-size: 14px; font-weight: 800; color: #1e1b4b; }
+    .flow-step .sub { font-size: 11px; color: #6b7280; margin-top: 3px; }
+    .flow-arrow { font-size: 24px; color: #c084fc; flex-shrink: 0; }
+
+    /* ── Page number ─── */
+    .page-num { position: absolute; bottom: 16px; right: 26px; font-size: 11px; font-weight: 600; opacity: 0.32; letter-spacing: 1px; }
+  </style>
+</head>
+<body>
+
+<!-- ════════════════════════════════════════
+  SLIDE 1 — TITLE
+════════════════════════════════════════ -->
+<div class="slide hero">
+  <div class="blob blob1"></div>
+  <div class="blob blob2"></div>
+  <div class="slide-tag">Python Crash Course · Day 1</div>
+  <div class="slide-title">Foundations</div>
+  <div class="slide-subtitle">How code, computers &amp; programming actually work</div>
+  <div style="margin-top:30px; font-size:56px; line-height:1;">🐣</div>
+  <div style="margin-top:26px; font-size:12px; opacity:0.6; font-weight:600; letter-spacing:2px; text-transform:uppercase;">
+    No code today · just the big picture
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+  SLIDE 2 — AGENDA
+════════════════════════════════════════ -->
+<div class="slide content" style="padding:40px 58px;">
+  <h2 style="margin-bottom:14px;">Today's Roadmap 🗺️</h2>
+  <div style="display:grid; grid-template-columns:1fr 1fr 1fr 1fr; gap:12px; margin-bottom:14px;">
+    <div class="card" style="border-left-color:#4f46e5;">
+      <div style="font-size:24px; margin-bottom:6px;">💻</div>
+      <div style="font-weight:800; font-size:15px; color:#1e1b4b;">What is a Computer?</div>
+      <div style="font-size:12px; color:#6b7280; margin-top:3px;">A fast, obedient assistant</div>
+    </div>
+    <div class="card green-border">
+      <div style="font-size:24px; margin-bottom:6px;">📜</div>
+      <div style="font-weight:800; font-size:15px; color:#1e1b4b;">Programs &amp; Languages</div>
+      <div style="font-size:12px; color:#6b7280; margin-top:3px;">Recipes for a computer</div>
+    </div>
+    <div class="card blue-border">
+      <div style="font-size:24px; margin-bottom:6px;">🗣️</div>
+      <div style="font-weight:800; font-size:15px; color:#1e1b4b;">Compiler vs Interpreter</div>
+      <div style="font-size:12px; color:#6b7280; margin-top:3px;">Two ways to translate</div>
+    </div>
+    <div class="card amber-border">
+      <div style="font-size:24px; margin-bottom:6px;">📄</div>
+      <div style="font-weight:800; font-size:15px; color:#1e1b4b;">Source Code &amp; Files</div>
+      <div style="font-size:12px; color:#6b7280; margin-top:3px;">What we actually type</div>
+    </div>
+  </div>
+  <div style="display:grid; grid-template-columns:1fr 1fr 1fr 1fr; gap:12px;">
+    <div class="card teal-border">
+      <div style="font-size:24px; margin-bottom:6px;">🧠</div>
+      <div style="font-weight:800; font-size:15px; color:#1e1b4b;">Algorithm &amp; Syntax</div>
+      <div style="font-size:12px; color:#6b7280; margin-top:3px;">Steps + grammar rules</div>
+    </div>
+    <div class="card violet-border">
+      <div style="font-size:24px; margin-bottom:6px;">🐛</div>
+      <div style="font-weight:800; font-size:15px; color:#1e1b4b;">Bugs &amp; Debugging</div>
+      <div style="font-size:12px; color:#6b7280; margin-top:3px;">When things go wrong</div>
+    </div>
+    <div class="card rose-border">
+      <div style="font-size:24px; margin-bottom:6px;">🐍</div>
+      <div style="font-weight:800; font-size:15px; color:#1e1b4b;">Why Python?</div>
+      <div style="font-size:12px; color:#6b7280; margin-top:3px;">Real-world uses</div>
+    </div>
+    <div class="card slate-border">
+      <div style="font-size:24px; margin-bottom:6px;">🚀</div>
+      <div style="font-weight:800; font-size:15px; color:#1e1b4b;">The Mindset</div>
+      <div style="font-size:12px; color:#6b7280; margin-top:3px;">How to think like a coder</div>
+    </div>
+  </div>
+  <div class="highlight-box" style="margin-top:14px; font-size:14px;">
+    💡 Goal: by the end of today, you understand <em>how</em> programming works — even if you've never written a line of code.
+  </div>
+  <div class="page-num">2 / 21</div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+  SLIDE 3 — WHAT IS A COMPUTER (section intro)
+════════════════════════════════════════ -->
+<div class="slide section-intro">
+  <div class="panel purple">
+    <div class="section-emoji">💻</div>
+    <div class="section-label">The Computer</div>
+    <div style="font-size:13px; margin-top:8px; opacity:0.85; text-align:center;">What it really is</div>
+  </div>
+  <div class="body">
+    <h2>It's Just a Very Fast Assistant</h2>
+    <p style="margin-bottom:14px;">A computer is <strong>incredibly fast</strong> at following instructions — but it has <strong>zero common sense</strong>. It does exactly what you say, in exactly the order you say it.</p>
+    <ul>
+      <li><span class="icon">⚡</span><span><strong>Lightning fast</strong> — billions of tiny operations every second</span></li>
+      <li><span class="icon">🧱</span><span><strong>Completely literal</strong> — it has no idea what you "meant"</span></li>
+      <li><span class="icon">🦜</span><span><strong>Doesn't speak English</strong> — only ON/OFF (1s and 0s)</span></li>
+      <li><span class="icon">😴</span><span><strong>Does nothing on its own</strong> — it waits for instructions</span></li>
+    </ul>
+    <div class="analogy">
+      🧠 <strong>Real-life intuition:</strong> imagine a friend who can do 1,000 push-ups in a second… but only if you tell them <em>exactly</em> when to bend, breathe and stand. Miss a step and they fall over. That's a computer.
+    </div>
+  </div>
+  <div class="page-num">3 / 21</div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+  SLIDE 4 — WHAT IS A PROGRAM
+════════════════════════════════════════ -->
+<div class="slide content">
+  <h2>So… What is a Program? 📜</h2>
+  <div class="grid-2" style="gap:26px; margin-top:8px;">
+    <div>
+      <p>A <strong>program</strong> is simply a <strong>list of instructions</strong> that tells the computer what to do, step by step.</p>
+      <p style="margin-top:12px;">You already write programs every day — you just don't call them that.</p>
+      <div style="margin-top:18px; display:flex; flex-direction:column; gap:10px;">
+        <div style="background:#ede9fe; border-radius:12px; padding:13px 16px;">
+          <div style="font-weight:700; color:#4f46e5; font-size:14px;">🍳 A recipe</div>
+          <div style="font-size:13px; color:#374151; margin-top:3px;">Step 1: heat oil. Step 2: crack egg. Step 3: fry 2 minutes.</div>
+        </div>
+        <div style="background:#d1fae5; border-radius:12px; padding:13px 16px;">
+          <div style="font-weight:700; color:#059669; font-size:14px;">🗺️ Google Maps directions</div>
+          <div style="font-size:13px; color:#374151; margin-top:3px;">In 200m, turn left. Then continue for 1.2 km.</div>
+        </div>
+        <div style="background:#dbeafe; border-radius:12px; padding:13px 16px;">
+          <div style="font-weight:700; color:#0284c7; font-size:14px;">🧺 IKEA furniture manual</div>
+          <div style="font-size:13px; color:#374151; margin-top:3px;">Insert screw A into hole B. Tighten with tool C.</div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <h3>What "a program" looks like in plain English</h3>
+      <div style="background:#0f172a; border-radius:12px; padding:18px 22px; color:#e2e8f0; font-family:'Fira Code',monospace; font-size:13.5px; line-height:1.8;">
+        <span style="color:#4b5563;"># A "program" to make tea</span><br>
+        <span style="color:#fb923c;">1.</span> Boil water<br>
+        <span style="color:#fb923c;">2.</span> Add tea leaves<br>
+        <span style="color:#fb923c;">3.</span> Wait <span style="color:#38bdf8;">3 minutes</span><br>
+        <span style="color:#fb923c;">4.</span> Add milk and sugar<br>
+        <span style="color:#fb923c;">5.</span> Pour into cup<br>
+        <span style="color:#fb923c;">6.</span> Serve ☕
+      </div>
+      <div class="analogy" style="margin-top:14px;">
+        🧠 <strong>Real-life intuition:</strong> a program is a <em>recipe</em>. The chef (computer) follows your steps blindly. Skip a step or put them in the wrong order, and dinner is ruined.
+      </div>
+    </div>
+  </div>
+  <div class="page-num">4 / 21</div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+  SLIDE 5 — PROGRAMMING LANGUAGE
+════════════════════════════════════════ -->
+<div class="slide content">
+  <h2>What is a Programming Language? 🗣️</h2>
+  <div class="grid-2" style="gap:26px; margin-top:8px;">
+    <div>
+      <p>Humans speak <strong>English, Nepali, Hindi…</strong> Computers ultimately only understand <strong>1s and 0s</strong>.</p>
+      <p style="margin-top:12px;">A <strong>programming language</strong> is a middle ground — something <em>we</em> can write that gets turned into something the computer can run.</p>
+      <p style="margin-top:12px;">There are hundreds of them: <strong>Python, JavaScript, C, Java, Go, Rust…</strong> Each has its own grammar, but they all do the same fundamental thing.</p>
+    </div>
+    <div>
+      <div style="display:flex; flex-direction:column; gap:10px;">
+        <div style="background:#fef3c7; border-radius:12px; padding:13px 18px; border-left:4px solid #d97706;">
+          <div style="font-size:13px; font-weight:800; color:#92400e; letter-spacing:1px;">YOU SPEAK</div>
+          <div style="font-size:15px; color:#1e1b4b; margin-top:2px;">English / Nepali / Hindi 🗣️</div>
+        </div>
+        <div style="text-align:center; font-size:22px; color:#c084fc;">↓</div>
+        <div style="background:#ede9fe; border-radius:12px; padding:13px 18px; border-left:4px solid #6d28d9;">
+          <div style="font-size:13px; font-weight:800; color:#4c1d95; letter-spacing:1px;">YOU WRITE (PROGRAMMING LANGUAGE)</div>
+          <div style="font-family:monospace; font-size:14px; color:#1e1b4b; margin-top:2px;">print("Hello!")</div>
+        </div>
+        <div style="text-align:center; font-size:22px; color:#c084fc;">↓</div>
+        <div style="background:#0f172a; border-radius:12px; padding:13px 18px; border-left:4px solid #38bdf8;">
+          <div style="font-size:13px; font-weight:800; color:#38bdf8; letter-spacing:1px;">COMPUTER UNDERSTANDS</div>
+          <div style="font-family:monospace; font-size:14px; color:#e2e8f0; margin-top:2px;">01001000 01100101 01101100…</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="analogy" style="margin-top:18px;">
+    🧠 <strong>Real-life intuition:</strong> if you only speak English and your friend only speaks Mandarin, you need <em>a translator</em>. A programming language is the script, and a translator turns it into something the computer brain understands.
+  </div>
+  <div class="page-num">5 / 21</div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+  SLIDE 6 — THE TRANSLATOR PROBLEM (section intro)
+════════════════════════════════════════ -->
+<div class="slide section-intro">
+  <div class="panel blue">
+    <div class="section-emoji">🌉</div>
+    <div class="section-label">The Bridge</div>
+    <div style="font-size:13px; margin-top:8px; opacity:0.85; text-align:center;">How code reaches the computer</div>
+  </div>
+  <div class="body">
+    <h2>Two Ways to Translate</h2>
+    <p style="margin-bottom:14px;">When you write code, <em>something</em> has to translate it from your language into the computer's language. There are <strong>two main approaches</strong>:</p>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px;">
+      <div class="card blue-border" style="background:#eff6ff;">
+        <div style="font-size:30px; margin-bottom:6px;">📚</div>
+        <div style="font-weight:800; font-size:16px; color:#0c4a6e;">Compiler</div>
+        <div style="font-size:13px; color:#374151; margin-top:4px;">Translates the <strong>whole book</strong> first. Then anyone can read it forever.</div>
+      </div>
+      <div class="card green-border" style="background:#f0fdf4;">
+        <div style="font-size:30px; margin-bottom:6px;">🎤</div>
+        <div style="font-weight:800; font-size:16px; color:#065f46;">Interpreter</div>
+        <div style="font-size:13px; color:#374151; margin-top:4px;">Translates <strong>one sentence at a time</strong>, live, as you speak.</div>
+      </div>
+    </div>
+    <div class="highlight-box">⭐ Python uses an <strong>interpreter</strong>. We'll see why this matters in a second.</div>
+  </div>
+  <div class="page-num">6 / 21</div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+  SLIDE 7 — COMPILER
+════════════════════════════════════════ -->
+<div class="slide content">
+  <h2>The Compiler 📚 — "Translate Once, Run Forever"</h2>
+  <div class="grid-2" style="gap:26px; margin-top:8px;">
+    <div>
+      <p>A <strong>compiler</strong> takes your <em>entire</em> source code and translates all of it into a finished machine-language file <strong>before</strong> the program runs.</p>
+      <p style="margin-top:12px;">Once compiled, you get an <strong>executable file</strong> (like <code style="background:#f3f4f6; padding:1px 6px; border-radius:4px; font-family:monospace;">.exe</code> on Windows). Double-click it and it runs — no translation needed at that moment.</p>
+      <div style="margin-top:14px; display:flex; flex-direction:column; gap:6px; font-size:13.5px; color:#374151;">
+        <div>✅ <strong>Very fast</strong> when running</div>
+        <div>⏳ <strong>Slow to translate</strong> upfront (every time you change code)</div>
+        <div>🌍 <strong>Locked to one OS</strong> — Windows .exe won't run on Mac</div>
+      </div>
+      <div style="margin-top:10px; font-size:13px; color:#6b7280;">Examples: <strong>C, C++, Rust, Go</strong></div>
+    </div>
+    <div style="background:#eff6ff; border-radius:14px; padding:20px;">
+      <div style="font-size:11px; font-weight:800; color:#0284c7; letter-spacing:2px; margin-bottom:10px;">REAL-LIFE INTUITION</div>
+      <p style="font-size:14.5px; line-height:1.7;">
+        Imagine you wrote a novel in Nepali and want the whole world to read it.<br><br>
+        You hire a translator to translate <strong>the entire book</strong> into English. They take 3 weeks. Now you have <strong>one finished English book</strong>. Anyone, anywhere, can read it instantly — no translator needed ever again.<br><br>
+        But if you change <em>one</em> chapter in the original… the translator has to redo the whole book.
+      </p>
+      <div style="margin-top:14px; background:white; border-radius:10px; padding:12px; text-align:center;">
+        <div style="font-size:13px; color:#0284c7; font-weight:700;">📖 Original (your code)</div>
+        <div style="font-size:18px; color:#94a3b8; margin:4px 0;">↓ compile (translate once)</div>
+        <div style="font-size:13px; color:#059669; font-weight:700;">📕 Finished book (.exe)</div>
+        <div style="font-size:18px; color:#94a3b8; margin:4px 0;">↓ run anytime</div>
+        <div style="font-size:13px; color:#1e1b4b; font-weight:700;">⚡ Fast results</div>
+      </div>
+    </div>
+  </div>
+  <div class="page-num">7 / 21</div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+  SLIDE 8 — INTERPRETER
+════════════════════════════════════════ -->
+<div class="slide content">
+  <h2>The Interpreter 🎤 — "Translate Live, Line by Line"</h2>
+  <div class="grid-2" style="gap:26px; margin-top:8px;">
+    <div>
+      <p>An <strong>interpreter</strong> reads your source code <strong>one line at a time</strong>, translates it, and runs it — <em>right now</em>. There is no "finished file" sitting around. Every time you run the program, the interpreter does its work again.</p>
+      <div style="margin-top:14px; display:flex; flex-direction:column; gap:6px; font-size:13.5px; color:#374151;">
+        <div>✅ <strong>Instant feedback</strong> — change code, run, see result</div>
+        <div>✅ <strong>Works on any OS</strong> with the interpreter installed</div>
+        <div>⏳ <strong>Slower at runtime</strong> than compiled programs</div>
+      </div>
+      <div style="margin-top:10px; font-size:13px; color:#6b7280;">Examples: <strong>Python 🐍, JavaScript, Ruby, PHP</strong></div>
+    </div>
+    <div style="background:#f0fdf4; border-radius:14px; padding:20px;">
+      <div style="font-size:11px; font-weight:800; color:#059669; letter-spacing:2px; margin-bottom:10px;">REAL-LIFE INTUITION</div>
+      <p style="font-size:14.5px; line-height:1.7;">
+        Imagine a Nepali diplomat giving a live speech at the UN. Beside them stands a <strong>simultaneous translator</strong> with a microphone.<br><br>
+        The speaker says <em>one sentence</em> — the translator immediately speaks the English version. Next sentence — translated again, on the spot. No finished book. Just constant, live, sentence-by-sentence translation.<br><br>
+        That's exactly what Python does with your code.
+      </p>
+      <div style="margin-top:14px; background:white; border-radius:10px; padding:12px; text-align:center;">
+        <div style="font-size:13px; color:#059669; font-weight:700;">📄 Your code</div>
+        <div style="font-size:18px; color:#94a3b8; margin:4px 0;">↓ read line 1 → run</div>
+        <div style="font-size:18px; color:#94a3b8;">↓ read line 2 → run</div>
+        <div style="font-size:18px; color:#94a3b8; margin:4px 0;">↓ read line 3 → run</div>
+        <div style="font-size:13px; color:#1e1b4b; font-weight:700;">🎤 Live, line-by-line</div>
+      </div>
+    </div>
+  </div>
+  <div class="page-num">8 / 21</div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+  SLIDE 9 — COMPILER vs INTERPRETER COMPARE
+════════════════════════════════════════ -->
+<div class="slide content" style="padding:40px 55px;">
+  <h2 style="margin-bottom:14px;">Compiler vs Interpreter — Side by Side ⚡</h2>
+  <div class="compare-row">
+    <div class="compare-col" style="border-top:4px solid #0284c7;">
+      <h4 style="color:#0c4a6e;">📚 COMPILER</h4>
+      <ul>
+        <li><span class="icon">📖</span><span>Translates <strong>all code at once</strong>, in advance</span></li>
+        <li><span class="icon">💾</span><span>Produces a separate <strong>executable file</strong></span></li>
+        <li><span class="icon">⚡</span><span>Runs <strong>very fast</strong> once compiled</span></li>
+        <li><span class="icon">🔨</span><span>Errors caught <strong>before</strong> running</span></li>
+        <li><span class="icon">🏷️</span><span>Examples: <strong>C, C++, Rust, Go</strong></span></li>
+        <li><span class="icon">🎯</span><span>Best for: games, operating systems, anything that needs raw speed</span></li>
+      </ul>
+    </div>
+    <div class="compare-col" style="border-top:4px solid #059669;">
+      <h4 style="color:#065f46;">🎤 INTERPRETER</h4>
+      <ul>
+        <li><span class="icon">📄</span><span>Translates &amp; runs <strong>line by line</strong>, live</span></li>
+        <li><span class="icon">🔁</span><span>No separate file — runs the source directly</span></li>
+        <li><span class="icon">🐢</span><span>A bit <strong>slower</strong> at runtime</span></li>
+        <li><span class="icon">💥</span><span>Errors only appear <strong>when that line runs</strong></span></li>
+        <li><span class="icon">🏷️</span><span>Examples: <strong>Python 🐍, JavaScript, Ruby</strong></span></li>
+        <li><span class="icon">🎯</span><span>Best for: scripts, web apps, data science, automation, learning!</span></li>
+      </ul>
+    </div>
+  </div>
+  <div class="highlight-box">
+    💡 Modern Python is actually a <em>mix</em> — it does a tiny bit of compiling behind the scenes before interpreting — but from <strong>your</strong> perspective, it behaves like an interpreter: write code, run it, see results. That's all you need today.
+  </div>
+  <div class="page-num">9 / 21</div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+  SLIDE 10 — WHERE PYTHON SITS
+════════════════════════════════════════ -->
+<div class="slide dark">
+  <h2 style="color:#38bdf8; margin-bottom:14px;">How Python Runs Your Code 🐍</h2>
+  <div class="flow">
+    <div class="flow-step" style="border-top-color:#fbbf24;">
+      <span class="em">✍️</span>
+      <div class="nm">You write</div>
+      <div class="sub">hello.py</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step" style="border-top-color:#34d399;">
+      <span class="em">🐍</span>
+      <div class="nm">Python reads</div>
+      <div class="sub">line by line</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step" style="border-top-color:#c084fc;">
+      <span class="em">🗣️</span>
+      <div class="nm">Translates</div>
+      <div class="sub">to machine code</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step" style="border-top-color:#f472b6;">
+      <span class="em">⚙️</span>
+      <div class="nm">Computer runs</div>
+      <div class="sub">the instructions</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step" style="border-top-color:#38bdf8;">
+      <span class="em">📺</span>
+      <div class="nm">You see result</div>
+      <div class="sub">on screen</div>
+    </div>
+  </div>
+  <div class="grid-2" style="gap:22px; margin-top:14px;">
+    <div>
+      <h3 style="color:#94a3b8;">The thing doing all this is called…</h3>
+      <p style="color:#cbd5e1;">The <strong style="color:#34d399;">Python interpreter</strong> — a small program you installed yesterday. When you type <code style="background:#1e293b; color:#34d399; padding:2px 8px; border-radius:4px; font-family:monospace;">python hello.py</code>, you're saying: <em>"Hey Python, please run this file for me."</em></p>
+    </div>
+    <div>
+      <h3 style="color:#94a3b8;">Why this matters for you</h3>
+      <ul>
+        <li style="color:#cbd5e1;"><span class="icon">⚡</span><span>You see results <strong>instantly</strong> — no waiting</span></li>
+        <li style="color:#cbd5e1;"><span class="icon">🧪</span><span>You can <strong>try things, fail, fix</strong> in seconds</span></li>
+        <li style="color:#cbd5e1;"><span class="icon">🚫</span><span>No mysterious <code style="background:#1e293b; padding:1px 6px; border-radius:4px;">.exe</code> files to manage</span></li>
+      </ul>
+    </div>
+  </div>
+  <div class="page-num">10 / 21</div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+  SLIDE 11 — SOURCE CODE (section intro)
+════════════════════════════════════════ -->
+<div class="slide section-intro">
+  <div class="panel amber">
+    <div class="section-emoji">📄</div>
+    <div class="section-label">Source Code</div>
+    <div style="font-size:13px; margin-top:8px; opacity:0.85; text-align:center;">The thing you type</div>
+  </div>
+  <div class="body">
+    <h2>Source Code = the human-readable file</h2>
+    <p style="margin-bottom:14px;">"<strong>Source code</strong>" sounds intimidating but it just means: <em>the text file you typed your program into</em>. That's it. It's the <strong>source</strong> — the original — that everything else is built from.</p>
+    <div style="background:#0f172a; border-radius:12px; padding:18px 22px; color:#e2e8f0; font-family:'Fira Code',monospace; font-size:14px; line-height:1.8;">
+<span style="color:#4b5563;"># hello.py  ← this whole file is "source code"</span><br>
+<span style="color:#4b5563;"># Don't worry about understanding it — just look!</span><br><br>
+<span style="color:#34d399;">print</span>(<span style="color:#fbbf24;">"Hello, world!"</span>)<br>
+<span style="color:#34d399;">print</span>(<span style="color:#fbbf24;">"My name is Alice."</span>)
+    </div>
+    <div class="analogy">
+      🧠 <strong>Real-life intuition:</strong> if a published book is the <em>compiled</em> version, the <strong>source code</strong> is the author's original Word document. It's the editable, human-readable starting point.
+    </div>
+  </div>
+  <div class="page-num">11 / 21</div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+  SLIDE 12 — FILE EXTENSIONS
+════════════════════════════════════════ -->
+<div class="slide content">
+  <h2>File Extensions 🏷️ — The Label on the Box</h2>
+  <div class="grid-2" style="gap:26px; margin-top:8px;">
+    <div>
+      <p>Every file on your computer has a <strong>tiny label</strong> at the end — three or four letters after the dot. That's called a <strong>file extension</strong>.</p>
+      <p style="margin-top:12px;">It tells your computer <em>what kind</em> of file this is, so it knows which program to open it with.</p>
+      <div class="analogy" style="margin-top:14px;">
+        🧠 <strong>Real-life intuition:</strong> imagine boxes in your kitchen. One labelled "spices", one "rice", one "tools". You don't have to open them to know what's inside — the <em>label</em> tells you. File extensions do the same job.
+      </div>
+    </div>
+    <div>
+      <div style="display:flex; flex-direction:column; gap:8px;">
+        <div style="display:flex; align-items:center; gap:14px; background:#f5f3ff; border-radius:12px; padding:11px 16px; border-left:4px solid #4f46e5;">
+          <code style="font-family:monospace; font-weight:800; color:#4f46e5; font-size:15px; min-width:55px;">.py</code>
+          <span style="font-size:13.5px; color:#374151;">Python source code 🐍</span>
+        </div>
+        <div style="display:flex; align-items:center; gap:14px; background:#f0fdf4; border-radius:12px; padding:11px 16px; border-left:4px solid #059669;">
+          <code style="font-family:monospace; font-weight:800; color:#059669; font-size:15px; min-width:55px;">.txt</code>
+          <span style="font-size:13.5px; color:#374151;">Plain text file</span>
+        </div>
+        <div style="display:flex; align-items:center; gap:14px; background:#eff6ff; border-radius:12px; padding:11px 16px; border-left:4px solid #0284c7;">
+          <code style="font-family:monospace; font-weight:800; color:#0284c7; font-size:15px; min-width:55px;">.html</code>
+          <span style="font-size:13.5px; color:#374151;">A web page</span>
+        </div>
+        <div style="display:flex; align-items:center; gap:14px; background:#fffbeb; border-radius:12px; padding:11px 16px; border-left:4px solid #d97706;">
+          <code style="font-family:monospace; font-weight:800; color:#d97706; font-size:15px; min-width:55px;">.jpg</code>
+          <span style="font-size:13.5px; color:#374151;">A photo</span>
+        </div>
+        <div style="display:flex; align-items:center; gap:14px; background:#f0fdfa; border-radius:12px; padding:11px 16px; border-left:4px solid #0d9488;">
+          <code style="font-family:monospace; font-weight:800; color:#0d9488; font-size:15px; min-width:55px;">.mp3</code>
+          <span style="font-size:13.5px; color:#374151;">An audio file</span>
+        </div>
+        <div style="display:flex; align-items:center; gap:14px; background:#fff1f2; border-radius:12px; padding:11px 16px; border-left:4px solid #be185d;">
+          <code style="font-family:monospace; font-weight:800; color:#be185d; font-size:15px; min-width:55px;">.exe</code>
+          <span style="font-size:13.5px; color:#374151;">A compiled program (Windows)</span>
+        </div>
+      </div>
+      <div class="highlight-box" style="font-size:13.5px; margin-top:12px;">
+        🐍 Every Python file you write will end in <code style="background:#fde047; padding:0 4px; border-radius:3px;">.py</code> — like <code style="background:#fde047; padding:0 4px; border-radius:3px;">hello.py</code>.
+      </div>
+    </div>
+  </div>
+  <div class="page-num">12 / 21</div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+  SLIDE 13 — IDE / CODE EDITOR
+════════════════════════════════════════ -->
+<div class="slide content">
+  <h2>The Code Editor &amp; the IDE 🍳</h2>
+  <div class="grid-2" style="gap:26px; margin-top:8px;">
+    <div>
+      <h3>What is a code editor?</h3>
+      <p>A <strong>code editor</strong> is just a special kind of notepad — but designed for writing code. It colours your words, finds typos, and helps you stay organised.</p>
+      <h3 style="margin-top:14px;">What is an IDE?</h3>
+      <p>An <strong>IDE</strong> (Integrated Development Environment) is a code editor <strong>plus extra tools</strong> bundled together — running, debugging, file management, all in one place.</p>
+      <div style="margin-top:12px; font-size:13.5px; color:#6b7280;">
+        Popular options: <strong>VS Code</strong> 🆚, <strong>PyCharm</strong>, <strong>Sublime Text</strong>, <strong>Cursor</strong>
+      </div>
+    </div>
+    <div>
+      <div class="analogy" style="margin-top:0;">
+        🧠 <strong>Real-life intuition:</strong><br><br>
+        A <strong>plain notepad</strong> (like Windows Notepad) is a <em>knife</em>. Useful, but bare.<br><br>
+        A <strong>code editor</strong> (like VS Code) is a <em>kitchen</em> with all the right tools — a sharp knife, the cutting board, good light, spices labelled, the stove right there. You <em>could</em> cook with just a knife on the floor… but why?<br><br>
+        An <strong>IDE</strong> is the kitchen <em>plus</em> a built-in chef's assistant who tastes the food and warns you before you burn it.
+      </div>
+      <div class="highlight-box" style="font-size:13.5px;">
+        🆚 In this course we use <strong>VS Code</strong> — free, popular, beginner-friendly. You installed it yesterday!
+      </div>
+    </div>
+  </div>
+  <div class="page-num">13 / 21</div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+  SLIDE 14 — ALGORITHM (section intro)
+════════════════════════════════════════ -->
+<div class="slide section-intro">
+  <div class="panel teal">
+    <div class="section-emoji">🧠</div>
+    <div class="section-label">Algorithm</div>
+    <div style="font-size:13px; margin-top:8px; opacity:0.85; text-align:center;">Thinking in steps</div>
+  </div>
+  <div class="body">
+    <h2>An Algorithm is Just a Plan</h2>
+    <p style="margin-bottom:14px;">An <strong>algorithm</strong> is a fancy word for <strong>a clear step-by-step plan</strong> to solve a problem. Nothing more. You use them every day.</p>
+    <div style="background:#0f172a; border-radius:12px; padding:18px 22px; color:#e2e8f0; font-size:14px; line-height:1.85;">
+      <span style="color:#fbbf24; font-weight:700;">Algorithm: "Make a cup of tea"</span><br>
+      <span style="color:#4b5563;">────────────────────</span><br>
+      <span style="color:#34d399;">1.</span> Fill kettle with water<br>
+      <span style="color:#34d399;">2.</span> Turn kettle on<br>
+      <span style="color:#34d399;">3.</span> <strong>If</strong> water is boiling → pour into cup<br>
+      <span style="color:#34d399;">4.</span> Add tea bag<br>
+      <span style="color:#34d399;">5.</span> Wait 3 minutes<br>
+      <span style="color:#34d399;">6.</span> Add milk &amp; sugar to taste<br>
+      <span style="color:#34d399;">7.</span> Stir &amp; serve ☕
+    </div>
+    <div class="analogy" style="margin-top:14px;">
+      🧠 Searching Google, finding the shortest route on Maps, even Netflix recommending the next show — all of those are powered by <strong>algorithms</strong>. They're just very <em>clever</em> step-by-step plans.
+    </div>
+  </div>
+  <div class="page-num">14 / 21</div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+  SLIDE 15 — SYNTAX
+════════════════════════════════════════ -->
+<div class="slide content">
+  <h2>Syntax — The Grammar Rules ✍️</h2>
+  <div class="grid-2" style="gap:26px; margin-top:8px;">
+    <div>
+      <p><strong>Syntax</strong> is the set of <strong>grammar rules</strong> of a programming language. English has rules ("the cat sat on the mat" ✅, "mat the cat on sat the" ❌). Python has rules too.</p>
+      <p style="margin-top:12px;">If you break the rules, the interpreter says: <em>"I don't understand what you wrote."</em> That's called a <strong>syntax error</strong>.</p>
+      <div class="analogy" style="margin-top:14px;">
+        🧠 <strong>Real-life intuition:</strong> if you tell a taxi driver <em>"Airport take me please to"</em>, they'll still figure it out — humans are forgiving. Python is <strong>not</strong>. Every comma, bracket and colon must be exactly where it belongs.
+      </div>
+    </div>
+    <div>
+      <div class="compare-row" style="margin-top:0;">
+        <div class="compare-col good" style="background:#f0fdf4;">
+          <h4>✅ Correct Syntax</h4>
+          <div style="background:#0f172a; border-radius:8px; padding:10px 14px; font-family:monospace; font-size:13px; color:#e2e8f0;">
+            <span style="color:#34d399;">print</span>(<span style="color:#fbbf24;">"Hello"</span>)
+          </div>
+          <p style="font-size:12px; color:#065f46; margin-top:8px;">Brackets matched. Quotes closed. Python is happy.</p>
+        </div>
+        <div class="compare-col bad" style="background:#fef2f2;">
+          <h4>❌ Broken Syntax</h4>
+          <div style="background:#0f172a; border-radius:8px; padding:10px 14px; font-family:monospace; font-size:13px; color:#e2e8f0;">
+            <span style="color:#34d399;">print</span>(<span style="color:#fbbf24;">"Hello</span>
+          </div>
+          <p style="font-size:12px; color:#991b1b; margin-top:8px;">Missing closing quote &amp; bracket → SyntaxError.</p>
+        </div>
+      </div>
+      <div class="highlight-box" style="font-size:13px; margin-top:12px;">
+        💡 You <strong>will</strong> hit syntax errors. Everyone does — even senior devs. They are 100% normal and 100% fixable.
+      </div>
+    </div>
+  </div>
+  <div class="page-num">15 / 21</div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+  SLIDE 16 — BUGS & DEBUGGING
+════════════════════════════════════════ -->
+<div class="slide content">
+  <h2>Bugs &amp; Debugging 🐛🔍</h2>
+  <div class="grid-2" style="gap:26px; margin-top:8px;">
+    <div>
+      <h3>What is a "bug"?</h3>
+      <p>A <strong>bug</strong> is any mistake in your code that makes the program behave wrongly. Wrong answer, crash, frozen screen — all bugs.</p>
+      <h3 style="margin-top:14px;">What is "debugging"?</h3>
+      <p><strong>Debugging</strong> is the process of <strong>finding</strong> the bug and <strong>fixing</strong> it. It's roughly 50% of a programmer's actual day.</p>
+      <div class="analogy" style="margin-top:14px;">
+        🧠 <strong>True story:</strong> in 1947 an engineer named Grace Hopper found an actual <em>moth</em> stuck inside a computer, causing it to malfunction. She taped it into her logbook and wrote "first actual case of bug being found." The name stuck. 🦋
+      </div>
+    </div>
+    <div>
+      <div style="background:#fff1f2; border-radius:14px; padding:18px; border-left:5px solid #be185d;">
+        <div style="font-size:11px; font-weight:800; color:#9f1239; letter-spacing:2px; margin-bottom:8px;">DEBUGGING = DETECTIVE WORK</div>
+        <ul style="gap:0;">
+          <li style="font-size:13.5px; padding:4px 0;"><span class="icon">🔍</span><span><strong>Observe</strong> — what did the program actually do?</span></li>
+          <li style="font-size:13.5px; padding:4px 0;"><span class="icon">🤔</span><span><strong>Hypothesise</strong> — where could it go wrong?</span></li>
+          <li style="font-size:13.5px; padding:4px 0;"><span class="icon">🧪</span><span><strong>Test</strong> — print values, narrow down the suspect</span></li>
+          <li style="font-size:13.5px; padding:4px 0;"><span class="icon">🔧</span><span><strong>Fix</strong> — change the code &amp; verify it works</span></li>
+          <li style="font-size:13.5px; padding:4px 0;"><span class="icon">🎉</span><span><strong>Repeat</strong> — there's almost always one more bug 😄</span></li>
+        </ul>
+      </div>
+      <div class="highlight-box" style="font-size:13px; margin-top:12px;">
+        🧠 An error message is <strong>not Python being mean</strong> — it's Python literally telling you <em>where</em> and <em>why</em> something broke. Read it. Always read it.
+      </div>
+    </div>
+  </div>
+  <div class="page-num">16 / 21</div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+  SLIDE 17 — WHY PYTHON (section intro)
+════════════════════════════════════════ -->
+<div class="slide section-intro">
+  <div class="panel rose">
+    <div class="section-emoji">🐍</div>
+    <div class="section-label">Why Python</div>
+    <div style="font-size:13px; margin-top:8px; opacity:0.85; text-align:center;">Of all the languages…</div>
+  </div>
+  <div class="body">
+    <h2>Why Python &amp; Where It's Used</h2>
+    <ul>
+      <li><span class="icon">📖</span><span><strong>Reads like English</strong> — almost no weird symbols. Perfect for beginners.</span></li>
+      <li><span class="icon">🌍</span><span><strong>#1 most popular language</strong> in the world today</span></li>
+      <li><span class="icon">📦</span><span><strong>Huge library ecosystem</strong> — pre-built tools for almost everything</span></li>
+      <li><span class="icon">🤝</span><span><strong>Massive community</strong> — millions of people ready to answer your questions online</span></li>
+    </ul>
+    <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-top:16px;">
+      <div class="concept-card" style="border-top:3px solid #4f46e5;"><span class="emoji">🤖</span><div class="c-name" style="font-size:14px;">AI / ChatGPT</div><div class="c-desc">OpenAI, Google, Meta all use Python</div></div>
+      <div class="concept-card" style="border-top:3px solid #0284c7;"><span class="emoji">📊</span><div class="c-name" style="font-size:14px;">Data Science</div><div class="c-desc">Excel on rocket fuel</div></div>
+      <div class="concept-card" style="border-top:3px solid #059669;"><span class="emoji">🌐</span><div class="c-name" style="font-size:14px;">Websites</div><div class="c-desc">Instagram, Spotify, Reddit</div></div>
+      <div class="concept-card" style="border-top:3px solid #d97706;"><span class="emoji">🔐</span><div class="c-name" style="font-size:14px;">Cybersecurity</div><div class="c-desc">Tools, scripts, automation</div></div>
+      <div class="concept-card" style="border-top:3px solid #0d9488;"><span class="emoji">⚙️</span><div class="c-name" style="font-size:14px;">Automation</div><div class="c-desc">Boring tasks → done in seconds</div></div>
+      <div class="concept-card" style="border-top:3px solid #be185d;"><span class="emoji">🎮</span><div class="c-name" style="font-size:14px;">Games &amp; Bots</div><div class="c-desc">Discord bots, simple games</div></div>
+    </div>
+  </div>
+  <div class="page-num">17 / 21</div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+  SLIDE 18 — TWO CONCEPTS WE'LL MEET TOMORROW
+════════════════════════════════════════ -->
+<div class="slide content">
+  <h2>Two Words You'll Hear Tomorrow 🔮</h2>
+  <p style="margin-bottom:14px; font-size:15px;">We won't <em>use</em> them today, but it helps to know what they mean before we start coding tomorrow.</p>
+  <div class="grid-2" style="gap:22px;">
+    <div class="card" style="background:#f5f3ff; border-left-color:#4f46e5; padding:22px;">
+      <div style="font-size:36px; margin-bottom:8px;">📦</div>
+      <div style="font-weight:800; font-size:18px; color:#4f46e5; margin-bottom:8px;">Variable</div>
+      <p style="font-size:14px; color:#374151;">A <strong>labelled box</strong> where you store a value so you can use it later.</p>
+      <div class="analogy" style="background:white; border-color:#c4b5fd; margin-top:12px; font-size:13px;">
+        🧠 Like sticking a Post-It note saying <strong>"Birthday"</strong> on a date in your calendar. Later, when someone asks <em>"when is your birthday?"</em>, you don't have to remember the date — you just check the Post-It.
+      </div>
+    </div>
+    <div class="card" style="background:#f0fdf4; border-left-color:#059669; padding:22px;">
+      <div style="font-size:36px; margin-bottom:8px;">🎰</div>
+      <div style="font-weight:800; font-size:18px; color:#059669; margin-bottom:8px;">Function</div>
+      <p style="font-size:14px; color:#374151;">A <strong>reusable mini-program</strong> — give it something, it gives you something back.</p>
+      <div class="analogy" style="background:white; border-color:#86efac; margin-top:12px; font-size:13px;">
+        🧠 Like a <strong>vending machine</strong>: put in coins + press a button (give the function some input), out comes a snack (the result). You don't care <em>how</em> it works inside — only that it works.
+      </div>
+    </div>
+  </div>
+  <div class="highlight-box" style="font-size:13.5px;">
+    🚀 Don't try to memorise these now — just recognise the names when they come up tomorrow.
+  </div>
+  <div class="page-num">18 / 21</div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+  SLIDE 19 — THE MINDSET
+════════════════════════════════════════ -->
+<div class="slide content" style="padding:40px 55px;">
+  <h2>The Mindset That Makes Coders 🧘</h2>
+  <p style="margin-bottom:14px; font-size:15px;">Programming is a skill, not a gift. These five habits matter <strong>far more</strong> than memorising syntax.</p>
+  <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px;">
+    <div class="card" style="border-left-color:#4f46e5; background:#f5f3ff;">
+      <div style="font-weight:800; color:#4f46e5; font-size:15px;">1. Errors are normal 🟣</div>
+      <p style="font-size:13.5px; margin-top:4px;">Every error message is just Python telling you <em>where</em> &amp; <em>why</em>. Read it slowly. It's not yelling at you.</p>
+    </div>
+    <div class="card green-border" style="background:#f0fdf4;">
+      <div style="font-weight:800; color:#059669; font-size:15px;">2. Google is your superpower 🔍</div>
+      <p style="font-size:13.5px; margin-top:4px;">Every senior dev googles dozens of times a day. Copy the error message, paste, learn. That's the job.</p>
+    </div>
+    <div class="card blue-border" style="background:#eff6ff;">
+      <div style="font-weight:800; color:#0284c7; font-size:15px;">3. Tiny experiments &gt; big plans 🧪</div>
+      <p style="font-size:13.5px; margin-top:4px;">Don't write 50 lines and pray. Write 2 lines, run, see, repeat. Small steps reveal big bugs.</p>
+    </div>
+    <div class="card amber-border" style="background:#fffbeb;">
+      <div style="font-weight:800; color:#d97706; font-size:15px;">4. Confusion is part of it 🌫️</div>
+      <p style="font-size:13.5px; margin-top:4px;">Not getting it <em>yet</em> is different from not getting it. Sit with the confusion — clicks come.</p>
+    </div>
+    <div class="card teal-border" style="background:#f0fdfa;">
+      <div style="font-weight:800; color:#0d9488; font-size:15px;">5. Type it, don't copy it ⌨️</div>
+      <p style="font-size:13.5px; margin-top:4px;">Your fingers learn faster than your eyes. Even if the code is on screen — type it out yourself.</p>
+    </div>
+    <div class="card rose-border" style="background:#fff1f2;">
+      <div style="font-weight:800; color:#be185d; font-size:15px;">6. Ask, always 💬</div>
+      <p style="font-size:13.5px; margin-top:4px;">No question is too basic. The only stupid question is the one you didn't ask &amp; spent 3 hours on.</p>
+    </div>
+  </div>
+  <div class="page-num">19 / 21</div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+  SLIDE 20 — CHEAT SHEET / VOCAB
+════════════════════════════════════════ -->
+<div class="slide content" style="padding:36px 52px;">
+  <h2 style="margin-bottom:14px;">Today's Vocabulary 📋</h2>
+  <p style="margin-bottom:14px; font-size:14px;">If you understand these 10 words, you're already ahead of where most people start.</p>
+  <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; font-size:13.5px;">
+    <div style="background:#f5f3ff; border-radius:10px; padding:11px 15px; border-left:4px solid #4f46e5;">
+      <strong style="color:#4f46e5;">Program</strong> — a list of instructions for the computer.
+    </div>
+    <div style="background:#f0fdf4; border-radius:10px; padding:11px 15px; border-left:4px solid #059669;">
+      <strong style="color:#059669;">Programming language</strong> — what you write code in (e.g. Python).
+    </div>
+    <div style="background:#eff6ff; border-radius:10px; padding:11px 15px; border-left:4px solid #0284c7;">
+      <strong style="color:#0284c7;">Source code</strong> — the text file you typed your program into.
+    </div>
+    <div style="background:#fffbeb; border-radius:10px; padding:11px 15px; border-left:4px solid #d97706;">
+      <strong style="color:#d97706;">Compiler</strong> — translates ALL code first, makes an executable.
+    </div>
+    <div style="background:#f0fdfa; border-radius:10px; padding:11px 15px; border-left:4px solid #0d9488;">
+      <strong style="color:#0d9488;">Interpreter</strong> — translates &amp; runs line by line (Python uses this).
+    </div>
+    <div style="background:#f5f3ff; border-radius:10px; padding:11px 15px; border-left:4px solid #6d28d9;">
+      <strong style="color:#6d28d9;">IDE / Code Editor</strong> — the "kitchen" you write code in (e.g. VS Code).
+    </div>
+    <div style="background:#fff1f2; border-radius:10px; padding:11px 15px; border-left:4px solid #be185d;">
+      <strong style="color:#be185d;">Algorithm</strong> — a clear step-by-step plan to solve a problem.
+    </div>
+    <div style="background:#f1f5f9; border-radius:10px; padding:11px 15px; border-left:4px solid #475569;">
+      <strong style="color:#475569;">Syntax</strong> — the grammar rules of a programming language.
+    </div>
+    <div style="background:#fef2f2; border-radius:10px; padding:11px 15px; border-left:4px solid #dc2626;">
+      <strong style="color:#dc2626;">Bug</strong> — a mistake in code that makes it misbehave.
+    </div>
+    <div style="background:#ecfeff; border-radius:10px; padding:11px 15px; border-left:4px solid #0891b2;">
+      <strong style="color:#0891b2;">Debugging</strong> — the detective work of finding &amp; fixing bugs.
+    </div>
+  </div>
+  <div class="highlight-box" style="margin-top:14px; font-size:13.5px;">
+    💡 You don't need to memorise these. You'll <em>absorb</em> them naturally over the next few days as we use them.
+  </div>
+  <div class="page-num">20 / 21</div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+  SLIDE 21 — CLOSING HERO
+════════════════════════════════════════ -->
+<div class="slide hero" style="background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #be185d 100%);">
+  <div class="blob blob1" style="background:#c4b5fd;"></div>
+  <div class="blob blob2" style="background:#fbcfe8;"></div>
+  <div style="font-size:72px; line-height:1; margin-bottom:18px;">🐣</div>
+  <div class="slide-title" style="font-size:58px;">You're Ready.</div>
+  <div class="slide-subtitle">Tomorrow we write our first real Python — variables, strings, numbers &amp; more.</div>
+  <div style="margin-top:36px; display:flex; gap:12px; flex-wrap:wrap; justify-content:center; max-width:760px;">
+    <div style="background:rgba(255,255,255,0.18); border-radius:10px; padding:10px 18px; font-size:14px; font-weight:700;">💻 What a computer is</div>
+    <div style="background:rgba(255,255,255,0.18); border-radius:10px; padding:10px 18px; font-size:14px; font-weight:700;">📜 What a program is</div>
+    <div style="background:rgba(255,255,255,0.18); border-radius:10px; padding:10px 18px; font-size:14px; font-weight:700;">📚 Compiler vs 🎤 Interpreter</div>
+    <div style="background:rgba(255,255,255,0.18); border-radius:10px; padding:10px 18px; font-size:14px; font-weight:700;">📄 Source code</div>
+    <div style="background:rgba(255,255,255,0.18); border-radius:10px; padding:10px 18px; font-size:14px; font-weight:700;">🧠 Algorithm</div>
+    <div style="background:rgba(255,255,255,0.18); border-radius:10px; padding:10px 18px; font-size:14px; font-weight:700;">✍️ Syntax</div>
+    <div style="background:rgba(255,255,255,0.18); border-radius:10px; padding:10px 18px; font-size:14px; font-weight:700;">🐛 Bugs &amp; debugging</div>
+    <div style="background:rgba(255,255,255,0.18); border-radius:10px; padding:10px 18px; font-size:14px; font-weight:700;">🐍 Why Python</div>
+  </div>
+  <div style="margin-top:30px; font-size:15px; opacity:0.9; font-weight:600; max-width:680px; line-height:1.6;">
+    ✨ Today you learned <em>how</em> code works. Tomorrow you'll start <em>writing</em> it.<br>That shift — from spectator to creator — is the whole point.
+  </div>
+  <div class="page-num" style="color:rgba(255,255,255,0.45);">21 / 21</div>
+</div>
+
+</body>
+</html>
