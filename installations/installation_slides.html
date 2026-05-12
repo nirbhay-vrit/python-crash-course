@@ -1,0 +1,1512 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Installation Guide — Python &amp; VSCode 🐍</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800;900&family=Fira+Code:wght@400;500;600&display=swap');
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    @page { size: A4 landscape; margin: 0; }
+
+    body { font-family: 'Poppins', 'Segoe UI', sans-serif; background: #e8e8e8; }
+
+    .slide {
+      width: 297mm;
+      height: 210mm;
+      overflow: hidden;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      page-break-after: always;
+      break-after: page;
+    }
+    @media screen { .slide { margin: 20px auto; box-shadow: 0 8px 40px rgba(0,0,0,0.18); } }
+
+    .blob { position: absolute; border-radius: 50%; opacity: 0.15; pointer-events: none; }
+
+    /* ── Themes ─── */
+    .hero {
+      background: linear-gradient(135deg, #1e3a8a 0%, #4338ca 60%, #7c3aed 100%);
+      color: white; justify-content: center; align-items: center; text-align: center; padding: 60px;
+    }
+    .hero .blob1 { width: 280px; height: 280px; background: white; top: -80px; right: -60px; }
+    .hero .blob2 { width: 200px; height: 200px; background: #c4b5fd; bottom: -60px; left: -40px; }
+
+    .section-intro { flex-direction: row; }
+    .section-intro .panel {
+      width: 40%; display: flex; flex-direction: column;
+      justify-content: center; align-items: center; padding: 50px 28px; color: white; text-align: center;
+    }
+    .section-intro .body {
+      width: 60%; padding: 44px 52px; background: white;
+      display: flex; flex-direction: column; justify-content: center;
+    }
+
+    .content { background: white; padding: 38px 56px; }
+    .dark    { background: #0f172a; color: #e2e8f0; padding: 38px 56px; }
+
+    /* ── Gradients ─── */
+    .blue-grad   { background: linear-gradient(135deg, #0284c7, #0ea5e9); }
+    .purple-grad { background: linear-gradient(135deg, #4f46e5, #7c3aed); }
+    .gray-grad   { background: linear-gradient(135deg, #475569, #64748b); }
+    .green-grad  { background: linear-gradient(135deg, #059669, #10b981); }
+    .amber-grad  { background: linear-gradient(135deg, #d97706, #f59e0b); }
+    .rose-grad   { background: linear-gradient(135deg, #be185d, #e11d48); }
+
+    /* ── Typography ─── */
+    .slide-tag      { font-size: 11px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; opacity: 0.7; margin-bottom: 10px; }
+    .slide-title    { font-size: 52px; font-weight: 900; line-height: 1.1; }
+    .slide-subtitle { font-size: 22px; font-weight: 400; opacity: 0.85; margin-top: 14px; }
+    .section-emoji  { font-size: 96px; line-height: 1; margin-bottom: 14px; }
+    .section-label  { font-size: 19px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; }
+
+    h2 { font-size: 30px; font-weight: 800; color: #1e1b4b; margin-bottom: 14px; }
+    h3 { font-size: 18px; font-weight: 700; color: #1e1b4b; margin-bottom: 8px; }
+    .dark h2 { color: #e2e8f0; }
+    .dark h3 { color: #94a3b8; }
+
+    p   { font-size: 15px; line-height: 1.65; color: #374151; }
+    .dark p { color: #cbd5e1; }
+
+    ul  { list-style: none; margin-top: 4px; }
+    ul li { font-size: 14.5px; color: #374151; padding: 4px 0; display: flex; align-items: flex-start; gap: 9px; line-height: 1.5; }
+    .dark ul li { color: #cbd5e1; }
+    ul li .icon { flex-shrink: 0; font-size: 16px; margin-top: 1px; }
+
+    a { color: #2563eb; text-decoration: none; font-weight: 600; }
+    a:hover { text-decoration: underline; }
+
+    /* ── Code ─── */
+    pre {
+      background: #0f172a; border-radius: 10px; padding: 14px 18px;
+      font-family: 'Fira Code', 'Consolas', monospace; font-size: 13px;
+      line-height: 1.7; color: #e2e8f0; overflow: hidden;
+    }
+    pre.terminal { background: #1a1a1a; color: #c5f7c5; }
+    pre.terminal .prompt { color: #5ec5ff; }
+    pre.terminal .cmd    { color: #fff; }
+    pre.terminal .out    { color: #94a3b8; }
+    pre .kw  { color: #c084fc; }
+    pre .fn  { color: #34d399; }
+    pre .st  { color: #fbbf24; }
+    pre .cm  { color: #4b5563; }
+
+    /* ── Layouts ─── */
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
+
+    /* ── Cards ─── */
+    .card { background: #f8fafc; border-radius: 12px; padding: 16px 20px; border-left: 5px solid #4f46e5; }
+    .card.green-border  { border-left-color: #059669; }
+    .card.blue-border   { border-left-color: #0284c7; }
+    .card.amber-border  { border-left-color: #d97706; }
+    .card.rose-border   { border-left-color: #be185d; }
+    .card.gray-border   { border-left-color: #64748b; }
+
+    /* ── Pills ─── */
+    .pill { display: inline-block; padding: 4px 12px; border-radius: 999px; font-size: 11px; font-weight: 700; }
+    .pill-blue   { background: #dbeafe; color: #1e40af; }
+    .pill-green  { background: #d1fae5; color: #065f46; }
+    .pill-purple { background: #ede9fe; color: #5b21b6; }
+    .pill-amber  { background: #fef3c7; color: #92400e; }
+    .pill-gray   { background: #e5e7eb; color: #374151; }
+    .pill-rose   { background: #ffe4e6; color: #9f1239; }
+
+    /* ── Highlight + warning ─── */
+    .highlight-box {
+      background: #fef9c3; border: 2px solid #fde047; border-radius: 10px;
+      padding: 12px 18px; font-size: 14px; color: #713f12; margin-top: 14px; font-weight: 600;
+    }
+    .warning-box {
+      background: #fee2e2; border: 2px solid #fca5a5; border-radius: 10px;
+      padding: 12px 18px; font-size: 14px; color: #7f1d1d; margin-top: 14px; font-weight: 600;
+    }
+    .success-box {
+      background: #d1fae5; border: 2px solid #6ee7b7; border-radius: 10px;
+      padding: 12px 18px; font-size: 14px; color: #065f46; margin-top: 14px; font-weight: 600;
+    }
+
+    /* ── Step pills ─── */
+    .step-row { display: flex; align-items: center; gap: 14px; margin-bottom: 14px; }
+    .step-num {
+      flex-shrink: 0; width: 38px; height: 38px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 900; font-size: 17px; color: white;
+    }
+    .step-num.blue   { background: #0284c7; }
+    .step-num.purple { background: #7c3aed; }
+    .step-num.green  { background: #059669; }
+    .step-num.gray   { background: #64748b; }
+    .step-num.rose   { background: #be185d; }
+    .step-content { flex: 1; }
+    .step-content h3 { margin-bottom: 3px; font-size: 16px; }
+    .step-content p  { font-size: 13.5px; color: #4b5563; }
+
+    /* ── Mock UI dialog ─── */
+    .mock-window {
+      background: white; border: 1px solid #d1d5db; border-radius: 8px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.15); overflow: hidden;
+      font-family: 'Segoe UI', sans-serif;
+    }
+    .mock-window .titlebar {
+      background: #f3f4f6; border-bottom: 1px solid #e5e7eb;
+      padding: 6px 12px; display: flex; justify-content: space-between;
+      align-items: center; font-size: 11px; color: #374151;
+    }
+    .mock-window .titlebar .controls { display: flex; gap: 5px; }
+    .mock-window .titlebar .controls .dot { width: 11px; height: 11px; border-radius: 50%; }
+    .mock-window .titlebar .controls .red    { background: #ef4444; }
+    .mock-window .titlebar .controls .yellow { background: #f59e0b; }
+    .mock-window .titlebar .controls .green  { background: #10b981; }
+    .mock-window .body { padding: 14px 18px; font-size: 12px; color: #1f2937; line-height: 1.55; }
+
+    .checkbox-row { display: flex; align-items: center; gap: 8px; margin: 5px 0; font-size: 12px; }
+    .checkbox-row .box {
+      width: 14px; height: 14px; border: 1.5px solid #4b5563;
+      background: white; border-radius: 2px; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px; color: white;
+    }
+    .checkbox-row .box.checked { background: #2563eb; border-color: #2563eb; }
+    .checkbox-row .box.checked::after { content: '✓'; font-size: 11px; }
+    .checkbox-row.critical {
+      background: #fef9c3; border: 2px solid #facc15;
+      padding: 8px 10px; border-radius: 6px; margin: 6px 0;
+      font-weight: 700; color: #713f12;
+    }
+
+    .mock-btn {
+      display: inline-block; padding: 6px 16px; border-radius: 4px;
+      font-size: 12px; font-weight: 600; cursor: pointer;
+    }
+    .mock-btn.primary { background: #2563eb; color: white; }
+    .mock-btn.ghost   { background: #f3f4f6; color: #374151; border: 1px solid #d1d5db; }
+
+    /* ── Page number ─── */
+    .page-num { position: absolute; bottom: 16px; right: 26px; font-size: 11px; font-weight: 600; opacity: 0.32; letter-spacing: 1px; }
+
+    /* ── OS badge ─── */
+    .os-badge {
+      position: absolute; top: 18px; right: 26px;
+      padding: 5px 14px; border-radius: 999px; font-size: 11px;
+      font-weight: 800; letter-spacing: 1px; text-transform: uppercase;
+    }
+    .os-badge.win  { background: #dbeafe; color: #1e40af; }
+    .os-badge.mac  { background: #e5e7eb; color: #1f2937; }
+    .os-badge.both { background: #ede9fe; color: #5b21b6; }
+
+    /* ── Big arrow ─── */
+    .pulse-arrow {
+      display: inline-block; color: #dc2626; font-size: 28px;
+      font-weight: 900; margin-right: 6px;
+    }
+
+    /* ── Logo blocks ─── */
+    .logo-block {
+      display: flex; align-items: center; justify-content: center; gap: 16px;
+    }
+    .logo-circle {
+      width: 90px; height: 90px; border-radius: 22px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 48px; box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+    }
+
+    /* ── Path diagram ─── */
+    .path-diagram {
+      background: #1e293b; color: #c5f7c5; border-radius: 8px;
+      padding: 14px 18px; font-family: 'Fira Code', monospace;
+      font-size: 12px; line-height: 1.8;
+    }
+    .path-diagram .label { color: #94a3b8; }
+    .path-diagram .entry { color: #fbbf24; }
+    .path-diagram .new-entry { color: #34d399; font-weight: 700; }
+  </style>
+</head>
+<body>
+
+<!-- ════════════════════════════════════════
+  SLIDE 1 — TITLE
+════════════════════════════════════════ -->
+<div class="slide hero">
+  <div class="blob blob1"></div>
+  <div class="blob blob2"></div>
+  <div class="slide-tag">Python Crash Course · Setup</div>
+  <div class="slide-title">Installing Python &amp; VSCode</div>
+  <div class="slide-subtitle">Windows 10 / 11 · macOS · Step-by-step with pictures</div>
+  <div style="margin-top:32px; display:flex; gap:24px;">
+    <div class="logo-circle" style="background:linear-gradient(135deg,#3776ab,#ffd43b);">🐍</div>
+    <div class="logo-circle" style="background:linear-gradient(135deg,#0078d4,#1f9cf0);">💻</div>
+  </div>
+  <div style="margin-top:30px; font-size:12px; opacity:0.7; font-weight:600; letter-spacing:2px; text-transform:uppercase;">
+    Read this BEFORE Day 1 · Takes ~15 minutes
+  </div>
+  <div class="page-num">01</div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+  SLIDE 2 — WHAT YOU NEED
+════════════════════════════════════════ -->
+<div class="slide content">
+  <h2>What we're installing today 🛠️</h2>
+  <p style="margin-bottom:18px;">Two pieces of software. That's it. They work together to let you write and run Python on your computer.</p>
+
+  <div class="grid-2" style="margin-top:14px;">
+    <div class="card blue-border" style="padding:22px 26px;">
+      <div style="font-size:42px;">🐍</div>
+      <h3 style="font-size:22px; margin-top:6px;">Python</h3>
+      <div class="pill pill-blue" style="margin:6px 0 10px;">The language</div>
+      <p style="font-size:14px;">The actual Python "engine" that runs your code. We'll install <strong>Python 3.12 or newer</strong>.</p>
+      <p style="font-size:13px; margin-top:8px; color:#6b7280;">Download: <a href="https://www.python.org/downloads/">python.org/downloads</a></p>
+    </div>
+    <div class="card green-border" style="padding:22px 26px;">
+      <div style="font-size:42px;">📝</div>
+      <h3 style="font-size:22px; margin-top:6px;">Visual Studio Code</h3>
+      <div class="pill pill-green" style="margin:6px 0 10px;">The editor</div>
+      <p style="font-size:14px;">A free editor where you type code. Made by Microsoft. Free. Cross-platform. Loved by everyone.</p>
+      <p style="font-size:13px; margin-top:8px; color:#6b7280;">Download: <a href="https://code.visualstudio.com/download">code.visualstudio.com</a></p>
+    </div>
+  </div>
+
+  <div class="highlight-box">
+    💡 Think of it like cooking: <strong>Python</strong> is the stove (it cooks the code), <strong>VSCode</strong> is your kitchen counter (where you prepare it).
+  </div>
+  <div class="page-num">02</div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+  SLIDE 3 — WHICH OS ARE YOU ON?
+════════════════════════════════════════ -->
+<div class="slide content">
+  <h2>Pick your operating system 👇</h2>
+  <p style="margin-bottom:22px;">The steps are different on Windows vs Mac. Find your section in this deck and follow it. <strong>Skip the other one.</strong></p>
+
+  <div class="grid-2" style="gap:24px; margin-top:6px;">
+    <div class="card blue-border" style="padding:30px;">
+      <div style="font-size:64px; margin-bottom:10px;">🪟</div>
+      <h3 style="font-size:26px;">Windows 10 / 11</h3>
+      <p style="font-size:14px; margin-top:8px;">Slides <strong>4–14</strong> are for you.</p>
+      <ul style="margin-top:10px;">
+        <li><span class="icon">⬇️</span> Download Python from python.org</li>
+        <li><span class="icon">⚠️</span> Tick "Add Python to PATH" (critical!)</li>
+        <li><span class="icon">🛠️</span> Install VSCode + Python extension</li>
+      </ul>
+    </div>
+    <div class="card gray-border" style="padding:30px;">
+      <div style="font-size:64px; margin-bottom:10px;">🍎</div>
+      <h3 style="font-size:26px;">macOS</h3>
+      <p style="font-size:14px; margin-top:8px;">Slides <strong>15–22</strong> are for you.</p>
+      <ul style="margin-top:10px;">
+        <li><span class="icon">⬇️</span> Download Python (or use Homebrew)</li>
+        <li><span class="icon">✅</span> Verify in Terminal</li>
+        <li><span class="icon">🛠️</span> Drag VSCode to Applications</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="highlight-box">
+    🌐 On both: <strong>slides 23–26</strong> show how to write &amp; run your first Python file. Don't skip those!
+  </div>
+  <div class="page-num">03</div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+  SLIDE 4 — WINDOWS SECTION DIVIDER
+════════════════════════════════════════ -->
+<div class="slide section-intro">
+  <div class="panel blue-grad">
+    <div class="section-emoji">🪟</div>
+    <div class="section-label">Part 1 of 3</div>
+    <div class="slide-title" style="font-size:46px; margin-top:8px;">Windows</div>
+    <div class="slide-subtitle" style="font-size:17px;">10 &amp; 11 · all versions</div>
+  </div>
+  <div class="body">
+    <h2>Coming up on Windows</h2>
+    <ul style="margin-top:12px;">
+      <li><span class="icon">①</span> Download Python from python.org</li>
+      <li><span class="icon">②</span> Run installer — <strong>tick "Add to PATH"</strong></li>
+      <li><span class="icon">③</span> Verify in Command Prompt</li>
+      <li><span class="icon">④</span> Understand environment variables (PATH)</li>
+      <li><span class="icon">⑤</span> Fix PATH manually if you forgot the checkbox</li>
+      <li><span class="icon">⑥</span> Install VSCode</li>
+      <li><span class="icon">⑦</span> Install the Python extension</li>
+    </ul>
+    <div class="warning-box">
+      ⚠️ The single most common beginner mistake on Windows: <strong>forgetting to check "Add Python to PATH"</strong> during install. We'll show you exactly where it is.
+    </div>
+  </div>
+  <div class="page-num">04</div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+  SLIDE 5 — WINDOWS: DOWNLOAD PYTHON
+════════════════════════════════════════ -->
+<div class="slide content">
+  <div class="os-badge win">Windows</div>
+  <h2>Step 1: Download Python 🐍</h2>
+
+  <div class="step-row">
+    <div class="step-num blue">1</div>
+    <div class="step-content">
+      <h3>Open your browser, go to:</h3>
+      <p style="font-size:16px;"><a href="https://www.python.org/downloads/">https://www.python.org/downloads/</a></p>
+    </div>
+  </div>
+
+  <div class="step-row">
+    <div class="step-num blue">2</div>
+    <div class="step-content">
+      <h3>Click the big yellow button</h3>
+      <p>The site detects your OS automatically. You'll see something like "Download Python 3.12.X" with a big yellow button.</p>
+    </div>
+  </div>
+
+  <!-- Mock python.org download page -->
+  <div class="mock-window" style="margin-top:8px;">
+    <div class="titlebar">
+      <div class="controls">
+        <div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div>
+      </div>
+      <div>🔒 python.org/downloads</div>
+      <div style="width:30px;"></div>
+    </div>
+    <div class="body" style="background:linear-gradient(180deg, #f5f5f5 0%, #e8eaf0 100%); padding:18px 22px;">
+      <div style="font-size:11px; color:#666; margin-bottom:8px;">▾ Download the latest version for Windows</div>
+      <div style="display:flex; align-items:center; gap:14px;">
+        <div style="background:#ffd43b; color:#1a1a1a; padding:14px 28px; border-radius:6px; font-weight:800; font-size:14px; box-shadow:0 2px 4px rgba(0,0,0,0.12);">
+          ⬇️  Download Python 3.12.X
+        </div>
+        <div style="color:#dc2626; font-size:20px;">⬅️ click this</div>
+      </div>
+      <div style="font-size:10px; color:#666; margin-top:10px;">Note that Python 3.12.X cannot be used on Windows 7 or earlier.</div>
+    </div>
+  </div>
+
+  <div class="highlight-box">
+    💾 The installer file will be named something like <code style="background:#fde047; padding:1px 5px; border-radius:3px;">python-3.12.X-amd64.exe</code> and saved to your Downloads folder.
+  </div>
+  <div class="page-num">05</div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+  SLIDE 6 — WINDOWS: THE CRITICAL CHECKBOX
+════════════════════════════════════════ -->
+<div class="slide content">
+  <div class="os-badge win">Windows</div>
+  <h2>Step 2: Run the installer ⚠️ DON'T SKIP THIS</h2>
+  <p style="margin-bottom:10px;">Double-click the <code style="background:#f3f4f6; padding:1px 5px;">python-3.12.X-amd64.exe</code> file you just downloaded. You'll see this window:</p>
+
+  <!-- Mock Python installer -->
+  <div class="mock-window" style="margin-top:6px; max-width:680px; margin-left:auto; margin-right:auto;">
+    <div class="titlebar">
+      <div style="font-weight:700;">🐍  Python 3.12.X (64-bit) Setup</div>
+      <div style="display:flex; gap:6px;">
+        <div style="width:16px; height:16px; border:1px solid #999; font-size:10px; text-align:center;">_</div>
+        <div style="width:16px; height:16px; border:1px solid #999; font-size:10px; text-align:center;">□</div>
+        <div style="width:16px; height:16px; background:#e81123; color:white; font-size:10px; text-align:center;">×</div>
+      </div>
+    </div>
+    <div class="body" style="background:white; padding:18px 22px;">
+      <div style="display:flex; gap:18px; align-items:flex-start;">
+        <div style="font-size:54px;">🐍</div>
+        <div style="flex:1;">
+          <div style="font-size:14px; font-weight:700; color:#1f2937;">Install Python 3.12.X (64-bit)</div>
+          <div style="font-size:11px; color:#6b7280; margin-top:3px;">Select Install Now to install Python with default settings, or choose Customize to enable or disable features.</div>
+
+          <div style="background:#f3f4f6; padding:10px 14px; margin-top:12px; border-radius:4px;">
+            <div style="font-size:12px; font-weight:700; color:#1e40af;">→ Install Now</div>
+            <div style="font-size:10px; color:#6b7280; margin-left:14px;">Python 3.12 from C:\Users\You\AppData\Local\Programs\Python\Python312</div>
+            <div style="font-size:10px; color:#6b7280; margin-left:14px;">Includes IDLE, pip and documentation</div>
+          </div>
+          <div style="margin-top:8px; font-size:12px; color:#6b7280;">→ Customize installation</div>
+        </div>
+      </div>
+
+      <div style="margin-top:18px;">
+        <div class="checkbox-row">
+          <div class="box checked"></div>
+          <span>Use admin privileges when installing py.exe</span>
+        </div>
+        <div class="checkbox-row critical">
+          <div class="box checked" style="background:#dc2626; border-color:#dc2626;"></div>
+          <span class="pulse-arrow">⬅</span>
+          <span>Add python.exe to PATH ← <strong>TICK THIS BOX!</strong></span>
+        </div>
+      </div>
+
+      <div style="display:flex; gap:8px; justify-content:flex-end; margin-top:14px;">
+        <div class="mock-btn primary">Install Now</div>
+        <div class="mock-btn ghost">Cancel</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="warning-box" style="margin-top:14px;">
+    🚨 The "Add python.exe to PATH" checkbox is at the <strong>BOTTOM of the first screen</strong>. It's OFF by default. <strong>Tick it</strong>, then click <em>Install Now</em>. If you skip this, you'll get "<code>python is not recognized</code>" later.
+  </div>
+  <div class="page-num">06</div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+  SLIDE 7 — WINDOWS: VERIFY
+════════════════════════════════════════ -->
+<div class="slide content">
+  <div class="os-badge win">Windows</div>
+  <h2>Step 3: Verify Python is installed ✅</h2>
+  <p style="margin-bottom:12px;">Open <strong>Command Prompt</strong> (press <kbd style="background:#1f2937;color:white;padding:2px 6px;border-radius:3px;font-size:12px;">Win</kbd> key, type <em>cmd</em>, press Enter), and type these commands:</p>
+
+  <pre class="terminal" style="margin-bottom:14px;">
+<span class="prompt">C:\Users\You&gt;</span> <span class="cmd">python --version</span>
+<span class="out">Python 3.12.X</span>
+
+<span class="prompt">C:\Users\You&gt;</span> <span class="cmd">pip --version</span>
+<span class="out">pip 24.X.X from C:\Users\You\AppData\Local\Programs\Python\Python312\Lib\site-packages\pip (python 3.12)</span>
+
+<span class="prompt">C:\Users\You&gt;</span> <span class="cmd">python</span>
+<span class="out">Python 3.12.X (...) on win32
+Type "help", "copyright", "credits" or "license" for more information.</span>
+<span class="prompt">&gt;&gt;&gt;</span> <span class="cmd">print("Hello!")</span>
+<span class="out">Hello!</span>
+<span class="prompt">&gt;&gt;&gt;</span> <span class="cmd">exit()</span></pre>
+
+  <div class="grid-2" style="gap:14px;">
+    <div class="success-box" style="margin-top:0;">
+      ✅ <strong>If you see version numbers:</strong> Python is installed correctly. Skip to Slide 11.
+    </div>
+    <div class="warning-box" style="margin-top:0;">
+      ❌ <strong>If you see "is not recognized as an internal or external command":</strong> the PATH wasn't set. See Slide 9 to fix it.
+    </div>
+  </div>
+
+  <div class="highlight-box">
+    💡 <code>&gt;&gt;&gt;</code> is the <strong>Python REPL</strong> — an interactive shell. Type any Python and it runs immediately. Press <kbd>Ctrl</kbd>+<kbd>Z</kbd> then <kbd>Enter</kbd>, or type <code>exit()</code>, to leave.
+  </div>
+  <div class="page-num">07</div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+  SLIDE 8 — WINDOWS: WHAT IS PATH
+════════════════════════════════════════ -->
+<div class="slide content">
+  <div class="os-badge win">Windows</div>
+  <h2>What is the <code>PATH</code> environment variable? 🧭</h2>
+  <p style="margin-bottom:12px;">When you type <code>python</code> into a terminal, Windows looks through a <strong>list of folders</strong> to find a program named <code>python.exe</code>. That list is called <code>PATH</code>.</p>
+
+  <div class="grid-2" style="gap:18px;">
+    <div>
+      <h3 style="margin-bottom:8px;">Before installing Python (PATH):</h3>
+      <div class="path-diagram">
+<span class="label"># Folders Windows searches:</span>
+<span class="entry">C:\Windows\system32</span>
+<span class="entry">C:\Windows</span>
+<span class="entry">C:\Windows\System32\Wbem</span>
+<span class="entry">...</span>
+<span class="label"># No python here → "not recognized"</span>
+      </div>
+    </div>
+    <div>
+      <h3 style="margin-bottom:8px;">After ticking the checkbox:</h3>
+      <div class="path-diagram">
+<span class="label"># Folders Windows searches:</span>
+<span class="entry">C:\Windows\system32</span>
+<span class="entry">C:\Windows</span>
+<span class="new-entry">C:\Users\You\...\Python312\Scripts\</span>
+<span class="new-entry">C:\Users\You\...\Python312\</span>
+<span class="label"># ✅ python.exe lives in one of these</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="card blue-border" style="margin-top:14px;">
+    <h3>The "Add Python to PATH" checkbox just does this 👇</h3>
+    <p style="font-size:14px;">It adds Python's install folder to your PATH list. Once there, typing <code>python</code> anywhere works — Windows finds <code>python.exe</code> and runs it.</p>
+  </div>
+
+  <div class="highlight-box">
+    💡 PATH isn't Python-specific. Every program you run from the terminal (git, node, code, etc.) lives in a folder that's on PATH.
+  </div>
+  <div class="page-num">08</div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+  SLIDE 9 — WINDOWS: MANUALLY FIX PATH (Part 1)
+════════════════════════════════════════ -->
+<div class="slide content">
+  <div class="os-badge win">Windows</div>
+  <h2>Forgot to tick "Add to PATH"? Here's the fix 🔧</h2>
+  <p style="margin-bottom:10px;">Easiest fix: <strong>uninstall Python and reinstall it</strong> with the checkbox ticked. Or — add it manually:</p>
+
+  <div class="step-row">
+    <div class="step-num purple">1</div>
+    <div class="step-content">
+      <h3>Open environment variables</h3>
+      <p>Press <kbd>Win</kbd>, type <em>"environment variables"</em>, click <strong>"Edit the system environment variables"</strong>.</p>
+    </div>
+  </div>
+
+  <div class="step-row">
+    <div class="step-num purple">2</div>
+    <div class="step-content">
+      <h3>Click "Environment Variables…" button</h3>
+      <p>It's at the bottom-right of the <em>System Properties</em> dialog that opened.</p>
+    </div>
+  </div>
+
+  <!-- Mock System Properties -->
+  <div class="mock-window" style="margin-top:8px; max-width:540px;">
+    <div class="titlebar">
+      <div style="font-weight:700;">System Properties</div>
+      <div style="display:flex; gap:6px;">
+        <div style="width:16px; height:16px; background:#e81123; color:white; font-size:10px; text-align:center;">×</div>
+      </div>
+    </div>
+    <div class="body" style="background:white; padding:14px 18px;">
+      <div style="display:flex; gap:14px; font-size:11px; border-bottom:1px solid #e5e7eb; padding-bottom:6px; margin-bottom:10px;">
+        <span>Computer Name</span><span>Hardware</span>
+        <span style="color:#2563eb; font-weight:700; border-bottom:2px solid #2563eb; padding-bottom:6px;">Advanced</span>
+        <span>System Protection</span><span>Remote</span>
+      </div>
+      <div style="font-size:11px; color:#4b5563;">You must be logged on as an Administrator to make most of these changes.</div>
+      <div style="background:#f3f4f6; padding:8px 10px; margin:10px 0; font-size:11px;">
+        <strong>Performance:</strong> Visual effects, processor scheduling…<br>
+        <strong>User Profiles:</strong> Desktop settings related to your sign-in<br>
+        <strong>Startup and Recovery:</strong> System startup, system failure…
+      </div>
+      <div style="display:flex; justify-content:flex-end; padding-top:6px;">
+        <div style="background:#fef9c3; border:2px solid #facc15; padding:5px 12px; border-radius:3px; font-size:11px; font-weight:700; color:#713f12;">
+          Environment Variables…  ⬅️ click
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <p style="margin-top:12px; font-size:14px; color:#6b7280;">Next slide: actually editing the PATH value →</p>
+  <div class="page-num">09</div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+  SLIDE 10 — WINDOWS: MANUALLY FIX PATH (Part 2)
+════════════════════════════════════════ -->
+<div class="slide content">
+  <div class="os-badge win">Windows</div>
+  <h2>Adding Python's folder to PATH manually</h2>
+
+  <div class="step-row">
+    <div class="step-num purple">3</div>
+    <div class="step-content">
+      <h3>Under "User variables", find <code>Path</code> → double-click it</h3>
+    </div>
+  </div>
+
+  <div class="step-row">
+    <div class="step-num purple">4</div>
+    <div class="step-content">
+      <h3>Click "New", paste these two paths</h3>
+      <p>Replace <code>YourName</code> with your actual Windows username.</p>
+    </div>
+  </div>
+
+  <pre style="margin:8px 0 12px;">
+C:\Users\<span style="color:#fbbf24;">YourName</span>\AppData\Local\Programs\Python\Python312\
+C:\Users\<span style="color:#fbbf24;">YourName</span>\AppData\Local\Programs\Python\Python312\Scripts\</pre>
+
+  <!-- Mock Edit Env Var dialog -->
+  <div class="mock-window" style="margin-top:6px; max-width:560px;">
+    <div class="titlebar">
+      <div style="font-weight:700;">Edit environment variable</div>
+      <div style="display:flex; gap:6px;">
+        <div style="width:16px; height:16px; background:#e81123; color:white; font-size:10px; text-align:center;">×</div>
+      </div>
+    </div>
+    <div class="body" style="background:white; padding:12px 16px;">
+      <table style="width:100%; font-size:11px; border-collapse:collapse;">
+        <tr style="background:#f3f4f6;"><td style="padding:5px;">%USERPROFILE%\AppData\Local\Microsoft\WindowsApps</td></tr>
+        <tr><td style="padding:5px;">C:\Program Files\Git\cmd</td></tr>
+        <tr style="background:#d1fae5;"><td style="padding:5px; color:#065f46; font-weight:700;">C:\Users\YourName\AppData\Local\Programs\Python\Python312\</td></tr>
+        <tr style="background:#d1fae5;"><td style="padding:5px; color:#065f46; font-weight:700;">C:\Users\YourName\AppData\Local\Programs\Python\Python312\Scripts\</td></tr>
+      </table>
+      <div style="display:flex; gap:6px; justify-content:flex-end; margin-top:10px;">
+        <div class="mock-btn ghost">New</div>
+        <div class="mock-btn ghost">Edit</div>
+        <div class="mock-btn ghost">Browse…</div>
+        <div class="mock-btn ghost">Delete</div>
+        <div class="mock-btn primary">OK</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="step-row" style="margin-top:14px;">
+    <div class="step-num purple">5</div>
+    <div class="step-content">
+      <h3>Click OK on all dialogs → open a NEW Command Prompt → test again</h3>
+      <p>The new PATH only applies to new terminal windows.</p>
+    </div>
+  </div>
+
+  <div class="highlight-box">
+    💡 Don't see the <code>AppData</code> folder when browsing? It's hidden by default. In File Explorer: <em>View → Show → Hidden items</em>.
+  </div>
+  <div class="page-num">10</div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+  SLIDE 11 — WINDOWS: DOWNLOAD VSCODE
+════════════════════════════════════════ -->
+<div class="slide content">
+  <div class="os-badge win">Windows</div>
+  <h2>Step 4: Download VSCode 📝</h2>
+
+  <div class="step-row">
+    <div class="step-num green">1</div>
+    <div class="step-content">
+      <h3>Go to <a href="https://code.visualstudio.com/download">code.visualstudio.com/download</a></h3>
+    </div>
+  </div>
+
+  <div class="step-row">
+    <div class="step-num green">2</div>
+    <div class="step-content">
+      <h3>Click the blue "Windows" button</h3>
+      <p>It downloads <code>VSCodeUserSetup-x64-X.X.X.exe</code> — the "User Installer" (no admin needed).</p>
+    </div>
+  </div>
+
+  <div class="mock-window" style="margin-top:8px;">
+    <div class="titlebar">
+      <div class="controls"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div></div>
+      <div>🔒 code.visualstudio.com/download</div>
+      <div style="width:30px;"></div>
+    </div>
+    <div class="body" style="background:#1f1f1f; color:#e5e7eb; padding:24px 30px;">
+      <div style="text-align:center;">
+        <div style="font-size:46px;">💻</div>
+        <div style="font-size:18px; font-weight:700; margin-top:6px;">Download Visual Studio Code</div>
+        <div style="font-size:11px; color:#9ca3af; margin-top:4px;">Free and built on open source. Integrated Git, debugging and extensions.</div>
+      </div>
+      <div style="display:flex; gap:14px; justify-content:center; margin-top:18px;">
+        <div style="background:#0078d4; color:white; padding:12px 22px; border-radius:4px; font-weight:700; font-size:13px; box-shadow:0 2px 6px rgba(0,120,212,0.4);">
+          🪟 Windows<br><span style="font-size:9px; opacity:0.8;">User Installer · x64</span>
+        </div>
+        <div style="background:#374151; color:#e5e7eb; padding:12px 22px; border-radius:4px; font-weight:700; font-size:13px;">
+          🍎 Mac
+        </div>
+        <div style="background:#374151; color:#e5e7eb; padding:12px 22px; border-radius:4px; font-weight:700; font-size:13px;">
+          🐧 Linux
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="page-num">11</div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+  SLIDE 12 — WINDOWS: VSCODE INSTALL CHECKBOXES
+════════════════════════════════════════ -->
+<div class="slide content">
+  <div class="os-badge win">Windows</div>
+  <h2>Step 5: Install VSCode — useful checkboxes ☑️</h2>
+  <p style="margin-bottom:10px;">Run the downloaded <code>.exe</code>. Accept the license, click <em>Next</em> a few times. On the <strong>"Select Additional Tasks"</strong> screen, tick these:</p>
+
+  <div class="mock-window" style="margin-top:6px; max-width:660px;">
+    <div class="titlebar">
+      <div style="font-weight:700;">Setup - Microsoft Visual Studio Code</div>
+      <div style="display:flex; gap:6px;">
+        <div style="width:16px; height:16px; background:#e81123; color:white; font-size:10px; text-align:center;">×</div>
+      </div>
+    </div>
+    <div class="body" style="background:white; padding:18px 22px;">
+      <div style="font-size:13px; font-weight:700; color:#1f2937; margin-bottom:4px;">Select Additional Tasks</div>
+      <div style="font-size:11px; color:#6b7280; margin-bottom:14px;">Which additional tasks should be performed?</div>
+
+      <div class="checkbox-row" style="background:#f0f9ff; padding:6px 8px; border-radius:4px;">
+        <div class="box checked"></div>
+        <span><strong>Create a desktop icon</strong> — handy</span>
+      </div>
+      <div class="checkbox-row" style="background:#f0f9ff; padding:6px 8px; border-radius:4px; margin-top:4px;">
+        <div class="box checked"></div>
+        <span><strong>Add "Open with Code" action to Windows Explorer file context menu</strong> — right-click any file → "Open with Code" 🎯</span>
+      </div>
+      <div class="checkbox-row" style="background:#f0f9ff; padding:6px 8px; border-radius:4px; margin-top:4px;">
+        <div class="box checked"></div>
+        <span><strong>Add "Open with Code" action to Windows Explorer directory context menu</strong> — right-click any FOLDER → "Open with Code" 🎯</span>
+      </div>
+      <div class="checkbox-row" style="background:#f0f9ff; padding:6px 8px; border-radius:4px; margin-top:4px;">
+        <div class="box checked"></div>
+        <span><strong>Register Code as an editor for supported file types</strong></span>
+      </div>
+      <div class="checkbox-row" style="background:#fef9c3; padding:6px 8px; border-radius:4px; margin-top:4px; border:2px solid #facc15;">
+        <div class="box checked"></div>
+        <span><strong>Add to PATH (requires shell restart)</strong> — so you can type <code>code .</code> in terminal to open VSCode here ⭐</span>
+      </div>
+
+      <div style="display:flex; gap:6px; justify-content:flex-end; margin-top:14px;">
+        <div class="mock-btn ghost">Back</div>
+        <div class="mock-btn primary">Next</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="highlight-box">
+    💡 After install, click <em>Finish</em> and VSCode opens. You'll see a welcome screen — close it for now.
+  </div>
+  <div class="page-num">12</div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+  SLIDE 13 — WINDOWS: PYTHON EXTENSION
+════════════════════════════════════════ -->
+<div class="slide content">
+  <div class="os-badge win">Windows</div>
+  <h2>Step 6: Install the Python extension in VSCode 🧩</h2>
+  <p style="margin-bottom:12px;">VSCode by itself doesn't know Python. The extension adds syntax highlighting, autocomplete, "Run" button, debugger, and more.</p>
+
+  <div class="grid-2" style="gap:18px;">
+    <div>
+      <div class="step-row">
+        <div class="step-num rose">1</div>
+        <div class="step-content"><h3>Open VSCode</h3></div>
+      </div>
+      <div class="step-row">
+        <div class="step-num rose">2</div>
+        <div class="step-content">
+          <h3>Click the Extensions icon</h3>
+          <p>The 4-squares icon on the left sidebar. Or press <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>X</kbd>.</p>
+        </div>
+      </div>
+      <div class="step-row">
+        <div class="step-num rose">3</div>
+        <div class="step-content">
+          <h3>Search "Python"</h3>
+          <p>Install the one by <strong>Microsoft</strong> (a blue check, ~150M installs).</p>
+        </div>
+      </div>
+      <div class="step-row">
+        <div class="step-num rose">4</div>
+        <div class="step-content">
+          <h3>Click "Install"</h3>
+          <p>Pylance comes along automatically. Both are needed.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mock VSCode Extensions panel -->
+    <div class="mock-window">
+      <div class="titlebar">
+        <div style="font-weight:700;">Visual Studio Code — Extensions</div>
+        <div style="display:flex; gap:6px;">
+          <div style="width:14px; height:14px; background:#e81123; color:white; font-size:9px; text-align:center;">×</div>
+        </div>
+      </div>
+      <div style="display:flex; background:#1e1e1e; color:#cccccc; font-size:11px;">
+        <div style="width:38px; background:#252526; padding:8px 0; display:flex; flex-direction:column; gap:14px; align-items:center; font-size:16px;">
+          <div>📁</div><div>🔍</div><div>🌿</div><div style="background:#37373d; padding:3px 6px; border-radius:3px;">🧩</div><div>🐞</div>
+        </div>
+        <div style="flex:1; padding:10px 12px;">
+          <div style="background:#3c3c3c; padding:5px 8px; border-radius:3px; font-size:11px; color:#fff;">🔍 Python</div>
+          <div style="margin-top:10px; background:#252526; padding:8px; border-radius:4px; border-left:3px solid #0078d4;">
+            <div style="display:flex; gap:8px;">
+              <div style="background:#3776ab; width:32px; height:32px; border-radius:4px; display:flex; align-items:center; justify-content:center; font-size:16px;">🐍</div>
+              <div style="flex:1;">
+                <div style="font-weight:700; font-size:11px; color:#fff;">Python <span style="color:#0078d4;">✓</span></div>
+                <div style="font-size:9px; color:#9ca3af;">Microsoft · 150M installs</div>
+                <div style="font-size:10px; color:#cbd5e1; margin-top:2px;">IntelliSense, Pylance, debugging, formatting…</div>
+                <div style="background:#0078d4; color:white; padding:2px 10px; border-radius:3px; font-size:10px; font-weight:700; display:inline-block; margin-top:5px;">Install</div>
+              </div>
+            </div>
+          </div>
+          <div style="margin-top:6px; background:#252526; padding:6px; border-radius:4px; font-size:9px; color:#9ca3af;">
+            <strong style="color:#cbd5e1;">Pylance</strong> · Microsoft · auto-installed with Python
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="success-box">
+    🎉 <strong>You're done on Windows!</strong> Skip to Slide 23 to write your first Python program.
+  </div>
+  <div class="page-num">13</div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+  SLIDE 14 — WINDOWS: TROUBLESHOOT QUICK
+════════════════════════════════════════ -->
+<div class="slide content">
+  <div class="os-badge win">Windows</div>
+  <h2>Windows: quick fixes 🔧</h2>
+
+  <div class="grid-2">
+    <div class="card rose-border">
+      <h3>"python is not recognized"</h3>
+      <p style="font-size:14px;">PATH wasn't set. <strong>Easiest:</strong> uninstall Python from Settings → Apps, then reinstall and TICK "Add to PATH". Or follow slides 9–10.</p>
+    </div>
+    <div class="card amber-border">
+      <h3>The Microsoft Store opens when I type <code>python</code></h3>
+      <p style="font-size:14px;">Windows has a "python.exe" stub that opens the Store. Fix: <em>Settings → Apps → Advanced app settings → App execution aliases</em> → turn OFF the two Python entries.</p>
+    </div>
+    <div class="card amber-border">
+      <h3><code>pip install X</code> says "permission denied"</h3>
+      <p style="font-size:14px;">Use <code>pip install --user X</code>, OR re-open Command Prompt as Administrator.</p>
+    </div>
+    <div class="card blue-border">
+      <h3>Multiple Python versions installed?</h3>
+      <p style="font-size:14px;">Use <code>py -3.12</code> or <code>py -3.11</code> to pick. The <code>py</code> launcher is bundled with Python on Windows.</p>
+    </div>
+    <div class="card blue-border">
+      <h3>VSCode doesn't see my Python</h3>
+      <p style="font-size:14px;">Press <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>P</kbd> → type "Python: Select Interpreter" → pick the version you installed.</p>
+    </div>
+    <div class="card rose-border">
+      <h3>Antivirus blocking the installer</h3>
+      <p style="font-size:14px;">Both python.org and code.visualstudio.com are official sources — temporarily disable real-time scanning if needed, or whitelist the file.</p>
+    </div>
+  </div>
+  <div class="page-num">14</div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+  SLIDE 15 — MACOS SECTION DIVIDER
+════════════════════════════════════════ -->
+<div class="slide section-intro">
+  <div class="panel gray-grad">
+    <div class="section-emoji">🍎</div>
+    <div class="section-label">Part 2 of 3</div>
+    <div class="slide-title" style="font-size:46px; margin-top:8px;">macOS</div>
+    <div class="slide-subtitle" style="font-size:17px;">Intel &amp; Apple Silicon · 12 Monterey or newer</div>
+  </div>
+  <div class="body">
+    <h2>Coming up on macOS</h2>
+    <ul style="margin-top:12px;">
+      <li><span class="icon">①</span> Two ways to install Python — pick one</li>
+      <li><span class="icon">②</span> Method A: official python.org installer (easiest)</li>
+      <li><span class="icon">③</span> Method B: Homebrew (recommended for devs)</li>
+      <li><span class="icon">④</span> Verify in Terminal.app</li>
+      <li><span class="icon">⑤</span> Understand <code>~/.zshrc</code> &amp; PATH on macOS</li>
+      <li><span class="icon">⑥</span> Install VSCode</li>
+      <li><span class="icon">⑦</span> Set up the <code>code</code> shell command</li>
+    </ul>
+    <div class="highlight-box">
+      ⚠️ macOS ships with an old Python 2.7 (or no Python at all on newer versions). <strong>Don't use it.</strong> We install our own modern Python 3.
+    </div>
+  </div>
+  <div class="page-num">15</div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+  SLIDE 16 — MACOS: TWO PATHS
+════════════════════════════════════════ -->
+<div class="slide content">
+  <div class="os-badge mac">macOS</div>
+  <h2>Pick one method 🛣️</h2>
+  <p style="margin-bottom:18px;">Both work great. If unsure, pick <strong>Method A</strong> — it's just a regular installer.</p>
+
+  <div class="grid-2" style="gap:18px;">
+    <div class="card blue-border" style="padding:22px 26px;">
+      <div style="display:flex; align-items:center; gap:12px; margin-bottom:8px;">
+        <div style="background:#0284c7; color:white; width:36px; height:36px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:900; font-size:18px;">A</div>
+        <h3 style="font-size:22px; margin-bottom:0;">python.org installer</h3>
+      </div>
+      <div class="pill pill-blue" style="margin-bottom:8px;">Easiest · No terminal needed</div>
+      <ul>
+        <li><span class="icon">✓</span> Download <code>.pkg</code> file, double-click</li>
+        <li><span class="icon">✓</span> Click "Continue" a few times</li>
+        <li><span class="icon">✓</span> No prerequisites</li>
+        <li><span class="icon">×</span> Updating = re-downloading installer</li>
+      </ul>
+      <p style="font-size:12.5px; margin-top:8px; color:#6b7280;"><strong>Best for:</strong> people new to coding.</p>
+    </div>
+
+    <div class="card amber-border" style="padding:22px 26px;">
+      <div style="display:flex; align-items:center; gap:12px; margin-bottom:8px;">
+        <div style="background:#d97706; color:white; width:36px; height:36px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:900; font-size:18px;">B</div>
+        <h3 style="font-size:22px; margin-bottom:0;">Homebrew</h3>
+      </div>
+      <div class="pill pill-amber" style="margin-bottom:8px;">More powerful · 1-line updates</div>
+      <ul>
+        <li><span class="icon">✓</span> One command to install</li>
+        <li><span class="icon">✓</span> <code>brew upgrade python</code> to update</li>
+        <li><span class="icon">✓</span> Manages git, node, and friends too</li>
+        <li><span class="icon">×</span> Requires installing Homebrew first</li>
+      </ul>
+      <p style="font-size:12.5px; margin-top:8px; color:#6b7280;"><strong>Best for:</strong> people who'll install more dev tools later.</p>
+    </div>
+  </div>
+
+  <div class="highlight-box">
+    💡 Slide 17 covers Method A. Slide 18 covers Method B. Pick ONE, then continue to Slide 19.
+  </div>
+  <div class="page-num">16</div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+  SLIDE 17 — MACOS: METHOD A
+════════════════════════════════════════ -->
+<div class="slide content">
+  <div class="os-badge mac">macOS</div>
+  <h2>Method A: python.org installer 🐍</h2>
+
+  <div class="step-row">
+    <div class="step-num blue">1</div>
+    <div class="step-content">
+      <h3>Open <a href="https://www.python.org/downloads/macos/">python.org/downloads/macos</a></h3>
+      <p>Or go to the main downloads page — it auto-detects macOS.</p>
+    </div>
+  </div>
+
+  <div class="step-row">
+    <div class="step-num blue">2</div>
+    <div class="step-content">
+      <h3>Download the "macOS 64-bit universal2 installer"</h3>
+      <p>It works on both Intel and Apple Silicon (M1/M2/M3/M4). The file is named <code>python-3.12.X-macos11.pkg</code>.</p>
+    </div>
+  </div>
+
+  <div class="step-row">
+    <div class="step-num blue">3</div>
+    <div class="step-content">
+      <h3>Double-click the <code>.pkg</code> file → follow the installer</h3>
+      <p>Click Continue → Continue → Agree → Install. Enter your Mac password when prompted.</p>
+    </div>
+  </div>
+
+  <!-- Mock macOS installer -->
+  <div class="mock-window" style="margin-top:8px; max-width:580px;">
+    <div class="titlebar">
+      <div class="controls"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div></div>
+      <div style="font-weight:700;">Install Python 3.12.X</div>
+      <div style="width:30px;"></div>
+    </div>
+    <div class="body" style="background:#ececec; padding:16px 20px;">
+      <div style="display:flex; gap:16px; align-items:center;">
+        <div style="font-size:48px;">🐍</div>
+        <div style="flex:1; font-size:12px; color:#1f2937;">
+          <strong>Welcome to the Python 3.12.X Installer</strong><br>
+          You will be guided through the steps necessary to install this software.<br><br>
+          <span style="color:#6b7280;">Introduction → Read Me → License → Destination Select → Installation Type → Installation → Summary</span>
+        </div>
+      </div>
+      <div style="display:flex; gap:8px; justify-content:flex-end; margin-top:14px;">
+        <div class="mock-btn ghost">Go Back</div>
+        <div class="mock-btn primary">Continue</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="success-box">
+    ✅ When finished, the installer opens a Finder window with <code>IDLE</code>, <code>Python Launcher</code>, and a "Update Shell Profile.command" script. <strong>Double-click "Install Certificates.command"</strong> — it fixes HTTPS for pip. Then jump to Slide 19.
+  </div>
+  <div class="page-num">17</div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+  SLIDE 18 — MACOS: METHOD B (HOMEBREW)
+════════════════════════════════════════ -->
+<div class="slide content">
+  <div class="os-badge mac">macOS</div>
+  <h2>Method B: Homebrew 🍺</h2>
+
+  <div class="step-row">
+    <div class="step-num amber">1</div>
+    <div class="step-content">
+      <h3>Open Terminal.app</h3>
+      <p>Press <kbd>⌘ Cmd</kbd> + <kbd>Space</kbd>, type <em>Terminal</em>, hit Enter.</p>
+    </div>
+  </div>
+
+  <div class="step-row">
+    <div class="step-num amber">2</div>
+    <div class="step-content">
+      <h3>Install Homebrew (skip if you already have it)</h3>
+      <p>Paste this into Terminal — get the latest official command from <a href="https://brew.sh/">brew.sh</a>:</p>
+    </div>
+  </div>
+
+  <pre class="terminal">
+<span class="prompt">your-mac ~ %</span> <span class="cmd">/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"</span></pre>
+
+  <div class="step-row" style="margin-top:14px;">
+    <div class="step-num amber">3</div>
+    <div class="step-content">
+      <h3>Install Python with Homebrew</h3>
+    </div>
+  </div>
+
+  <pre class="terminal">
+<span class="prompt">your-mac ~ %</span> <span class="cmd">brew install python</span>
+<span class="out">==&gt; Downloading https://...
+==&gt; Pouring python@3.12...
+🍺  /opt/homebrew/Cellar/python@3.12/3.12.X: ...</span>
+
+<span class="prompt">your-mac ~ %</span> <span class="cmd">python3 --version</span>
+<span class="out">Python 3.12.X</span></pre>
+
+  <div class="highlight-box">
+    💡 On Homebrew, the command is <code>python3</code> (not just <code>python</code>) by default. We'll set up an alias on the next slide if you want plain <code>python</code> to work.
+  </div>
+  <div class="page-num">18</div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+  SLIDE 19 — MACOS: VERIFY + ZSHRC
+════════════════════════════════════════ -->
+<div class="slide content">
+  <div class="os-badge mac">macOS</div>
+  <h2>Verify Python + understand <code>~/.zshrc</code> ✅</h2>
+
+  <p style="margin-bottom:8px;">In Terminal, run these:</p>
+  <pre class="terminal">
+<span class="prompt">your-mac ~ %</span> <span class="cmd">python3 --version</span>
+<span class="out">Python 3.12.X</span>
+
+<span class="prompt">your-mac ~ %</span> <span class="cmd">pip3 --version</span>
+<span class="out">pip 24.X.X from ... (python 3.12)</span>
+
+<span class="prompt">your-mac ~ %</span> <span class="cmd">which python3</span>
+<span class="out">/usr/local/bin/python3      <span class="cm"># python.org installer</span>
+<span class="cm">— or —</span>
+/opt/homebrew/bin/python3   <span class="cm"># Homebrew on Apple Silicon</span></span></pre>
+
+  <h3 style="margin-top:18px;">Want plain <code>python</code> to also work? Add an alias to <code>~/.zshrc</code>:</h3>
+  <p style="margin-bottom:6px; font-size:14px;">macOS uses the <strong>zsh</strong> shell. Its config file is <code>~/.zshrc</code> in your home folder. PATH and aliases live there.</p>
+
+  <pre class="terminal">
+<span class="prompt">your-mac ~ %</span> <span class="cmd">echo 'alias python=python3' &gt;&gt; ~/.zshrc</span>
+<span class="prompt">your-mac ~ %</span> <span class="cmd">echo 'alias pip=pip3' &gt;&gt; ~/.zshrc</span>
+<span class="prompt">your-mac ~ %</span> <span class="cmd">source ~/.zshrc</span>
+<span class="prompt">your-mac ~ %</span> <span class="cmd">python --version</span>
+<span class="out">Python 3.12.X    <span class="cm"># ✅ plain "python" now works</span></span></pre>
+
+  <div class="highlight-box">
+    💡 <code>~/.zshrc</code> runs every time you open a new Terminal. PATH changes, aliases, environment exports — all go here. To open it in VSCode later: <code>code ~/.zshrc</code>.
+  </div>
+  <div class="page-num">19</div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+  SLIDE 20 — MACOS: DOWNLOAD VSCODE
+════════════════════════════════════════ -->
+<div class="slide content">
+  <div class="os-badge mac">macOS</div>
+  <h2>Install VSCode 📝</h2>
+
+  <div class="step-row">
+    <div class="step-num green">1</div>
+    <div class="step-content">
+      <h3>Go to <a href="https://code.visualstudio.com/download">code.visualstudio.com/download</a></h3>
+      <p>Click the <strong>Mac</strong> button. Pick "Apple silicon" if you have M1/M2/M3/M4, or "Intel chip" otherwise. ("Universal" works for both if unsure.)</p>
+    </div>
+  </div>
+
+  <div class="step-row">
+    <div class="step-num green">2</div>
+    <div class="step-content">
+      <h3>Unzip the file</h3>
+      <p>Safari auto-unzips. You'll see <strong>Visual Studio Code.app</strong> in Downloads.</p>
+    </div>
+  </div>
+
+  <div class="step-row">
+    <div class="step-num green">3</div>
+    <div class="step-content">
+      <h3>Drag it into your <code>/Applications</code> folder</h3>
+      <p>This is how all Mac apps install. Open Finder → drag Visual Studio Code.app to Applications.</p>
+    </div>
+  </div>
+
+  <!-- Mock Finder drag illustration -->
+  <div class="grid-2" style="gap:24px; margin-top:12px;">
+    <div class="mock-window">
+      <div class="titlebar">
+        <div class="controls"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div></div>
+        <div style="font-weight:700;">Downloads</div>
+        <div style="width:30px;"></div>
+      </div>
+      <div class="body" style="background:white; padding:16px; text-align:center;">
+        <div style="font-size:48px;">📦</div>
+        <div style="font-size:11px; margin-top:6px; font-weight:700;">Visual Studio Code.app</div>
+        <div style="font-size:10px; color:#6b7280; margin-top:4px;">320 MB</div>
+        <div style="margin-top:14px; font-size:24px; color:#dc2626;">⤵️ drag →</div>
+      </div>
+    </div>
+    <div class="mock-window">
+      <div class="titlebar">
+        <div class="controls"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div></div>
+        <div style="font-weight:700;">Applications</div>
+        <div style="width:30px;"></div>
+      </div>
+      <div class="body" style="background:white; padding:16px;">
+        <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; text-align:center; font-size:10px;">
+          <div>🌐<br>Safari</div>
+          <div>📧<br>Mail</div>
+          <div>🎵<br>Music</div>
+          <div>📷<br>Photos</div>
+          <div style="background:#dbeafe; border-radius:6px; padding:4px;">💻<br><strong>VSCode</strong></div>
+          <div>🖥️<br>Terminal</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="success-box">
+    🎉 Open <strong>Launchpad</strong> (F4 or pinch on trackpad) and click VSCode. First time, macOS asks "Are you sure?" — click <strong>Open</strong>.
+  </div>
+  <div class="page-num">20</div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+  SLIDE 21 — MACOS: 'code' COMMAND
+════════════════════════════════════════ -->
+<div class="slide content">
+  <div class="os-badge mac">macOS</div>
+  <h2>Set up the <code>code</code> shell command ⚡</h2>
+  <p style="margin-bottom:14px;">A handy trick: type <code>code .</code> in any folder to open it in VSCode. Set it up once:</p>
+
+  <div class="step-row">
+    <div class="step-num purple">1</div>
+    <div class="step-content">
+      <h3>Open VSCode</h3>
+    </div>
+  </div>
+
+  <div class="step-row">
+    <div class="step-num purple">2</div>
+    <div class="step-content">
+      <h3>Open the Command Palette</h3>
+      <p>Press <kbd>⌘ Cmd</kbd> + <kbd>Shift</kbd> + <kbd>P</kbd>.</p>
+    </div>
+  </div>
+
+  <div class="step-row">
+    <div class="step-num purple">3</div>
+    <div class="step-content">
+      <h3>Type: <code>Shell Command: Install 'code' command in PATH</code></h3>
+      <p>Hit Enter. macOS may ask for your password.</p>
+    </div>
+  </div>
+
+  <!-- Mock command palette -->
+  <div class="mock-window" style="max-width:580px; margin-top:6px;">
+    <div class="titlebar">
+      <div class="controls"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div></div>
+      <div style="font-weight:700;">Visual Studio Code</div>
+      <div style="width:30px;"></div>
+    </div>
+    <div class="body" style="background:#1e1e1e; padding:14px;">
+      <div style="background:#252526; border:1px solid #454545; border-radius:4px; padding:6px 10px; font-size:11px; color:#cccccc;">
+        &gt; Shell Command: Install 'code' command in PATH
+      </div>
+      <div style="background:#37373d; padding:6px 10px; font-size:11px; color:#fff; margin-top:1px; border-radius:0 0 4px 4px;">
+        ▸ <strong>Shell Command: Install 'code' command in PATH</strong>
+      </div>
+      <div style="padding:6px 10px; font-size:11px; color:#888;">Shell Command: Uninstall 'code' command from PATH</div>
+    </div>
+  </div>
+
+  <div class="step-row" style="margin-top:14px;">
+    <div class="step-num purple">4</div>
+    <div class="step-content">
+      <h3>Test it</h3>
+      <p>Open Terminal in any folder and run:</p>
+    </div>
+  </div>
+
+  <pre class="terminal">
+<span class="prompt">your-mac ~ %</span> <span class="cmd">cd ~/Documents</span>
+<span class="prompt">your-mac Documents %</span> <span class="cmd">code .</span>
+<span class="out"><span class="cm"># VSCode opens with this folder loaded — magic ✨</span></span></pre>
+
+  <div class="page-num">21</div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+  SLIDE 22 — MACOS: PYTHON EXTENSION
+════════════════════════════════════════ -->
+<div class="slide content">
+  <div class="os-badge mac">macOS</div>
+  <h2>Install the Python extension 🧩</h2>
+  <p style="margin-bottom:12px;">Same as Windows. The extension adds Python smarts to VSCode — autocomplete, error squiggles, the Run button.</p>
+
+  <div class="grid-2" style="gap:18px;">
+    <div>
+      <div class="step-row">
+        <div class="step-num rose">1</div>
+        <div class="step-content"><h3>Open VSCode</h3></div>
+      </div>
+      <div class="step-row">
+        <div class="step-num rose">2</div>
+        <div class="step-content">
+          <h3>Click the Extensions icon</h3>
+          <p>Left sidebar (4 squares). Or <kbd>⌘ Cmd</kbd>+<kbd>Shift</kbd>+<kbd>X</kbd>.</p>
+        </div>
+      </div>
+      <div class="step-row">
+        <div class="step-num rose">3</div>
+        <div class="step-content">
+          <h3>Search "Python"</h3>
+          <p>Install the one by <strong>Microsoft</strong>.</p>
+        </div>
+      </div>
+      <div class="step-row">
+        <div class="step-num rose">4</div>
+        <div class="step-content">
+          <h3>Tell VSCode which Python to use</h3>
+          <p>Press <kbd>⌘ Cmd</kbd>+<kbd>Shift</kbd>+<kbd>P</kbd> → "Python: Select Interpreter" → pick <code>Python 3.12</code>.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="mock-window">
+      <div class="titlebar">
+        <div class="controls"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div></div>
+        <div style="font-weight:700;">Select Interpreter</div>
+        <div style="width:30px;"></div>
+      </div>
+      <div class="body" style="background:#1e1e1e; padding:14px;">
+        <div style="background:#252526; border:1px solid #454545; border-radius:4px; padding:6px 10px; font-size:11px; color:#cccccc;">
+          Select a Python interpreter
+        </div>
+        <div style="background:#37373d; padding:8px 10px; font-size:11px; color:#fff; margin-top:1px;">
+          ▸ <strong style="color:#fff;">Python 3.12.X</strong> ('python3.12') <span style="color:#9ca3af;">— Recommended</span>
+          <div style="font-size:9px; color:#9ca3af;">/opt/homebrew/bin/python3.12</div>
+        </div>
+        <div style="padding:8px 10px; font-size:11px; color:#888;">
+          Python 3.10.X ('python3.10')
+          <div style="font-size:9px;">/usr/local/bin/python3.10</div>
+        </div>
+        <div style="padding:8px 10px; font-size:11px; color:#888;">
+          + Enter interpreter path…
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="success-box">
+    🎉 <strong>You're done on macOS!</strong> Continue to Slide 23 — let's write some Python.
+  </div>
+  <div class="page-num">22</div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+  SLIDE 23 — BOTH: SECTION DIVIDER
+════════════════════════════════════════ -->
+<div class="slide section-intro">
+  <div class="panel purple-grad">
+    <div class="section-emoji">🚀</div>
+    <div class="section-label">Part 3 of 3</div>
+    <div class="slide-title" style="font-size:46px; margin-top:8px;">Hello, Python!</div>
+    <div class="slide-subtitle" style="font-size:17px;">Same on every OS · the fun part</div>
+  </div>
+  <div class="body">
+    <h2>Almost there — let's make sure it all works</h2>
+    <ul style="margin-top:12px;">
+      <li><span class="icon">①</span> Create a folder for your code</li>
+      <li><span class="icon">②</span> Open it in VSCode</li>
+      <li><span class="icon">③</span> Create your first <code>.py</code> file</li>
+      <li><span class="icon">④</span> Type a tiny program</li>
+      <li><span class="icon">⑤</span> Click the Run button (or press F5)</li>
+      <li><span class="icon">⑥</span> See the output</li>
+    </ul>
+    <div class="highlight-box">
+      📁 Make a dedicated folder somewhere obvious — e.g. <code>~/Documents/python-course</code> on Mac or <code>C:\Users\YourName\Documents\python-course</code> on Windows.
+    </div>
+  </div>
+  <div class="page-num">23</div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+  SLIDE 24 — BOTH: FIRST FILE
+════════════════════════════════════════ -->
+<div class="slide content">
+  <div class="os-badge both">Both OS</div>
+  <h2>Your first Python program 👋</h2>
+
+  <div class="grid-2" style="gap:18px;">
+    <div>
+      <div class="step-row">
+        <div class="step-num purple">1</div>
+        <div class="step-content">
+          <h3>Open VSCode</h3>
+          <p>File → Open Folder → pick the folder you made.</p>
+        </div>
+      </div>
+      <div class="step-row">
+        <div class="step-num purple">2</div>
+        <div class="step-content">
+          <h3>Create a new file</h3>
+          <p>Hover the folder name in the sidebar → click the "📄+" icon → name it <code>hello.py</code>.</p>
+        </div>
+      </div>
+      <div class="step-row">
+        <div class="step-num purple">3</div>
+        <div class="step-content">
+          <h3>Type this code in</h3>
+        </div>
+      </div>
+      <pre style="margin-top:6px;">
+<span class="fn">print</span>(<span class="st">"Hello, Python!"</span>)
+<span class="fn">print</span>(<span class="st">"I'm running on my own machine."</span>)
+
+name = <span class="fn">input</span>(<span class="st">"What's your name? "</span>)
+<span class="fn">print</span>(<span class="st">f"Welcome, {name}!"</span>)</pre>
+    </div>
+
+    <div>
+      <div class="step-row">
+        <div class="step-num purple">4</div>
+        <div class="step-content">
+          <h3>Save</h3>
+          <p><kbd>Ctrl</kbd>+<kbd>S</kbd> (Win) or <kbd>⌘ Cmd</kbd>+<kbd>S</kbd> (Mac).</p>
+        </div>
+      </div>
+      <div class="step-row">
+        <div class="step-num purple">5</div>
+        <div class="step-content">
+          <h3>Run it ▶️</h3>
+          <p>Click the <strong>▶ play button</strong> in the top-right of the editor. Or press <kbd>F5</kbd>. Or right-click → "Run Python File in Terminal".</p>
+        </div>
+      </div>
+
+      <div class="mock-window" style="margin-top:8px;">
+        <div class="titlebar">
+          <div class="controls"><div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div></div>
+          <div style="font-weight:700;">TERMINAL — hello.py</div>
+          <div style="width:30px;"></div>
+        </div>
+        <pre class="terminal" style="margin:0; border-radius:0;">
+<span class="prompt">$</span> <span class="cmd">python hello.py</span>
+<span class="out">Hello, Python!
+I'm running on my own machine.
+What's your name? </span><span class="cmd">Bibek</span>
+<span class="out">Welcome, Bibek!</span>
+
+<span class="prompt">$</span></pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="success-box">
+    🎉 If you saw that output — <strong>everything is working</strong>. You're ready for Day 1 of the course.
+  </div>
+  <div class="page-num">24</div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+  SLIDE 25 — BOTH: COMMON ISSUES
+════════════════════════════════════════ -->
+<div class="slide content">
+  <div class="os-badge both">Both OS</div>
+  <h2>If something goes wrong 🩹</h2>
+
+  <div class="grid-2">
+    <div class="card rose-border">
+      <h3>The Run ▶ button doesn't appear</h3>
+      <p style="font-size:13.5px;">VSCode hasn't recognized this as a Python file. Save it with a <code>.py</code> extension. Also confirm the Python extension is installed and enabled.</p>
+    </div>
+
+    <div class="card rose-border">
+      <h3>"No Python interpreter selected"</h3>
+      <p style="font-size:13.5px;"><kbd>Ctrl/⌘</kbd>+<kbd>Shift</kbd>+<kbd>P</kbd> → "Python: Select Interpreter" → pick the version you installed.</p>
+    </div>
+
+    <div class="card amber-border">
+      <h3>VSCode opens the Microsoft Store on Windows</h3>
+      <p style="font-size:13.5px;">Disable "App execution aliases" for Python (Settings → Apps → Advanced app settings).</p>
+    </div>
+
+    <div class="card amber-border">
+      <h3>"ModuleNotFoundError: No module named 'X'"</h3>
+      <p style="font-size:13.5px;">Run <code>pip install X</code> (Windows) or <code>pip3 install X</code> (Mac) in the terminal. We won't need this for Day 1.</p>
+    </div>
+
+    <div class="card blue-border">
+      <h3>Wrong Python version is being used</h3>
+      <p style="font-size:13.5px;">Different ways Python is found can conflict. Check <code>which python3</code> (Mac) or <code>where python</code> (Windows) — it shows which one is being picked.</p>
+    </div>
+
+    <div class="card blue-border">
+      <h3>Terminal in VSCode is wrong shell</h3>
+      <p style="font-size:13.5px;"><kbd>Ctrl/⌘</kbd>+<kbd>Shift</kbd>+<kbd>P</kbd> → "Terminal: Select Default Profile" → pick PowerShell (Win) or zsh (Mac).</p>
+    </div>
+  </div>
+
+  <div class="highlight-box">
+    🆘 Still stuck? Copy the exact error message into Google. 99% of the time, the first Stack Overflow result has your fix. Senior devs do this every day.
+  </div>
+  <div class="page-num">25</div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+  SLIDE 26 — RECAP & LINKS
+════════════════════════════════════════ -->
+<div class="slide dark">
+  <h2 style="color:#e2e8f0;">🎉 You're ready for Day 1</h2>
+  <p style="color:#cbd5e1; margin-bottom:18px;">Quick recap of what's now on your machine, plus all the links in one place.</p>
+
+  <div class="grid-2" style="gap:18px;">
+    <div style="background:#1e293b; border-radius:14px; padding:20px 24px; border-left:5px solid #0ea5e9;">
+      <h3 style="color:#7dd3fc;">✅ Installed</h3>
+      <ul>
+        <li style="color:#cbd5e1;"><span class="icon">🐍</span> Python 3.12 (or newer) — the language</li>
+        <li style="color:#cbd5e1;"><span class="icon">📦</span> pip — Python's package manager</li>
+        <li style="color:#cbd5e1;"><span class="icon">💻</span> VSCode — the editor</li>
+        <li style="color:#cbd5e1;"><span class="icon">🧩</span> Python extension for VSCode</li>
+        <li style="color:#cbd5e1;"><span class="icon">⚡</span> <code>python</code> &amp; <code>code</code> commands in your terminal</li>
+      </ul>
+    </div>
+
+    <div style="background:#1e293b; border-radius:14px; padding:20px 24px; border-left:5px solid #f59e0b;">
+      <h3 style="color:#fcd34d;">🔗 Useful links</h3>
+      <ul>
+        <li style="color:#cbd5e1;"><span class="icon">📥</span> <a href="https://www.python.org/downloads/" style="color:#7dd3fc;">python.org/downloads</a></li>
+        <li style="color:#cbd5e1;"><span class="icon">📥</span> <a href="https://code.visualstudio.com/download" style="color:#7dd3fc;">code.visualstudio.com/download</a></li>
+        <li style="color:#cbd5e1;"><span class="icon">🍺</span> <a href="https://brew.sh/" style="color:#7dd3fc;">brew.sh</a> (macOS)</li>
+        <li style="color:#cbd5e1;"><span class="icon">🧩</span> <a href="https://marketplace.visualstudio.com/items?itemName=ms-python.python" style="color:#7dd3fc;">Python extension</a></li>
+        <li style="color:#cbd5e1;"><span class="icon">📚</span> <a href="https://docs.python.org/3/tutorial/" style="color:#7dd3fc;">Official Python tutorial</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <div style="background:#1e293b; border-radius:14px; padding:20px 24px; margin-top:18px; border-left:5px solid #10b981;">
+    <h3 style="color:#6ee7b7;">📝 Verification checklist — tick before Day 1</h3>
+    <ul style="margin-top:6px;">
+      <li style="color:#cbd5e1;"><span class="icon">☑️</span> <code>python --version</code> (Win) or <code>python3 --version</code> (Mac) shows <strong>3.12 or newer</strong></li>
+      <li style="color:#cbd5e1;"><span class="icon">☑️</span> VSCode opens, you can see the Extensions panel</li>
+      <li style="color:#cbd5e1;"><span class="icon">☑️</span> A <code>hello.py</code> file with <code>print("Hi")</code> ran and printed <code>Hi</code></li>
+      <li style="color:#cbd5e1;"><span class="icon">☑️</span> You know how to open the terminal inside VSCode (<kbd>Ctrl</kbd>+<kbd>`</kbd>)</li>
+    </ul>
+  </div>
+
+  <div style="text-align:center; margin-top:22px; color:#cbd5e1; font-size:15px; font-weight:600;">
+    See you on Day 1 🐍✨
+  </div>
+  <div class="page-num">26</div>
+</div>
+
+</body>
+</html>
